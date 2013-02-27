@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translation>
+    <static>
+        <text key="$this" value="TRTR" />
+        <text key="buttonRestore" value="&amp;Restaurar" />
+        <text key="buttonTranslate" value="&amp;Traduzir" />
+        <text key="groupBoxGameInfo" value="Informações do Jogo" />
+        <text key="labelInstallPathText" value="Instalar Patch" />
+        <text key="labelInstalledVersionText" value="Versão Instalada" />
+        <text key="labelLastUsedProfileText" value="Último Perfil Utilizado" />
+        <text key="labelSelectedLanguageText" value="Idioma Selecionado" />
+        <text key="labelAvailableTranslationVersionText" value="Versão da Tradução Disponível" />
+        <text key="labelSelectedSubtitleLanguageText" value="Idioma Selecionado para Legenda" />
+        <text key="labelExtra" value="E&amp;xtra" />
+        <text key="labelGame" value="Escolha um &amp;jogo" />
+        <text key="labelProgress" value="Progresso" />
+        <text key="menuItemCompileTexts" value="Compactar &amp;textos da tradução em XML" />
+        <text key="menuItemCreateRestoration" value="Criar &amp;XML de Restauração" />
+        <text key="menuItemExtractTexts" value="&amp;Extrair Textos dos Arquivos de Sistema" />
+        <text key="menuItemRunGame" value="Iniciar &amp;jogo" />
+        <text key="menuItemRunGameWithConfiguration" value="Iniciar jogo &amp;com configuração" />
+        <text key="menuItemSimulateRestoration" value="Simular Restauração" />
+        <text key="menuItemSimulateTranslation" value="Simular Tradução" />
+        <text key="menuItemConvertOldTranslations" value="Convert old translations to new format" />
+    </static>
+    <dynamic>
+        <text key="MissingFileInfo" value="File info file is missing." />
+        <text key="CorruptedFileInfo" value="Arquivo de Destino está corrompido." />
+        <text key="CorruptedRestoration" value="Arquivo de Restauração está corrompido" />
+        <text key="CorruptedTranslation" value="Arquivo de Tradução está corrompido" />
+        <text key="DataFilesNotFound" value="O diretrio de instalação do jogo escolhido não possui arquivos de sistema" />
+        <text key="FATEntryCountError" value="Erro de Arquivo: Número FAT Errado: {0:d}" />
+        <text key="GameIsNotSelected" value="Jogo não Selecionado" />
+        <text key="InstallDirectoryNotExist" value="Diretório de Instalação do Jogo Escolhido não Existe" />
+        <text key="InvalidLanguageCode" value="Código de Idioma Errado" />
+        <text key="InvalidParameter" value="Parâmetro inválido, esperado {0}" />
+        <text key="InvalidSortMode" value="Modo Inválido" />
+        <text key="InvalidStoredFileInfo" value="Arquivo de Depósito Inválido" />
+        <text key="InvalidTextReplaceSettings" value="Configurações de Texto de Substituição Inválido" />
+        <text key="CannotFoundInstalledGame" value="Não foi possível encontrar jogo instalado" />
+        <text key="InitializationError" value="Erro ao iniciar" />
+        <text key="LangCzech" value="Czech" />
+        <text key="LangEnglish" value="English" />
+        <text key="LangEspanol" value="Espanol" />
+        <text key="LangFrench" value="French" />
+        <text key="LangGerman" value="German" />
+        <text key="LangItalian" value="Italian" />
+        <text key="LangNoLang" value="Sem Idioma" />
+        <text key="LangPolish" value="Polish" />
+        <text key="LangRussian" value="Russian" />
+        <text key="NewFileIsTooBig" value="Arquivo Novo Grande Demais" />
+        <text key="None" value="Nenhum" />
+        <text key="NotAvailable" value="Não Disponvel" />
+        <text key="NotAvailableShort" value="N/A" />
+        <text key="Ok" value="Ok" />
+        <text key="ParseErrorBlockTypeError" value="Tipo de Cinemática Inválida" />
+        <text key="ParseErrorSizeMismatch" value="Erro no Tamanho do Arquivo" />
+        <text key="ParseErrorTooBig" value="Grande Demais" />
+        <text key="TranslatingUninitializedBlock" value="Bloco deve ser iniciado antes da tradução" />
+        <text key="TranslationDataFileNotFound" value="Arquivo de tradução não encontrado para o jogo selecionado" />
+        <text key="TranslationInformationsNotInitialized" value="Informações de tradução não iniciadas" />
+        <text key="Undefined" value="Não definido" />
+        <text key="Unknown" value="Desconhecido" />
+        <text key="Version" value="Verso do Programa: {0}" />
+        <text key="Translating" value="Translating" />
+        <text key="TranslationDone" value="Translation done" />
+        <text key="Restoring" value="Restoring" />
+        <text key="RestorationDone" value="Restoration done" />
+        <text key="CreatingRestorationPoint" value="Creating restoration point" />
+        <text key="CreatingRestorationPointDone" value="Creating restoration point done" />
+        <text key="Error" value="Error" />
+        <text key="Details" value="Details..." />
+        <text key="DialogDetails" value="Do you want to see the details of error occured?" />
+        <text key="CopyDetails" value="Copy details to clipboard" />
+    </dynamic>
+</translation>

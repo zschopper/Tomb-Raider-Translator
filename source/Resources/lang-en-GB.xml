@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translation>
+    <static>
+        <text key="$this" value="TRTR" />
+        <text key="buttonRestore" value="&amp;Restore" />
+        <text key="buttonTranslate" value="&amp;Translate" />
+        <text key="groupBoxGameInfo" value="Game Informations" />
+        <text key="labelInstallPathText" value="Install Path" />
+        <text key="labelInstalledVersionText" value="Installed Version" />
+        <text key="labelLastUsedProfileText" value="Last Used Profile" />
+        <text key="labelSelectedLanguageText" value="Selected Language" />
+        <text key="labelAvailableTranslationVersionText" value="Available Translation Version" />
+        <text key="labelSelectedSubtitleLanguageText" value="Selected Subtitle Language" />
+        <text key="labelExtra" value="E&amp;xtra" />
+        <text key="labelGame" value="Choose a &amp;game" />
+        <text key="labelProgress" value="Progress" />
+        <text key="menuItemCompileTexts" value="Compile &amp;text translations into XML" />
+        <text key="menuItemCreateRestoration" value="Create &amp;restoration XML" />
+        <text key="menuItemExtractTexts" value="&amp;Extract texts from datafiles" />
+        <text key="menuItemRunGame" value="Run &amp;game" />
+        <text key="menuItemRunGameWithConfiguration" value="Run game &amp;with configuration" />
+        <text key="menuItemSimulateRestoration" value="Simulate restoration" />
+        <text key="menuItemSimulateTranslation" value="Simulate translation" />
+        <text key="menuItemConvertOldTranslations" value="Convert old translations to new format" />
+    </static>
+    <dynamic>
+        <text key="MissingFileInfo" value="File info file is missing." />
+        <text key="CorruptedFileInfo" value="File info file is corrupted." />
+        <text key="CorruptedRestoration" value="Restoration datafile is corrupted" />
+        <text key="CorruptedTranslation" value="Translation datafile is corrupted" />
+        <text key="DataFilesNotFound" value="Chosen game's install directory isn't contain data file" />
+        <text key="FATEntryCountError" value="DataFile error: Wrong FAT entry number: {0:d}" />
+        <text key="GameIsNotSelected" value="Game isn't selected" />
+        <text key="InstallDirectoryNotExist" value="Chosen game's install directory does not exist" />
+        <text key="InvalidLanguageCode" value="Invalid language code" />
+        <text key="InvalidParameter" value="Invalid parameter, expected {0}" />
+        <text key="InvalidSortMode" value="Invalid sort mode" />
+        <text key="InvalidStoredFileInfo" value="Invalid stored file info" />
+        <text key="InvalidTextReplaceSettings" value="Invalid text replace settings" />
+        <text key="CannotFoundInstalledGame" value="Can't found installed game" />
+        <text key="InitializationError" value="Initialization error" />
+        <text key="LangCzech" value="Czech" />
+        <text key="LangEnglish" value="English" />
+        <text key="LangEspanol" value="Espanol" />
+        <text key="LangFrench" value="French" />
+        <text key="LangGerman" value="German" />
+        <text key="LangItalian" value="Italian" />
+        <text key="LangNoLang" value="No language" />
+        <text key="LangPolish" value="Polish" />
+        <text key="LangRussian" value="Russian" />
+        <text key="NewFileIsTooBig" value="New file is too big" />
+        <text key="None" value="None" />
+        <text key="NotAvailable" value="Not Available" />
+        <text key="NotAvailableShort" value="N/A" />
+        <text key="Ok" value="Ok" />
+        <text key="ParseErrorBlockTypeError" value="Unknown cinematics block type" />
+        <text key="ParseErrorSizeMismatch" value="Size mismatch" />
+        <text key="ParseErrorTooBig" value="Too big" />
+        <text key="TranslatingUninitializedBlock" value="Block must be initialized before translate" />
+        <text key="TranslationDataFileNotFound" value="Translation data file isn't found for chosen game" />
+        <text key="TranslationInformationsNotInitialized" value="Translation informations isn't initialized" />
+        <text key="Undefined" value="Undefined" />
+        <text key="Unknown" value="Unknown" />
+        <text key="Version" value="Program version: {0}" />
+        <text key="Translating" value="Translating" />
+        <text key="TranslationDone" value="Translation done" />
+        <text key="Restoring" value="Restoring" />
+        <text key="RestorationDone" value="Restoration done" />
+        <text key="CreatingRestorationPoint" value="Creating restoration point" />
+        <text key="CreatingRestorationPointDone" value="Creating restoration point done" />
+        <text key="Error" value="Error" />
+        <text key="Details" value="Details..." />
+        <text key="DialogDetails" value="Do you want to see the details of error occured?" />
+        <text key="CopyDetails" value="Copy details to clipboard" />
+    </dynamic>
+</translation>

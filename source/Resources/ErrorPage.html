@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <title>Tomb Raider Translator Error Page</title>
+
+    <style type="text/css">
+      html
+      {
+          border-style: none;
+
+
+
+      }
+
+      body
+      {
+          font-family: "Tahoma";
+          font-size: 10pt;
+          border-width: 0px;
+          border-style: none;
+
+      }
+
+      h1
+      {
+          font-size: 12pt;
+          border-bottom: cornflowerblue 2px solid;
+      }
+
+      #content
+      {
+          position: relative;
+          top: 0px;
+          left: 0px;
+          margin: 0;
+          padding: 0;
+      }
+
+      .title
+      {
+          font-weight: bold;
+      }
+
+      .value
+      {
+          margin-bottom: 10px;
+          left: 120px;
+          clear: both;
+      }
+
+      .label
+      {
+          font-weight: bold;
+      }
+
+      .clickable
+      {
+          color: Green;
+          text-decoration: underline;
+      /*    border: green 1px dotted;*/
+          cursor: hand;
+      }
+
+      #more
+      {
+      /*    border: darkgreen 1px dotted;*/
+          clear: both;
+          position: relative;
+          float: left;
+          left: 300px;
+          text-align: right;
+      }
+      div
+      {
+          border: red 1px solid;
+      }
+      span
+      {
+          border: blue 1px solid;
+      }
+      td
+      {
+          vertical-align : top;
+      }
+      ul
+      {
+          display: inline;
+      }
+        </style>
+    <script language="javascript" type="text/javascript">
+      <!--
+
+function more_onclick() {
+
+    more_element = document.getElementById('more');
+    dtld_element = document.getElementById('detailed');
+    if(dtld_element.style.display == "none")
+    {
+        more_element.innerText = "show me less";
+        dtld_element.style.display = "";
+    }
+    else
+    {
+        more_element.innerText = "show me more";
+        dtld_element.style.display = "none";
+    }
+}
+
+function notify_onclick() {
+    alert('EWB:' + window.event.srcElement.id);
+}
+
+function copyAll() {
+    document.body.createTextRange().execCommand("Copy");
+}
+// -->
+    </script>
+  </head>
+  <body>
+    <div id="content">
+      <h1>TombRaider Translator</h1>
+      &nbsp;<table style="width:100%;">
+            <tr>
+                <td class="title" id="errorLabel">
+                    Error:</td>
+                <td class="value" id="error">
+                    &nbsp;</td>
+            </tr>
+            <tr>
+                <td class="title">
+                    Stack Trace:</td>
+                <td class="value" id="detailed">
+                    &nbsp;</td>
+            </tr>
+            <tr>
+                <td class="title" id="sysInfoLabel">
+                    Sys Info:</td>
+                <td class="value">
+                    &nbsp;</td>
+            </tr>
+        </table>
+      <br style="clear: both"/>
+      <!--
+      <a id="more" class="clickable" onclick="return more_onclick()"></a>  
+      --> 
+        <a id="copy" class="clickable" onclick="return copyAll()">Copy all to clipboard</a>
+    </div>
+  </body>
+</html>

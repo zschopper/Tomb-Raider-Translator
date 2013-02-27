@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translation>
+    <static>
+        <text key="buttonRestore" value="Vi&amp;sszaállít" />
+        <text key="buttonTranslate" value="&amp;Fordít" />
+        <text key="groupBoxGameInfo" value="Játék információk" />
+        <text key="labelAvailableTranslationVersionText" value="Legfrissebb fordítás verziója" />
+        <text key="labelGame" value="Válassz &amp;egy játékot" />
+        <text key="labelInstalledVersionText" value="Telepített verzió" />
+        <text key="labelInstallPathText" value="Telepítési útvonal" />
+        <text key="labelLastUsedProfileText" value="Utolsó használt profil" />
+        <text key="labelProgress" value="Folyamat" />
+        <text key="labelSelectedLanguageText" value="Kiválasztott nyelv" />
+        <text key="labelSelectedSubtitleLanguageText" value="Kiválasztott felirat nyelve" />
+        <text key="menuItemCompileTexts" value="Szöveg&amp;fordítások összeállítása XML-be" />
+        <text key="menuItemCompileTextsBR" value="br" />
+        <text key="menuItemCompileTextsHU" value="hu" />
+        <text key="menuItemCreateRestoration" value="&amp;Visszaállítási pont készítése" />
+        <text key="menuItemExtractTexts" value="&amp;Szövegfájlok mentése az adatfájlokból" />
+        <text key="menuItemRunGame" value="&amp;Játék indítása" />
+        <text key="menuItemRunGameWithConfiguration" value="Játék indítása &amp;konfigurálással" />
+        <text key="menuItemSimulateRestoration" value="Szimulált visszaállítás" />
+        <text key="menuItemSimulateTranslation" value="Szimulált fordítás" />
+        <text key="menuItemConvertOldTranslations" value="Régi formátumú fordítások konvertálása" />
+    </static>
+    <dynamic>
+        <text key="MissingFileInfo" value="File info fájl hiányzik." />
+        <text key="CorruptedFileInfo" value="File info fájl megsérült" />
+        <text key="CorruptedRestoration" value="A visszaállításhoz szükséges adatfájl megsérült" />
+        <text key="CorruptedTranslation" value="A fordításhoz szükséges adatfájl megsérült" />
+        <text key="DataFilesNotFound" value="A kiválasztott játék telepítési könyvtárában nincsenek adatfájlok" />
+        <text key="FATEntryCountError" value="DataFile error: A fájl-bejegyzések száma hibás adatot tartalmaz ({0:d})" />
+        <text key="GameIsNotSelected" value="Nincs kiválasztva játék" />
+        <text key="InstallDirectoryNotExist" value="A kiválasztott játék telepítési könyvtára nem létezik" />
+        <text key="InvalidLanguageCode" value="Hibás nyelvi kód" />
+        <text key="InvalidParameter" value="Invalid parameter, expected {0}" />
+        <text key="InvalidSortMode" value="Hibás rendezési mód" />
+        <text key="InvalidStoredFileInfo" value="A fordítandó fájlok listáját tartalmazó fájl megsérült" />
+        <text key="InvalidTextReplaceSettings" value="Hibás szöveg csere beállítás" />
+        <text key="CannotFoundInstalledGame" value="Nincs telepített játék" />
+        <text key="InitializationError" value="Hiba a programindításnál" />
+        <text key="LangCzech" value="Cseh" />
+        <text key="LangEnglish" value="Angol" />
+        <text key="LangEspanol" value="Spanyol" />
+        <text key="LangFrench" value="Francia" />
+        <text key="LangGerman" value="Német" />
+        <text key="LangItalian" value="Olasz" />
+        <text key="LangNoLang" value="Nincs nyelv" />
+        <text key="LangPolish" value="Lengyel" />
+        <text key="LangRussian" value="Orosz" />
+        <text key="NewFileIsTooBig" value="Az új fájl túl nagy" />
+        <text key="None" value="Nincs" />
+        <text key="NotAvailable" value="Nem elérhető" />
+        <text key="NotAvailableShort" value="N/A" />
+        <text key="Ok" value="Ok" />
+        <text key="ParseErrorBlockTypeError" value="Ismeretlen videóblokk típus" />
+        <text key="ParseErrorSizeMismatch" value="A fájl méretadata hibás" />
+        <text key="ParseErrorTooBig" value="Túl nagy" />
+        <text key="TranslatingUninitializedBlock" value="A szövegblokk inicializálása nem történt meg fordítás előtt" />
+        <text key="TranslationDataFileNotFound" value="A kiválasztott játékhoz nincs fordítás" />
+        <text key="TranslationInformationsNotInitialized" value="A fordítási információkat nem inicializálták" />
+        <text key="Undefined" value="Nincs beállíva" />
+        <text key="Unknown" value="Ismeretlen" />
+        <text key="Version" value="Program verzió: {0}" />
+        <text key="Translating" value="Fordítás..." />
+        <text key="TranslationDone" value="A fordítás elkészült." />
+        <text key="Restoring" value="Visszaállítás..." />
+        <text key="RestorationDone" value="A visszaállítás elkészült." />
+        <text key="CreatingRestorationPoint" value="Visszaállítási pont készítése..." />
+        <text key="CreatingRestorationPointDone" value="A visszaállítási pont elkészült" />
+        <text key="Error" value="Hiba" />
+        <text key="Details" value="Részletek..." />
+        <text key="DialogDetails" value="Szeretnéd látni a hibaüzenet részleteit?" />
+        <text key="CopyDetails" value="Hibaüzenet másolása a vágólapra" />
+    </dynamic>
+</translation>
