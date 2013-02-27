@@ -1,0 +1,4187 @@
+﻿;extracted from datafiles
+@0000
+#Complete
+Complete
+
+@0001
+#%02d:%02d:%02d
+%02d:%02d:%02d
+
+@0002
+#EASY
+EASY
+
+@0003
+#MEDIUM
+MEDIUM
+
+@0004
+#HARD
+HARD
+
+@0005
+#GAME COMPLETE
+GAME COMPLETE
+
+@0006
+#TREASURE HUNT
+TREASURE HUNT
+
+@0007
+#Loading
+Loading
+
+@0008
+#Score Challenges:
+Score Challenges:
+
+@0009
+#Reward Challenges:
+Reward Challenges:
+
+@0010
+#PAUSE
+PAUSE
+
+@0011
+#Waiting for other player to exit 
+#pause menus.
+Waiting for other player to exit 
+pause menus.
+
+@0012
+#RESUME GAME
+RESUME GAME
+
+@0013
+#RESTART LEVEL
+RESTART LEVEL
+
+@0014
+#LEADERBOARDS
+LEADERBOARDS
+
+@0015
+#HELP & OPTIONS
+HELP & OPTIONS
+
+@0016
+#ACHIEVEMENTS
+ACHIEVEMENTS
+
+@0017
+#EXIT GAME
+EXIT GAME
+
+@0018
+#Back
+Back
+
+@0019
+#Select
+Select
+
+@0020
+#If you quit the game, you will lose all unsaved content. Are you sure you want to quit?
+If you quit the game, you will lose all unsaved content. Are you sure you want to quit?
+
+@0021
+#If you restart the level, you will lose all unsaved content. Are you sure you want to restart the level?
+If you restart the level, you will lose all unsaved content. Are you sure you want to restart the level?
+
+@0022
+#Waiting for player
+Waiting for player
+
+@0023
+#ᠪ Continue
+ᠪ Continue
+
+@0024
+#᠀ Restart Level
+᠀ Restart Level
+
+@0025
+#᠁ Exit Game
+᠁ Exit Game
+
+@0026
+#Are you sure you want to exit the game?
+Are you sure you want to exit the game?
+
+@0027
+#Are you sure you want to replay the current level?
+Are you sure you want to replay the current level?
+
+@0028
+#LEVEL
+#COMPLETE
+LEVEL
+COMPLETE
+
+@0029
+#points
+points
+
+@0030
+#Press ᠃ to continue
+Press ᠃ to continue
+
+@0031
+#PRESS ANY BUTTON
+PRESS ANY BUTTON
+
+@0032
+#SCORE CHALLENGE COMPLETE
+SCORE CHALLENGE COMPLETE
+
+@0033
+#REWARD CHALLENGE COMPLETE
+REWARD CHALLENGE COMPLETE
+
+@0034
+#REWARD CHALLENGE AVAILABLE
+REWARD CHALLENGE AVAILABLE
+
+@0035
+#AUTO-EQUIP THIS WEAPON
+AUTO-EQUIP THIS WEAPON
+
+@0036
+#Saving content. Please don't turn off your console.
+Saving content. Please don't turn off your console.
+
+@0037
+#OK
+OK
+
+@0038
+#ᠪ SELECT
+ᠪ SELECT
+
+@0039
+#YES
+YES
+
+@0040
+#NO
+NO
+
+@0041
+#Journal Entry Unlocked...
+Journal Entry Unlocked...
+
+@0042
+#EIDOS INTERACTIVE
+EIDOS INTERACTIVE
+
+@0043
+#CRYSTAL DYNAMICS
+CRYSTAL DYNAMICS
+
+@0044
+#Player 1
+Player 1
+
+@0045
+#Player 2
+Player 2
+
+@0046
+#New Character Costume Unlocked
+New Character Costume Unlocked
+
+@0047
+#Game Complete
+Game Complete
+
+@0048
+#WEAPONS
+WEAPONS
+
+@0049
+#AMMO BAR
+AMMO BAR
+
+@0050
+#WEAPON SELECTION
+WEAPON SELECTION
+
+@0051
+#You've unlocked a new secondary weapon. Press ᠑ to view the Player Inventory and equip this weapon.
+You've unlocked a new secondary weapon. Press ᠑ to view the Player Inventory and equip this weapon.
+
+@0052
+#Your ammunition is represented by the Ammo Bar. Secondary weapons will drain the Ammo Bar at different rates. If you run out of ammo, you will switch back to your default weapon.
+Your ammunition is represented by the Ammo Bar. Secondary weapons will drain the Ammo Bar at different rates. If you run out of ammo, you will switch back to your default weapon.
+
+@0053
+#Use ᠈ ᠋ ᠉ ᠊ to select between your equipped weapons.
+Use ᠈ ᠋ ᠉ ᠊ to select between your equipped weapons.
+
+@0054
+#WALL RUN
+WALL RUN
+
+@0055
+#While connected to a grapple ring, jump out to the wall to hang.
+While connected to a grapple ring, jump out to the wall to hang.
+
+@0056
+#Move left and right to swing back and forth while hanging from the grapple line.
+Move left and right to swing back and forth while hanging from the grapple line.
+
+@0057
+#SPEAR JUMP
+SPEAR JUMP
+
+@0058
+#Lara can jump to spears that she has thrown into the walls or other objects in the world.
+Lara can jump to spears that she has thrown into the walls or other objects in the world.
+
+@0059
+#Lara can jump to spears that Totec has thrown into the walls or other objects in the world. If Totec tries to jump onto a spear his weight will break it.
+Lara can jump to spears that Totec has thrown into the walls or other objects in the world. If Totec tries to jump onto a spear his weight will break it.
+
+@0060
+#SHIELD JUMP
+SHIELD JUMP
+
+@0061
+#Hold ᠆ to raise Totec's shield above his head.
+Hold ᠆ to raise Totec's shield above his head.
+
+@0062
+#Lara can then jump to and from the shield to reach higher areas.
+Lara can then jump to and from the shield to reach higher areas.
+
+@0063
+#SHIELD BLOCK
+SHIELD BLOCK
+
+@0064
+#Hold ᠄ to use Totec's shield to block projectiles and enemy attacks.
+Hold ᠄ to use Totec's shield to block projectiles and enemy attacks.
+
+@0065
+#PLAYER REVIVE
+PLAYER REVIVE
+
+@0066
+#Press ᠂ while standing next to your fallen partner to revive them instantly.
+Press ᠂ while standing next to your fallen partner to revive them instantly.
+
+@0067
+#RELICS
+RELICS
+
+@0068
+#RELIC POWER METER
+RELIC POWER METER
+
+@0069
+#Equipped Relics give your character very powerful combat abilities. A single Relic can grant players multiple abilities. To view a Relic's abilities select it in the inventory screen.
+Equipped Relics give your character very powerful combat abilities. A single Relic can grant players multiple abilities. To view a Relic's abilities select it in the inventory screen.
+
+@0070
+#A Relic's abilities will only be granted when your Relic Power Meter is full.
+A Relic's abilities will only be granted when your Relic Power Meter is full.
+
+@0071
+#To fill your Power Meter, collect gems and kill enemies without taking damage.
+To fill your Power Meter, collect gems and kill enemies without taking damage.
+
+@0072
+#Once the Power Meter is full taking any damage will empty it completely.
+Once the Power Meter is full taking any damage will empty it completely.
+
+@0073
+#LEVEL MAP AVAILABLE
+LEVEL MAP AVAILABLE
+
+@0074
+#Press ᠑ to view the Player Inventory and then ᠆ to view the map.
+Press ᠑ to view the Player Inventory and then ᠆ to view the map.
+
+@0075
+#ARTIFACT DISCOVERED
+ARTIFACT DISCOVERED
+
+@0076
+#There are Artifacts hidden throughout the world. Each Artifact will affect your character attributes differently. Press ᠑ to view the Player Inventory and equip this Artifact.
+There are Artifacts hidden throughout the world. Each Artifact will affect your character attributes differently. Press ᠑ to view the Player Inventory and equip this Artifact.
+
+@0077
+#RELIC DISCOVERED
+RELIC DISCOVERED
+
+@0078
+#Press ᠑ to view the Player Inventory and equip this Relic. Relics are unique treasures that will grant you new abilities.
+Press ᠑ to view the Player Inventory and equip this Relic. Relics are unique treasures that will grant you new abilities.
+
+@0079
+#RELIC POWER METER
+RELIC POWER METER
+
+@0080
+#A Relic's ability can only be used when the Relic Power Meter is activated. Kill many enemies without taking damage to fill the Meter.
+A Relic's ability can only be used when the Relic Power Meter is activated. Kill many enemies without taking damage to fill the Meter.
+
+@0081
+#HEALTH SHRINE DISCOVERED
+HEALTH SHRINE DISCOVERED
+
+@0082
+#Standing near a Health Shrine will gradually refill your health. Each shrine will eventually dry up after being used for an extended period of time.
+Standing near a Health Shrine will gradually refill your health. Each shrine will eventually dry up after being used for an extended period of time.
+
+@0083
+#AMMO CACHE DISCOVERED
+AMMO CACHE DISCOVERED
+
+@0084
+#An Ammo Cache will completely refill your ammo supply. Abandoned by Vasco's forces, these ammo crates can be found scattered throughout the area.
+An Ammo Cache will completely refill your ammo supply. Abandoned by Vasco's forces, these ammo crates can be found scattered throughout the area.
+
+@0085
+#CHALLENGE TOMBS
+CHALLENGE TOMBS
+
+@0086
+#Rooms marked with red lights are Challenge Tombs. These optional tombs contain rare treasures and difficult challenges.
+Rooms marked with red lights are Challenge Tombs. These optional tombs contain rare treasures and difficult challenges.
+
+@0087
+#ASSAULT RIFLE DISCOVERED
+ASSAULT RIFLE DISCOVERED
+
+@0088
+#You've unlocked a new secondary weapon. Press ᠑ to view the Player Inventory and equip this weapon.
+You've unlocked a new secondary weapon. Press ᠑ to view the Player Inventory and equip this weapon.
+
+@0089
+#AMMUNITION BAR
+AMMUNITION BAR
+
+@0090
+#Your ammunition is represented by the Ammo Bar. Secondary weapons will drain the Ammo Bar at different rates. If you run out of ammo, you will switch back to your default weapon.
+Your ammunition is represented by the Ammo Bar. Secondary weapons will drain the Ammo Bar at different rates. If you run out of ammo, you will switch back to your default weapon.
+
+@0091
+#GRAPPLE TIGHT ROPE
+GRAPPLE TIGHT ROPE
+
+@0092
+#Totec can jump onto Lara's grapple line and walk on it like a tightrope when the line is connected to a golden grapple ring.
+Totec can jump onto Lara's grapple line and walk on it like a tightrope when the line is connected to a golden grapple ring.
+
+@0093
+#GRAPPLE CLIMB
+GRAPPLE CLIMB
+
+@0094
+#Hold ᠆ to throw Lara's grapple down to Totec.
+Hold ᠆ to throw Lara's grapple down to Totec.
+
+@0095
+#Move up or down to climb up and down the rope while hanging.
+Move up or down to climb up and down the rope while hanging.
+
+@0096
+#Hold ᠆ to throw Lara's grapple to a golden grapple ring.
+Hold ᠆ to throw Lara's grapple to a golden grapple ring.
+
+@0097
+#Move up or down climb up and down the rope while hanging.
+Move up or down climb up and down the rope while hanging.
+
+@0098
+#GRAPPLE AIM
+GRAPPLE AIM
+
+@0099
+#Use the ᠍ to aim at Totec and hold ᠆ to throw him the rope.
+Use the ᠍ to aim at Totec and hold ᠆ to throw him the rope.
+
+@0100
+#Use the mouse to aim at Totec and hold ᠆ to throw him the rope.
+Use the mouse to aim at Totec and hold ᠆ to throw him the rope.
+
+@0101
+#ARTIFACTS
+ARTIFACTS
+
+@0102
+#Artifacts affect your characters attributes in different ways both positively and negatively. Two artifacts can be equipped that boost the same attribute to give even greater strength.
+Artifacts affect your characters attributes in different ways both positively and negatively. Two artifacts can be equipped that boost the same attribute to give even greater strength.
+
+@0103
+#DRAW & AIM WEAPONS
+DRAW & AIM WEAPONS
+
+@0104
+#AIMING & FIRING
+AIMING & FIRING
+
+@0105
+#STRAFING & FIRING
+STRAFING & FIRING
+
+@0106
+#Use ᠍ to DRAW and AIM your weapons.
+Use ᠍ to DRAW and AIM your weapons.
+
+@0107
+#Press ᠏ to DRAW and use the mouse to AIM your weapons.
+Press ᠏ to DRAW and use the mouse to AIM your weapons.
+
+@0108
+#While guns are drawn, HOLD DOWN ᠇ to continuously fire your weapon.
+While guns are drawn, HOLD DOWN ᠇ to continuously fire your weapon.
+
+@0109
+#You can strafe and move while aiming and firing.
+You can strafe and move while aiming and firing.
+
+@0110
+#Spear
+Spear
+
+@0111
+#Handgun
+Handgun
+
+@0112
+#Assault Rifle
+Assault Rifle
+
+@0113
+#Magnums
+Magnums
+
+@0114
+#Shotgun
+Shotgun
+
+@0115
+#Bolt Action Rifle
+Bolt Action Rifle
+
+@0116
+#Automatic Shotgun
+Automatic Shotgun
+
+@0117
+#Flamethrower
+Flamethrower
+
+@0118
+#Fast Action Rifle
+Fast Action Rifle
+
+@0119
+#AR-06
+AR-06
+
+@0120
+#Lightweight Machine Pistols
+Lightweight Machine Pistols
+
+@0121
+#Double Barrel Shotgun
+Double Barrel Shotgun
+
+@0122
+#Grenade Launcher
+Grenade Launcher
+
+@0123
+#Hand Cannons
+Hand Cannons
+
+@0124
+#High Power Assault Rifle
+High Power Assault Rifle
+
+@0125
+#Automatic Pistols
+Automatic Pistols
+
+@0126
+#High Power Flamethrower
+High Power Flamethrower
+
+@0127
+#High Power Single Shot Rifle
+High Power Single Shot Rifle
+
+@0128
+#Submachine Gun
+Submachine Gun
+
+@0129
+#Chaingun
+Chaingun
+
+@0130
+#Spear of Fire
+Spear of Fire
+
+@0131
+#Rocket Launcher
+Rocket Launcher
+
+@0132
+#Heavy Grenade Launcher
+Heavy Grenade Launcher
+
+@0133
+#Dual SMG
+Dual SMG
+
+@0134
+#Railgun
+Railgun
+
+@0135
+#High Power Shotgun
+High Power Shotgun
+
+@0136
+#Golden Shotgun
+Golden Shotgun
+
+@0137
+#Spear of Light
+Spear of Light
+
+@0138
+#Spear of Darkness
+Spear of Darkness
+
+@0139
+#Clay Owl
+Clay Owl
+
+@0140
+#DEFENSE +1, BOMB -1
+DEFENSE +1, BOMB -1
+
+@0141
+#This ancient warrior's artifact will increase your defense and decrease your bomb strength while it is equipped.
+This ancient warrior's artifact will increase your defense and decrease your bomb strength while it is equipped.
+
+@0142
+#Stone Owl
+Stone Owl
+
+@0143
+#DEFENSE +1, WEAPON -1
+DEFENSE +1, WEAPON -1
+
+@0144
+#This ancient warrior's artifact will increase your defense and decrease your weapon strength while it is equipped.
+This ancient warrior's artifact will increase your defense and decrease your weapon strength while it is equipped.
+
+@0145
+#Gold Owl
+Gold Owl
+
+@0146
+#DEFENSE +1
+DEFENSE +1
+
+@0147
+#This ancient warrior's artifact will increase your defense while it is equipped.
+This ancient warrior's artifact will increase your defense while it is equipped.
+
+@0148
+#Clay Feather
+Clay Feather
+
+@0149
+#SPEED +1, DEFENSE -1
+SPEED +1, DEFENSE -1
+
+@0150
+#This ancient warrior's artifact will increase your combat speed and decrease your defense while it is equipped.
+This ancient warrior's artifact will increase your combat speed and decrease your defense while it is equipped.
+
+@0151
+#Stone Feather
+Stone Feather
+
+@0152
+#SPEED +1, BOMB -1
+SPEED +1, BOMB -1
+
+@0153
+#This ancient warrior's artifact will increase your combat speed and decrease your bomb strength while it is equipped.
+This ancient warrior's artifact will increase your combat speed and decrease your bomb strength while it is equipped.
+
+@0154
+#Gold Feather
+Gold Feather
+
+@0155
+#SPEED +1
+SPEED +1
+
+@0156
+#This ancient warrior's artifact will increase your combat speed while it is equipped.
+This ancient warrior's artifact will increase your combat speed while it is equipped.
+
+@0157
+#Clay Arrow
+Clay Arrow
+
+@0158
+#WEAPON +1, DEFENSE -1
+WEAPON +1, DEFENSE -1
+
+@0159
+#This ancient warrior's artifact will increase your weapon strength and decrease your defense while it is equipped.
+This ancient warrior's artifact will increase your weapon strength and decrease your defense while it is equipped.
+
+@0160
+#Stone Arrow
+Stone Arrow
+
+@0161
+#WEAPON +1, BOMB -1
+WEAPON +1, BOMB -1
+
+@0162
+#This ancient warrior's artifact will increase your weapon strength and decrease your bomb strength while it is equipped.
+This ancient warrior's artifact will increase your weapon strength and decrease your bomb strength while it is equipped.
+
+@0163
+#Gold Arrow
+Gold Arrow
+
+@0164
+#WEAPON +1
+WEAPON +1
+
+@0165
+#This ancient warrior's artifact will increase your weapon strength while it is equipped.
+This ancient warrior's artifact will increase your weapon strength while it is equipped.
+
+@0166
+#Clay Lizard
+Clay Lizard
+
+@0167
+#BOMB +1, WEAPON -1
+BOMB +1, WEAPON -1
+
+@0168
+#This ancient warrior's artifact will increase your bomb strength and decrease your weapon strength while it is equipped.
+This ancient warrior's artifact will increase your bomb strength and decrease your weapon strength while it is equipped.
+
+@0169
+#Stone Lizard
+Stone Lizard
+
+@0170
+#BOMB +1, DEFENSE -1
+BOMB +1, DEFENSE -1
+
+@0171
+#This ancient warrior's artifact will increase your bomb strength and decrease your defense while it is equipped.
+This ancient warrior's artifact will increase your bomb strength and decrease your defense while it is equipped.
+
+@0172
+#Gold Lizard
+Gold Lizard
+
+@0173
+#BOMB +1
+BOMB +1
+
+@0174
+#This ancient warrior's artifact will increase your bomb strength while it is equipped.
+This ancient warrior's artifact will increase your bomb strength while it is equipped.
+
+@0175
+#War Drum
+War Drum
+
+@0176
+#WEAPON +1, BOMB +1
+WEAPON +1, BOMB +1
+
+@0177
+#This ancient warrior's artifact will increase your weapon strength and your bomb strength while it is equipped.
+This ancient warrior's artifact will increase your weapon strength and your bomb strength while it is equipped.
+
+@0178
+#Wind Drum
+Wind Drum
+
+@0179
+#SPEED +1, WEAPON +1
+SPEED +1, WEAPON +1
+
+@0180
+#This ancient warrior's artifact will increase your combat speed and your weapon strength while it is equipped.
+This ancient warrior's artifact will increase your combat speed and your weapon strength while it is equipped.
+
+@0181
+#Serpent Drum
+Serpent Drum
+
+@0182
+#SPEED +1, BOMB +1
+SPEED +1, BOMB +1
+
+@0183
+#This ancient warrior's artifact will increase your combat speed and your bomb strength while it is equipped.
+This ancient warrior's artifact will increase your combat speed and your bomb strength while it is equipped.
+
+@0184
+#White Drum
+White Drum
+
+@0185
+#DEFENSE +1, SPEED +1
+DEFENSE +1, SPEED +1
+
+@0186
+#This ancient warrior's artifact will increase your defense and your speed while it is equipped.
+This ancient warrior's artifact will increase your defense and your speed while it is equipped.
+
+@0187
+#Dark Drum
+Dark Drum
+
+@0188
+#DEFENSE +1, WEAPON +1
+DEFENSE +1, WEAPON +1
+
+@0189
+#This ancient warrior's artifact will increase your defense and weapon strength while it is equipped.
+This ancient warrior's artifact will increase your defense and weapon strength while it is equipped.
+
+@0190
+#Stone Serpent
+Stone Serpent
+
+@0191
+#WEAPON +1, BOMB +1, DEFENSE +1
+WEAPON +1, BOMB +1, DEFENSE +1
+
+@0192
+#This ancient warrior's artifact will increase your weapon strength, bomb strength, and defense while it is equipped.
+This ancient warrior's artifact will increase your weapon strength, bomb strength, and defense while it is equipped.
+
+@0193
+#Clay Serpent
+Clay Serpent
+
+@0194
+#SPEED +1, DEFENSE +1, BOMB +1
+SPEED +1, DEFENSE +1, BOMB +1
+
+@0195
+#This ancient warrior's artifact will increase your combat speed, defense, and bomb strength while it is equipped.
+This ancient warrior's artifact will increase your combat speed, defense, and bomb strength while it is equipped.
+
+@0196
+#Jade Heart
+Jade Heart
+
+@0197
+#SPEED +1, DEFENSE +1, BOMB +1, WEAPON +1
+SPEED +1, DEFENSE +1, BOMB +1, WEAPON +1
+
+@0198
+#This ancient warrior's artifact will increase your combat speed, defense, bomb strength, and weapon strength while it is equipped.
+This ancient warrior's artifact will increase your combat speed, defense, bomb strength, and weapon strength while it is equipped.
+
+@0199
+#Knife of Itzli
+Knife of Itzli
+
+@0200
+#POWER SHOT
+POWER SHOT
+
+@0201
+#This artifact was made by the gods to grant great strength to a warrior's weapon.
+This artifact was made by the gods to grant great strength to a warrior's weapon.
+
+@0202
+#Eye of Cipactli
+Eye of Cipactli
+
+@0203
+#POWER BOMB
+POWER BOMB
+
+@0204
+#Headdress of Ehecatl
+Headdress of Ehecatl
+
+@0205
+#POWER SPEED
+POWER SPEED
+
+@0206
+#This artifact was made by the gods to grant warriors great speed.
+This artifact was made by the gods to grant warriors great speed.
+
+@0207
+#Scepter of Huitzilopochtli
+Scepter of Huitzilopochtli
+
+@0208
+#HEALTH REGEN
+HEALTH REGEN
+
+@0209
+#Scepter of Cihuacoatl
+Scepter of Cihuacoatl
+
+@0210
+#AMMO REGEN
+AMMO REGEN
+
+@0211
+#This artifact was made by the gods to grant warriors ever increasing ammunition.
+This artifact was made by the gods to grant warriors ever increasing ammunition.
+
+@0212
+#Arrow of Tezcatlipoca
+Arrow of Tezcatlipoca
+
+@0213
+#SCATTER SHOT
+SCATTER SHOT
+
+@0214
+#This artifact was made by the gods to grant multiple strikes to a warrior's weapon.
+This artifact was made by the gods to grant multiple strikes to a warrior's weapon.
+
+@0215
+#Two Arrows of Tezcatlipoca
+Two Arrows of Tezcatlipoca
+
+@0216
+#SCATTER SHOT, HEALTH REGEN
+SCATTER SHOT, HEALTH REGEN
+
+@0217
+#This artifact was made by the gods to grant warriors ever increasing health and multiple weapon strikes.
+This artifact was made by the gods to grant warriors ever increasing health and multiple weapon strikes.
+
+@0218
+#Three Arrows of Tezcatlipoca
+Three Arrows of Tezcatlipoca
+
+@0219
+#SCATTER SHOT, POWER BOMB
+SCATTER SHOT, POWER BOMB
+
+@0220
+#Golden Eye of Cipactli
+Golden Eye of Cipactli
+
+@0221
+#POWER BOMB, POWER SPEED
+POWER BOMB, POWER SPEED
+
+@0222
+#Golden Knife of Itzli
+Golden Knife of Itzli
+
+@0223
+#POWER SHOT, POWER BOMB
+POWER SHOT, POWER BOMB
+
+@0224
+#Golden Scepter of Huitzilopochtli
+Golden Scepter of Huitzilopochtli
+
+@0225
+#HEALTH REGEN, AMMO REGEN
+HEALTH REGEN, AMMO REGEN
+
+@0226
+#Golden Scepter of Cihuacoatl
+Golden Scepter of Cihuacoatl
+
+@0227
+#AMMO REGEN, SCATTER SHOT
+AMMO REGEN, SCATTER SHOT
+
+@0228
+#This artifact was made by the gods to grant warriors ever increasing ammunition and multiple weapon strikes.
+This artifact was made by the gods to grant warriors ever increasing ammunition and multiple weapon strikes.
+
+@0229
+#Golden Arrow of Tezcatlipoca
+Golden Arrow of Tezcatlipoca
+
+@0230
+#SCATTER SHOT, POWER SHOT
+SCATTER SHOT, POWER SHOT
+
+@0231
+#Mask of Tezcatlipoca
+Mask of Tezcatlipoca
+
+@0232
+#POWER SHOT, POWER BOMB, SCATTER SHOT
+POWER SHOT, POWER BOMB, SCATTER SHOT
+
+@0233
+#Mask of Ehecatl
+Mask of Ehecatl
+
+@0234
+#POWER SPEED, HEALTH REGEN, AMMO REGEN
+POWER SPEED, HEALTH REGEN, AMMO REGEN
+
+@0235
+#Mask of Itzli
+Mask of Itzli
+
+@0236
+#HEALTH REGEN, AMMO REGEN, POWER SHOT
+HEALTH REGEN, AMMO REGEN, POWER SHOT
+
+@0237
+#Mask of Cipactli
+Mask of Cipactli
+
+@0238
+#POWER BOMB, POWER SPEED, HEALTH REGEN
+POWER BOMB, POWER SPEED, HEALTH REGEN
+
+@0239
+#Fist of Tezcatlipoca
+Fist of Tezcatlipoca
+
+@0240
+#POWER SHOT, POWER BOMB, AMMO REGEN, SCATTER SHOT
+POWER SHOT, POWER BOMB, AMMO REGEN, SCATTER SHOT
+
+@0241
+#Golden Shroud of Cihuacoatl
+Golden Shroud of Cihuacoatl
+
+@0242
+#HEALTH REGEN, AMMO REGEN, POWER SPEED, POWER BOMB
+HEALTH REGEN, AMMO REGEN, POWER SPEED, POWER BOMB
+
+@0243
+#Mask of Xolotl
+Mask of Xolotl
+
+@0244
+#POWER SHOT, POWER BOMB, POWER SPEED, HEALTH REGEN, AMMO REGEN, SCATTER SHOT
+POWER SHOT, POWER BOMB, POWER SPEED, HEALTH REGEN, AMMO REGEN, SCATTER SHOT
+
+@0245
+#Lara Croft
+Lara Croft
+
+@0246
+#Totec
+Totec
+
+@0247
+#Raziel
+Raziel
+
+@0248
+#Kain
+Kain
+
+@0249
+#Lara Croft Biker Outfit
+Lara Croft Biker Outfit
+
+@0250
+#Lara Croft Jungle Outfit
+Lara Croft Jungle Outfit
+
+@0251
+#Lara Croft Heavy Jungle Outfit
+Lara Croft Heavy Jungle Outfit
+
+@0252
+#Lara Croft Legend Outfit
+Lara Croft Legend Outfit
+
+@0253
+#Kane
+Kane
+
+@0254
+#Lynch
+Lynch
+
+@0255
+#Doppelganger
+Doppelganger
+
+@0256
+#Photosensitive Seizure Warning
+Photosensitive Seizure Warning
+
+@0257
+#If you or any family members have a history of epilepsy or seizures, consult a physician before use. Certain images or patterns may trigger a seizure even for people with no history. Before playing, see credits for further details.
+If you or any family members have a history of epilepsy or seizures, consult a physician before use. Certain images or patterns may trigger a seizure even for people with no history. Before playing, see credits for further details.
+
+@0258
+#Warning:  You have chosen to start a new game without signing into a gamer profile.  You will not be able to save progress or access online menus.  Would you like to sign in now?
+Warning:  You have chosen to start a new game without signing into a gamer profile.  You will not be able to save progress or access online menus.  Would you like to sign in now?
+
+@0259
+#You need to select a storage device to allow saves.  Would you like to select a device now?
+You need to select a storage device to allow saves.  Would you like to select a device now?
+
+@0260
+#Lara Croft and The Guardian Of Light © Eidos Interactive Ltd. 2008.  Developed by Crystal Dynamics Inc. Co-published in the US, Canada, and Mexico by Eidos, Inc. and Warner Bros Home Entertainment.  Published in all other territories by Eidos Interactive Limited. Tomb Raider, Tomb Raider: Underworld, Crystal Dynamics, the Crystal Dynamics logo, Eidos, and the Eidos logo are trademarks of Eidos Interactive Ltd. The rating icon is a registered trademark of the Entertainment Software Association. All other trademarks are the property of their respective owners.  All rights reserved.
+#
+#
+Lara Croft and The Guardian Of Light © Eidos Interactive Ltd. 2008.  Developed by Crystal Dynamics Inc. Co-published in the US, Canada, and Mexico by Eidos, Inc. and Warner Bros Home Entertainment.  Published in all other territories by Eidos Interactive Limited. Tomb Raider, Tomb Raider: Underworld, Crystal Dynamics, the Crystal Dynamics logo, Eidos, and the Eidos logo are trademarks of Eidos Interactive Ltd. The rating icon is a registered trademark of the Entertainment Software Association. All other trademarks are the property of their respective owners.  All rights reserved.
+
+
+
+@0261
+#PRESS START
+PRESS START
+
+@0262
+#Are you sure you want to return to Windows?
+Are you sure you want to return to Windows?
+
+@0263
+#SINGLE PLAYER
+SINGLE PLAYER
+
+@0264
+#MULTIPLAYER
+MULTIPLAYER
+
+@0265
+#UNLOCK FULL GAME
+UNLOCK FULL GAME
+
+@0266
+#DOWNLOAD CONTENT
+DOWNLOAD CONTENT
+
+@0267
+#DOWNLOADABLE CONTENT
+DOWNLOADABLE CONTENT
+
+@0268
+#ᠫ BACK
+ᠫ BACK
+
+@0269
+#᠀ Toggle Costume
+᠀ Toggle Costume
+
+@0270
+#BACK TO PREVIOUS MENU
+BACK TO PREVIOUS MENU
+
+@0271
+#᠄ Show User Profile
+᠄ Show User Profile
+
+@0272
+#᠁ Invite Friends
+᠁ Invite Friends
+
+@0273
+#Invite Xbox LIVE Party
+Invite Xbox LIVE Party
+
+@0274
+#Getting Information
+Getting Information
+
+@0275
+#Are you sure you want to exit the game lobby?
+Are you sure you want to exit the game lobby?
+
+@0276
+#If you choose to start the selected level, your current mid level save will be overwritten.  Do you wish to continue?
+If you choose to start the selected level, your current mid level save will be overwritten.  Do you wish to continue?
+
+@0277
+#Continue
+Continue
+
+@0278
+#Best Score:
+Best Score:
+
+@0279
+#Best Time:
+Best Time:
+
+@0280
+#Weapons:
+Weapons:
+
+@0281
+#Relics:
+Relics:
+
+@0282
+#Artifacts:
+Artifacts:
+
+@0283
+#Power Ups:
+Power Ups:
+
+@0284
+#Total Best Time:
+Total Best Time:
+
+@0285
+#Total Score:
+Total Score:
+
+@0286
+#Hidden Unlock
+Hidden Unlock
+
+@0287
+#HOW TO PLAY
+HOW TO PLAY
+
+@0288
+#CONTROLS
+CONTROLS
+
+@0289
+#AUDIO
+AUDIO
+
+@0290
+#GRAPHICS
+GRAPHICS
+
+@0291
+#GAMEPLAY
+GAMEPLAY
+
+@0292
+#CREDITS
+CREDITS
+
+@0293
+#BACK TO MENU
+BACK TO MENU
+
+@0294
+#HOW TO PLAY
+HOW TO PLAY
+
+@0295
+#BASIC CONTROLS
+BASIC CONTROLS
+
+@0296
+#RUN: 
+#- Use direction keys or gamepad stick to move through the world.
+RUN: 
+- Use direction keys or gamepad stick to move through the world.
+
+@0297
+#JUMP: 
+#- Press ᠃ to jump.
+#- Holding ᠃ will increase the distance of your jump.
+JUMP: 
+- Press ᠃ to jump.
+- Holding ᠃ will increase the distance of your jump.
+
+@0298
+#DODGE: 
+#- Press ᠀ and any direction to dodge.
+DODGE: 
+- Press ᠀ and any direction to dodge.
+
+@0299
+#DROP DOWN: 
+#- Press ᠂ to drop down while hanging, standing on a spear, or while standing on a rope.
+DROP DOWN: 
+- Press ᠂ to drop down while hanging, standing on a spear, or while standing on a rope.
+
+@0300
+#REMOTE BOMBS: 
+#- Press ᠁ to drop a bomb and press ᠁ again to detonate.
+#- Bombs can be used to destroy or move objects in the world.
+REMOTE BOMBS: 
+- Press ᠁ to drop a bomb and press ᠁ again to detonate.
+- Bombs can be used to destroy or move objects in the world.
+
+@0301
+#INTERACT: 
+#- Press ᠂ to interact with certain objects in the world.
+INTERACT: 
+- Press ᠂ to interact with certain objects in the world.
+
+@0302
+#COMBAT CONTROLS
+COMBAT CONTROLS
+
+@0303
+#AIMING & FIRING: 
+#- Use ᠍ to draw and aim your weapons.
+#- While guns are drawn, HOLD DOWN ᠇ to continuously fire your weapons.
+#- Use ᠌ to strafe and move while aiming and firing.
+AIMING & FIRING: 
+- Use ᠍ to draw and aim your weapons.
+- While guns are drawn, HOLD DOWN ᠇ to continuously fire your weapons.
+- Use ᠌ to strafe and move while aiming and firing.
+
+@0304
+#AIMING & FIRING: 
+#- Press ᠏ to draw and use your mouse to aim your weapons.
+#- While guns are drawn, HOLD DOWN ᠇ to continuously fire your weapons.
+#- You can strafe and move while aiming and firing.
+AIMING & FIRING: 
+- Press ᠏ to draw and use your mouse to aim your weapons.
+- While guns are drawn, HOLD DOWN ᠇ to continuously fire your weapons.
+- You can strafe and move while aiming and firing.
+
+@0305
+#REMOTE BOMBS: 
+#- Press ᠁ to drop a bomb and press ᠁ again to detonate.
+REMOTE BOMBS: 
+- Press ᠁ to drop a bomb and press ᠁ again to detonate.
+
+@0306
+#DODGE: 
+#- Press ᠀ and any direction to dodge enemy attacks.
+DODGE: 
+- Press ᠀ and any direction to dodge enemy attacks.
+
+@0307
+#EQUIPPING WEAPONS: 
+#- To equip new weapons, press ᠑ and select the inventory screen.
+#- Weapons can be equipped to any of the three available slots.
+EQUIPPING WEAPONS: 
+- To equip new weapons, press ᠑ and select the inventory screen.
+- Weapons can be equipped to any of the three available slots.
+
+@0308
+#CHANGING WEAPONS:
+#- Use ᠈ ᠋ ᠉ ᠊ to select between your equipped weapons.
+CHANGING WEAPONS:
+- Use ᠈ ᠋ ᠉ ᠊ to select between your equipped weapons.
+
+@0309
+#SINGLE PLAYER ABILITIES
+SINGLE PLAYER ABILITIES
+
+@0310
+#SPEARS:
+#- Lara can jump to spears that she has thrown into walls or other objects in the world.
+SPEARS:
+- Lara can jump to spears that she has thrown into walls or other objects in the world.
+
+@0311
+#GRAPPLE CONTROLS:
+#- Hold ᠆ to throw Lara's grapple to a golden grapple ring.
+#- Move up or down to climb up and down the rope while hanging.
+#- Move left and right to swing back and forth while hanging from the grapple line.
+GRAPPLE CONTROLS:
+- Hold ᠆ to throw Lara's grapple to a golden grapple ring.
+- Move up or down to climb up and down the rope while hanging.
+- Move left and right to swing back and forth while hanging from the grapple line.
+
+@0312
+#CO-OP ABILITIES (1 of 2)
+CO-OP ABILITIES (1 of 2)
+
+@0313
+#CO-OP ABILITIES (2 of 2)
+CO-OP ABILITIES (2 of 2)
+
+@0314
+#GRAPPLE CONTROLS:
+#- Hold ᠆ to throw Lara's grapple to Totec or to a golden grapple ring.
+#- Move up or down to climb up and down the rope while hanging.
+#- Move left and right to swing back and forth while hanging from the grapple line.
+GRAPPLE CONTROLS:
+- Hold ᠆ to throw Lara's grapple to Totec or to a golden grapple ring.
+- Move up or down to climb up and down the rope while hanging.
+- Move left and right to swing back and forth while hanging from the grapple line.
+
+@0315
+#GRAPPLE TIGHTROPE:
+#- Totec can jump onto Lara's grapple line and walk on it like a tightrope when the line is connected to a golden grapple ring.
+GRAPPLE TIGHTROPE:
+- Totec can jump onto Lara's grapple line and walk on it like a tightrope when the line is connected to a golden grapple ring.
+
+@0316
+#SPEARS:
+#- Lara can jump to spears that Totec has thrown into the walls or other objects in the world.
+#- If Totec tries to jump onto a spear his weight will break it.
+SPEARS:
+- Lara can jump to spears that Totec has thrown into the walls or other objects in the world.
+- If Totec tries to jump onto a spear his weight will break it.
+
+@0317
+#SHIELD BOOST:
+#- Hold ᠆ to raise Totec's shield above his head.
+#- Lara can jump to and from Totec's shield to reach higher areas.
+SHIELD BOOST:
+- Hold ᠆ to raise Totec's shield above his head.
+- Lara can jump to and from Totec's shield to reach higher areas.
+
+@0318
+#SHIELD BLOCK:
+#- Hold ᠄ to block projectiles and enemy attacks.
+SHIELD BLOCK:
+- Hold ᠄ to block projectiles and enemy attacks.
+
+@0319
+#REVIVING YOUR PARTNER:
+#- Press ᠂ while standing next to your fallen partner to revive your partner instantly.
+REVIVING YOUR PARTNER:
+- Press ᠂ while standing next to your fallen partner to revive your partner instantly.
+
+@0320
+#PLAYER UPGRADES & REWARDS
+PLAYER UPGRADES & REWARDS
+
+@0321
+#RELICS:
+#- Equipped Relics give your character very powerful abilities.
+#- A single Relic can grant multiple abilities.
+#- To view a Relic's abilities select it in the inventory screen.
+#
+RELICS:
+- Equipped Relics give your character very powerful abilities.
+- A single Relic can grant multiple abilities.
+- To view a Relic's abilities select it in the inventory screen.
+
+
+@0322
+#RELIC METER:
+#- A Relic's abilities will only be granted when your Relic Power Meter is full.
+#- To fill your Power Meter, collect gems and kill enemies without taking damage.
+#- Once the Power Meter is full, taking any damage will empty it completely.
+RELIC METER:
+- A Relic's abilities will only be granted when your Relic Power Meter is full.
+- To fill your Power Meter, collect gems and kill enemies without taking damage.
+- Once the Power Meter is full, taking any damage will empty it completely.
+
+@0323
+#ARTIFACTS:
+#- Artifacts affect your character's attributes in different ways both positively and negatively.
+#- Two Artifacts can be equipped that boost the same attribute to give even greater strength.
+ARTIFACTS:
+- Artifacts affect your character's attributes in different ways both positively and negatively.
+- Two Artifacts can be equipped that boost the same attribute to give even greater strength.
+
+@0324
+#HEALTH & AMMO UPGRADES:
+#- Health and Ammo Upgrades increase the maximum capacity of your health and ammo bars.
+HEALTH & AMMO UPGRADES:
+- Health and Ammo Upgrades increase the maximum capacity of your health and ammo bars.
+
+@0325
+#GAMEPAD SELECTION
+GAMEPAD SELECTION
+
+@0326
+#CONFIGURATION
+CONFIGURATION
+
+@0327
+#If you select a new storage device, save games on that storage device will be overwritten. Do you wish to continue?
+If you select a new storage device, save games on that storage device will be overwritten. Do you wish to continue?
+
+@0328
+#SETTINGS
+SETTINGS
+
+@0329
+#DISPLAY CALIBRATION
+DISPLAY CALIBRATION
+
+@0330
+#IN-GAME MUSIC VOLUME
+IN-GAME MUSIC VOLUME
+
+@0331
+#SFX VOLUME
+SFX VOLUME
+
+@0332
+#DIALOGUE VOLUME
+DIALOGUE VOLUME
+
+@0333
+#SUBTITLES
+SUBTITLES
+
+@0334
+#ON
+ON
+
+@0335
+#OFF
+OFF
+
+@0336
+#VIBRATION
+VIBRATION
+
+@0337
+#TUTORIALS
+TUTORIALS
+
+@0338
+#PLAYER RINGS
+PLAYER RINGS
+
+@0339
+#LANGUAGE
+LANGUAGE
+
+@0340
+#ENGLISH
+ENGLISH
+
+@0341
+#FRENCH
+FRENCH
+
+@0342
+#GERMAN
+GERMAN
+
+@0343
+#ITALIAN
+ITALIAN
+
+@0344
+#SPANISH
+SPANISH
+
+@0345
+#POLISH
+POLISH
+
+@0346
+#RUSSIAN
+RUSSIAN
+
+@0347
+#CZECH
+CZECH
+
+@0348
+#DUTCH
+DUTCH
+
+@0349
+#COMBAT DIFFICULTY
+COMBAT DIFFICULTY
+
+@0350
+#SELECT STORAGE DEVICE
+SELECT STORAGE DEVICE
+
+@0351
+#Toggle
+Toggle
+
+@0352
+#BRIGHTNESS
+BRIGHTNESS
+
+@0353
+#CONTRAST
+CONTRAST
+
+@0354
+#Adjust the Brightness so the image is as bright as possible but there are no colors visible between the horizontal red lines. Adjust the contrast only if the screen appears washed out.
+Adjust the Brightness so the image is as bright as possible but there are no colors visible between the horizontal red lines. Adjust the contrast only if the screen appears washed out.
+
+@0355
+#Adjust the Brightness so the image is as bright as possible but there are no colors visible between the horizontal red lines.
+Adjust the Brightness so the image is as bright as possible but there are no colors visible between the horizontal red lines.
+
+@0356
+#Photosensitive Seizure Warning
+#A very small percentage of people may experience a seizure when exposed to certain visual images, including flashing lights or patterns that may appear in video games.  Even people who have no history of seizures or epilepsy may have an undiagnosed condition that can cause these "photosensitive epileptic seizures" while watching video games.
+#
+#These seizures may have a variety of symptoms, including lightheadedness, altered vision, eye or face twitching, jerking or shaking of arms or legs, disorientation, confusion, or momentary loss of awareness.  Seizures may also cause loss of consciousness or convulsions that can lead to injury from falling down or striking nearby objects.
+#
+#Immediately stop playing and consult a doctor if you experience any of these symptoms. Parents should watch for or ask their children about the above symptoms - children and teenagers are more likely than adults to experience these seizures.
+#
+#The risk of photosensitive epileptic seizures may be reduced by taking the following precautions:
+#- Sit Farther from the screen
+#- Use a smaller screen
+#- Play in a well-lit room
+#- Do not play when you are drowsy or fatigued
+#
+#If you or any of your relatives have a history of seizures or epilepsy, consult a doctor before playing.
+Photosensitive Seizure Warning
+A very small percentage of people may experience a seizure when exposed to certain visual images, including flashing lights or patterns that may appear in video games.  Even people who have no history of seizures or epilepsy may have an undiagnosed condition that can cause these "photosensitive epileptic seizures" while watching video games.
+
+These seizures may have a variety of symptoms, including lightheadedness, altered vision, eye or face twitching, jerking or shaking of arms or legs, disorientation, confusion, or momentary loss of awareness.  Seizures may also cause loss of consciousness or convulsions that can lead to injury from falling down or striking nearby objects.
+
+Immediately stop playing and consult a doctor if you experience any of these symptoms. Parents should watch for or ask their children about the above symptoms - children and teenagers are more likely than adults to experience these seizures.
+
+The risk of photosensitive epileptic seizures may be reduced by taking the following precautions:
+- Sit Farther from the screen
+- Use a smaller screen
+- Play in a well-lit room
+- Do not play when you are drowsy or fatigued
+
+If you or any of your relatives have a history of seizures or epilepsy, consult a doctor before playing.
+
+@0357
+#ᠪ View profile
+ᠪ View profile
+
+@0358
+#᠁ SCORE
+᠁ SCORE
+
+@0359
+#᠁ TIME
+᠁ TIME
+
+@0360
+#LEADERBOARDS
+LEADERBOARDS
+
+@0361
+#Retrieving Stats
+Retrieving Stats
+
+@0362
+#You are not yet ranked on this leaderboard
+You are not yet ranked on this leaderboard
+
+@0363
+#Your friends are not yet ranked on this leaderboard
+Your friends are not yet ranked on this leaderboard
+
+@0364
+#MY SCORE
+MY SCORE
+
+@0365
+#FRIENDS
+FRIENDS
+
+@0366
+#OVERALL
+OVERALL
+
+@0367
+#SCORE
+SCORE
+
+@0368
+#TIME
+TIME
+
+@0369
+#RANK
+RANK
+
+@0370
+#PLAYER
+PLAYER
+
+@0371
+#All Levels Combined
+All Levels Combined
+
+@0372
+#Total Entries:
+Total Entries:
+
+@0373
+#LOCAL CO-OP
+LOCAL CO-OP
+
+@0374
+#QUICK MATCH
+QUICK MATCH
+
+@0375
+#FIND GAME
+FIND GAME
+
+@0376
+#CREATE GAME
+CREATE GAME
+
+@0377
+#No games found!
+No games found!
+
+@0378
+#Join Any Available Game
+Join Any Available Game
+
+@0379
+#Finding Games...
+Finding Games...
+
+@0380
+#Joining Game...
+Joining Game...
+
+@0381
+#PRIVACY SETTING
+PRIVACY SETTING
+
+@0382
+#Create Game
+Create Game
+
+@0383
+#PUBLIC
+PUBLIC
+
+@0384
+#PRIVATE
+PRIVATE
+
+@0385
+#Prev Page
+Prev Page
+
+@0386
+#Next Page
+Next Page
+
+@0387
+#Refresh List
+Refresh List
+
+@0388
+#Join Selected Game
+Join Selected Game
+
+@0389
+#Page
+Page
+
+@0390
+#WAITING FOR PLAYER
+WAITING FOR PLAYER
+
+@0391
+#Other player left, waiting for new 
+#player to join the game.
+Other player left, waiting for new 
+player to join the game.
+
+@0392
+#Player left game, waiting for new player to join.
+Player left game, waiting for new player to join.
+
+@0393
+#᠁ Un-Equip
+᠁ Un-Equip
+
+@0394
+#WEAPON
+WEAPON
+
+@0395
+#DEFENSE
+DEFENSE
+
+@0396
+#BOMB
+BOMB
+
+@0397
+#SPEED
+SPEED
+
+@0398
+#POWER SHOT
+POWER SHOT
+
+@0399
+#POWER BOMB
+POWER BOMB
+
+@0400
+#POWER SPEED
+POWER SPEED
+
+@0401
+#HEALTH REGEN
+HEALTH REGEN
+
+@0402
+#AMMO REGEN
+AMMO REGEN
+
+@0403
+#SCATTER SHOT
+SCATTER SHOT
+
+@0404
+#WEAPON POWER
+WEAPON POWER
+
+@0405
+#RATE OF FIRE
+RATE OF FIRE
+
+@0406
+#AMMO CONSUMPTION
+AMMO CONSUMPTION
+
+@0407
+#...Waiting for Player Two...
+...Waiting for Player Two...
+
+@0408
+#...Waiting for Player One...
+...Waiting for Player One...
+
+@0409
+#OBJECTIVES
+OBJECTIVES
+
+@0410
+#LEVEL MAP
+LEVEL MAP
+
+@0411
+#INVENTORY
+INVENTORY
+
+@0412
+#A relic's power will only by granted when the relic power meter is full.
+A relic's power will only by granted when the relic power meter is full.
+
+@0413
+#ARTIFACTS:
+ARTIFACTS:
+
+@0414
+#RELIC:
+RELIC:
+
+@0415
+#This title supports Autosaves. Please don't turn off your console or remove the storage device when you see this icon.
+This title supports Autosaves. Please don't turn off your console or remove the storage device when you see this icon.
+
+@0416
+#Continue
+Continue
+
+@0417
+#Treasures:
+Treasures:
+
+@0418
+#SPIDER TOMB
+SPIDER TOMB
+
+@0419
+#TEMPLE OF LIGHT
+TEMPLE OF LIGHT
+
+@0420
+#SUN DISC TOMB ENTRANCE
+SUN DISC TOMB ENTRANCE
+
+@0421
+#SUN DISC TOMB EXIT
+SUN DISC TOMB EXIT
+
+@0422
+#MISSING SUN DISC
+MISSING SUN DISC
+
+@0423
+#Maps only chart outdoor areas.
+Maps only chart outdoor areas.
+
+@0424
+#GATEWAY
+GATEWAY
+
+@0425
+#GATEWAY 2
+GATEWAY 2
+
+@0426
+#GATEWAY 3
+GATEWAY 3
+
+@0427
+#GATEWAY CRYPT
+GATEWAY CRYPT
+
+@0428
+#GATEWAY CRYPT 2
+GATEWAY CRYPT 2
+
+@0429
+#GATEWAY CRYPT 3
+GATEWAY CRYPT 3
+
+@0430
+#ISLAND TOMB
+ISLAND TOMB
+
+@0431
+#THE ARENA
+THE ARENA
+
+@0432
+#MAIN GATE
+MAIN GATE
+
+@0433
+#XOLOTL'S STRONGHOLD
+XOLOTL'S STRONGHOLD
+
+@0434
+#ANCIENT CRYPT
+ANCIENT CRYPT
+
+@0435
+#ROTATING CORNER
+ROTATING CORNER
+
+@0436
+#ROTATING PLATFORM 1
+ROTATING PLATFORM 1
+
+@0437
+#ROTATING PLATFORM 2
+ROTATING PLATFORM 2
+
+@0438
+#THE FIERY DEPTHS
+THE FIERY DEPTHS
+
+@0439
+#No storage device has been selected.  You must select a device, or continue without saving.  Would you like to select a storage device now?
+No storage device has been selected.  You must select a device, or continue without saving.  Would you like to select a storage device now?
+
+@0440
+#You have finished playing the trial version of Lara Croft and the Guardian of Light. If you would like to play further please purchase the full game from the Steam store.
+You have finished playing the trial version of Lara Croft and the Guardian of Light. If you would like to play further please purchase the full game from the Steam store.
+
+@0441
+#You have earned an achievement.  Would you like to purchase the full game to receive the achievement?
+You have earned an achievement.  Would you like to purchase the full game to receive the achievement?
+
+@0442
+#Experience Lara Croft like never before in this all new digital adventure.
+#
+#Explore 14 levels of intense puzzle solving, action & exploration in single and co-op modes. Along the way collect dozens of artifacts, relics & weapons that allow you to unlock thousands of power-up combinations giving you the ability to control your character in true arcade style.
+Experience Lara Croft like never before in this all new digital adventure.
+
+Explore 14 levels of intense puzzle solving, action & exploration in single and co-op modes. Along the way collect dozens of artifacts, relics & weapons that allow you to unlock thousands of power-up combinations giving you the ability to control your character in true arcade style.
+
+@0443
+#ᠫ Exit
+ᠫ Exit
+
+@0444
+#Exit
+Exit
+
+@0445
+#START GAME
+START GAME
+
+@0446
+#All the Trappings - Challenge Pack 1
+All the Trappings - Challenge Pack 1
+
+@0447
+#Things that Go Boom - Challenge Pack 2
+Things that Go Boom - Challenge Pack 2
+
+@0448
+#Hazardous Reunion - Challenge Pack 3
+Hazardous Reunion - Challenge Pack 3
+
+@0449
+#Kane & Lynch Character Pack
+Kane & Lynch Character Pack
+
+@0450
+#Legacy of Kain Character Pack
+Legacy of Kain Character Pack
+
+@0451
+#AVAILABLE NOW
+AVAILABLE NOW
+
+@0452
+#PURCHASED
+PURCHASED
+
+@0453
+#PREVIOUSLY...
+PREVIOUSLY...
+
+@0454
+#VOLUME SETTINGS
+VOLUME SETTINGS
+
+@0455
+#DISPLAY MODE SELECTION
+DISPLAY MODE SELECTION
+
+@0456
+#DISPLAY SETTINGS
+DISPLAY SETTINGS
+
+@0457
+#CONTROL
+CONTROL
+
+@0458
+#MOUSE SENSITIVITY
+MOUSE SENSITIVITY
+
+@0459
+#BUTTON CONFIGURATION
+BUTTON CONFIGURATION
+
+@0460
+#RESTORE DEFAULTS
+RESTORE DEFAULTS
+
+@0461
+#GAMEPAD
+GAMEPAD
+
+@0462
+#CONFIGURATION
+CONFIGURATION
+
+@0463
+#GAMEPAD AXES
+GAMEPAD AXES
+
+@0464
+#INVERT X-AXIS
+INVERT X-AXIS
+
+@0465
+#INVERT Y-AXIS
+INVERT Y-AXIS
+
+@0466
+#GAMEPAD CONFIGURATION
+GAMEPAD CONFIGURATION
+
+@0467
+#CONTROL CONFIGURATION
+CONTROL CONFIGURATION
+
+@0468
+#VIEW AXIS INVERSION
+VIEW AXIS INVERSION
+
+@0469
+#GAME OPTIONS
+GAME OPTIONS
+
+@0470
+#AIM & FIELD CAM INVERT X-AXIS
+AIM & FIELD CAM INVERT X-AXIS
+
+@0471
+#AIM & FIELD CAM INVERT Y-AXIS
+AIM & FIELD CAM INVERT Y-AXIS
+
+@0472
+#ANTI ALIASING
+ANTI ALIASING
+
+@0473
+#TEXTURE DETAIL
+TEXTURE DETAIL
+
+@0474
+#TEXTURE FILTERING
+TEXTURE FILTERING
+
+@0475
+#FULLSCREEN EFFECTS
+FULLSCREEN EFFECTS
+
+@0476
+#WATER EFFECTS
+WATER EFFECTS
+
+@0477
+#VOLUMETRIC EFFECTS
+VOLUMETRIC EFFECTS
+
+@0478
+#SHADOWS
+SHADOWS
+
+@0479
+#TRIPLE BUFFERING
+TRIPLE BUFFERING
+
+@0480
+#VSYNC
+VSYNC
+
+@0481
+#LOW
+LOW
+
+@0482
+#MEDIUM
+MEDIUM
+
+@0483
+#HIGH
+HIGH
+
+@0484
+#WIDTH
+WIDTH
+
+@0485
+#HEIGHT
+HEIGHT
+
+@0486
+#REFRESH RATE
+REFRESH RATE
+
+@0487
+#ASPECT RATIO
+ASPECT RATIO
+
+@0488
+#APPLY
+APPLY
+
+@0489
+#ᠬ UNMAP
+ᠬ UNMAP
+
+@0490
+#UP
+UP
+
+@0491
+#DOWN
+DOWN
+
+@0492
+#LEFT
+LEFT
+
+@0493
+#RIGHT
+RIGHT
+
+@0494
+#CROUCH/ROLL
+CROUCH/ROLL
+
+@0495
+#JUMP
+JUMP
+
+@0496
+#GRAPPLE / SHIELD
+GRAPPLE / SHIELD
+
+@0497
+#INTERACT
+INTERACT
+
+@0498
+#SHOOT
+SHOOT
+
+@0499
+#BOMB
+BOMB
+
+@0500
+#RAISE SHIELD
+RAISE SHIELD
+
+@0501
+#PAUSE
+PAUSE
+
+@0502
+#INVENTORY
+INVENTORY
+
+@0503
+#WEAPON 1
+WEAPON 1
+
+@0504
+#WEAPON 2
+WEAPON 2
+
+@0505
+#WEAPON 3
+WEAPON 3
+
+@0506
+#WEAPON 4
+WEAPON 4
+
+@0507
+#WALK
+WALK
+
+@0508
+#CANCEL
+CANCEL
+
+@0509
+#Press a button for the selected action
+Press a button for the selected action
+
+@0510
+#Corrupt save file detected. Previous save information is lost and corrupt file will be overwritten if you continue.
+Corrupt save file detected. Previous save information is lost and corrupt file will be overwritten if you continue.
+
+@0511
+#Load failed.
+Load failed.
+
+@0512
+#Loading save data...
+Loading save data...
+
+@0513
+#Save failed.
+Save failed.
+
+@0514
+#Saving data...
+Saving data...
+
+@0515
+#Disabled
+Disabled
+
+@0516
+#Delete Failed.
+Delete Failed.
+
+@0517
+#Are you sure you want to delete the selected save file?
+Are you sure you want to delete the selected save file?
+
+@0518
+#Delete Successful.
+Delete Successful.
+
+@0519
+#If you choose to load the selected game, any progress since the last saved checkpoint will be lost, and previously existing Lara Croft and the Guardian of Light autosaves may be overwritten. Do you wish to continue?
+If you choose to load the selected game, any progress since the last saved checkpoint will be lost, and previously existing Lara Croft and the Guardian of Light autosaves may be overwritten. Do you wish to continue?
+
+@0520
+#There is not enough space on the selected storage device to save a game, and autosaves will not be created. You must select a different device or free up space. Would you like to select a device now?
+There is not enough space on the selected storage device to save a game, and autosaves will not be created. You must select a different device or free up space. Would you like to select a device now?
+
+@0521
+#Autosave failed because there is no room on the currently selected storage device.  For future autosaves to succeed, you must select a different storage device or free space on the current storage device.
+Autosave failed because there is no room on the currently selected storage device.  For future autosaves to succeed, you must select a different storage device or free space on the current storage device.
+
+@0522
+#Not enough space left for additional user saves.  If you'd like to make additional saves you must overwrite an existing user save.
+Not enough space left for additional user saves.  If you'd like to make additional saves you must overwrite an existing user save.
+
+@0523
+#Are you sure you want to overwrite the selected save file?
+Are you sure you want to overwrite the selected save file?
+
+@0524
+#You are not allowed to overwrite auto saved games.
+You are not allowed to overwrite auto saved games.
+
+@0525
+#Save Successful
+Save Successful
+
+@0526
+#Saving content. Please don't turn off your console.
+Saving content. Please don't turn off your console.
+
+@0527
+#The active gamer profile has changed.  You must now return to the main menu.
+The active gamer profile has changed.  You must now return to the main menu.
+
+@0528
+#You are not signed in with a gamer profile.  You must sign in to access storage devices.
+You are not signed in with a gamer profile.  You must sign in to access storage devices.
+
+@0529
+#The storage device has become unavailable.  You must select a device, or continue without saving.  Would you like to select a storage device now?
+The storage device has become unavailable.  You must select a device, or continue without saving.  Would you like to select a storage device now?
+
+@0530
+#The profile storage device has become unavailable.  Please reinsert the profile storage device.
+The profile storage device has become unavailable.  Please reinsert the profile storage device.
+
+@0531
+#Corrupt
+Corrupt
+
+@0532
+#Lara Croft and the Guardian of Light
+Lara Croft and the Guardian of Light
+
+@0533
+#Create autosave file?
+#An autosave file is required to record game progress and settings.
+Create autosave file?
+An autosave file is required to record game progress and settings.
+
+@0534
+#Failed to load autosave file.
+#Retry?
+Failed to load autosave file.
+Retry?
+
+@0535
+#Are you sure?
+#No progress or settings will be saved.
+Are you sure?
+No progress or settings will be saved.
+
+@0536
+#Scanning for Downloadable Content. Please do not remove any storage devices or power off your console.
+Scanning for Downloadable Content. Please do not remove any storage devices or power off your console.
+
+@0537
+#Required Downloadable Content not found. Please reinsert a Xbox 360 Memory Unit containing Downloadable Content to continue.
+Required Downloadable Content not found. Please reinsert a Xbox 360 Memory Unit containing Downloadable Content to continue.
+
+@0538
+#One or more Downloadable Content packs were corrupt, and the content they contain will not be available.  Please download them again.
+One or more Downloadable Content packs were corrupt, and the content they contain will not be available.  Please download them again.
+
+@0539
+#Failed to create autosave file.
+#Retry?
+Failed to create autosave file.
+Retry?
+
+@0540
+#Display mode has been changed. Do you want to keep these settings?
+#Reverting in %d seconds.
+Display mode has been changed. Do you want to keep these settings?
+Reverting in %d seconds.
+
+@0541
+#You need to be connected to the Steam service to access online game play features.
+You need to be connected to the Steam service to access online game play features.
+
+@0542
+#Two Gamer Profiles are required.
+Two Gamer Profiles are required.
+
+@0543
+#You have been disconnected from the Steam service and will be returned to the title screen.
+You have been disconnected from the Steam service and will be returned to the title screen.
+
+@0544
+#The connection to the Steam service has been lost. Please reconnect to Steam to use online features.
+The connection to the Steam service has been lost. Please reconnect to Steam to use online features.
+
+@0545
+#This gamer profile does not have multiplayer privileges.
+This gamer profile does not have multiplayer privileges.
+
+@0546
+#Unknown network error occured.
+Unknown network error occured.
+
+@0547
+#Failed to create game.
+Failed to create game.
+
+@0548
+#Failed to find games.
+Failed to find games.
+
+@0549
+#Failed to join game.
+Failed to join game.
+
+@0550
+#Game no longer exists.
+Game no longer exists.
+
+@0551
+#Game full.
+Game full.
+
+@0552
+#Game ended by host.
+Game ended by host.
+
+@0553
+#Other player left the session.
+Other player left the session.
+
+@0554
+#Autosave: Progression
+Autosave: Progression
+
+@0555
+#Autosave: Single Player
+Autosave: Single Player
+
+@0556
+#Autosave: COOP
+Autosave: COOP
+
+@0557
+#Installing trophies
+Installing trophies
+
+@0558
+#Re-installing trophies
+Re-installing trophies
+
+@0559
+#Updating trophies
+Updating trophies
+
+@0560
+#Please go to the Help & Options menu to configure a gamepad for player 2.
+Please go to the Help & Options menu to configure a gamepad for player 2.
+
+@0561
+#Score 1,410,000 points
+Score 1,410,000 points
+
+@0562
+#Lara Croft Jungle Outfit
+Lara Croft Jungle Outfit
+
+@0563
+#Score 1,900,000 points
+Score 1,900,000 points
+
+@0564
+#Lara Croft Biker Outfit
+Lara Croft Biker Outfit
+
+@0565
+#Score 2,400,000 points
+Score 2,400,000 points
+
+@0566
+#Doppelganger
+Doppelganger
+
+@0567
+#Temple Grounds
+Temple Grounds
+
+@0568
+#Enter the Spider Tomb
+Enter the Spider Tomb
+
+@0569
+#Explore the temple grounds and find the entrance to the Spider Tomb
+Explore the temple grounds and find the entrance to the Spider Tomb
+
+@0570
+#Locate the first Sun Disc missing from the dais
+Locate the first Sun Disc missing from the dais
+
+@0571
+#Find the second missing Sun Disc
+Find the second missing Sun Disc
+
+@0572
+#Find the final missing Sun Disc
+Find the final missing Sun Disc
+
+@0573
+#Return the Sun Discs to the Spider Tomb
+Return the Sun Discs to the Spider Tomb
+
+@0574
+#Use your bombs to move objects in the world.  Press ᠁ to drop a bomb and ᠁ again to detonate it.
+Use your bombs to move objects in the world.  Press ᠁ to drop a bomb and ᠁ again to detonate it.
+
+@0575
+#Score 100,000 points
+Score 100,000 points
+
+@0576
+# 
+ 
+
+@0577
+#POWER UP EARNED
+POWER UP EARNED
+
+@0578
+#Score 200,000 points
+Score 200,000 points
+
+@0579
+# 
+ 
+
+@0580
+#Score 300,000 points
+Score 300,000 points
+
+@0581
+#Automatic Shotgun
+Automatic Shotgun
+
+@0582
+#WEAPON EARNED
+WEAPON EARNED
+
+@0583
+#Collect 10 Red Skulls
+Collect 10 Red Skulls
+
+@0584
+#Golden Scepter of Huitzilopochtli
+Golden Scepter of Huitzilopochtli
+
+@0585
+#RELIC EARNED
+RELIC EARNED
+
+@0586
+#Collect 10 Red Skulls
+Collect 10 Red Skulls
+
+@0587
+#Open the Spider Tomb in 5:00 or less
+Open the Spider Tomb in 5:00 or less
+
+@0588
+#Gold Owl
+Gold Owl
+
+@0589
+#ARTIFACT EARNED
+ARTIFACT EARNED
+
+@0590
+#Cross the river without touching the water
+Cross the river without touching the water
+
+@0591
+#Health Powerup
+Health Powerup
+
+@0592
+#Find and defeat the Giant Demon Lizard
+Find and defeat the Giant Demon Lizard
+
+@0593
+#Ammo Powerup
+Ammo Powerup
+
+@0594
+#Destroy all the trucks
+Destroy all the trucks
+
+@0595
+#Clay Lizard
+Clay Lizard
+
+@0596
+#Ammo Upgrade
+Ammo Upgrade
+
+@0597
+#POWERUP DISCOVERED
+POWERUP DISCOVERED
+
+@0598
+#Health Upgrade
+Health Upgrade
+
+@0599
+#WEAPON DISCOVERED
+WEAPON DISCOVERED
+
+@0600
+#ARTIFACT DISCOVERED
+ARTIFACT DISCOVERED
+
+@0601
+#RELIC DISCOVERED
+RELIC DISCOVERED
+
+@0602
+#Spider Tomb
+Spider Tomb
+
+@0603
+#Take the shortcut through the Spider Tomb
+Take the shortcut through the Spider Tomb
+
+@0604
+#Find a path to the bottom of the tomb
+Find a path to the bottom of the tomb
+
+@0605
+#Use the hanging counter weights to extend the bridge
+Use the hanging counter weights to extend the bridge
+
+@0606
+#Cross the extended bridge and escape the Spider Tomb
+Cross the extended bridge and escape the Spider Tomb
+
+@0607
+#There are surfaces in the world that can be destroyed using bombs. Press ᠁ to drop a bomb and ᠁ again to detonate it.
+There are surfaces in the world that can be destroyed using bombs. Press ᠁ to drop a bomb and ᠁ again to detonate it.
+
+@0608
+#Score 200,000 points
+Score 200,000 points
+
+@0609
+# 
+ 
+
+@0610
+#Score 250,000 points
+Score 250,000 points
+
+@0611
+# 
+ 
+
+@0612
+#Score 290,000 points
+Score 290,000 points
+
+@0613
+#Fast Action Rifle
+Fast Action Rifle
+
+@0614
+#Weapon
+Weapon
+
+@0615
+#Achieve a hole-in-one
+Achieve a hole-in-one
+
+@0616
+#Health Powerup
+Health Powerup
+
+@0617
+#Health
+Health
+
+@0618
+#12 leaps over the triple trap
+12 leaps over the triple trap
+
+@0619
+#Ammo Powerup
+Ammo Powerup
+
+@0620
+#Extend the bridge in 4:00 or less
+Extend the bridge in 4:00 or less
+
+@0621
+#Two Arrows of Tezcatlipoca
+Two Arrows of Tezcatlipoca
+
+@0622
+#Defeat Leglion, Queen of all Spiders
+Defeat Leglion, Queen of all Spiders
+
+@0623
+#Clay Feather
+Clay Feather
+
+@0624
+#Collect 10 Red Skulls
+Collect 10 Red Skulls
+
+@0625
+#Stone Owl
+Stone Owl
+
+@0626
+#The Summoning
+The Summoning
+
+@0627
+#Defeat the summoned beast
+Defeat the summoned beast
+
+@0628
+#Score 30,000 points
+Score 30,000 points
+
+@0629
+# 
+ 
+
+@0630
+#Score 45,000 points
+Score 45,000 points
+
+@0631
+# 
+ 
+
+@0632
+#Score 60,000 points
+Score 60,000 points
+
+@0633
+#AR-06
+AR-06
+
+@0634
+#Collect 10 Red Skulls
+Collect 10 Red Skulls
+
+@0635
+#Stone Owl
+Stone Owl
+
+@0636
+#Defeat the T-Rex in 2:00 or less
+Defeat the T-Rex in 2:00 or less
+
+@0637
+#Gold Feather
+Gold Feather
+
+@0638
+#Destroy all Columns
+Destroy all Columns
+
+@0639
+#Clay Lizard
+Clay Lizard
+
+@0640
+#Destroy all columns
+Destroy all columns
+
+@0641
+#Toxic Swamp
+Toxic Swamp
+
+@0642
+#Chase Xolotl to the Island Tomb
+Chase Xolotl to the Island Tomb
+
+@0643
+#Explore the Toxic Swamp
+Explore the Toxic Swamp
+
+@0644
+#Find and open the first of three large gateways
+Find and open the first of three large gateways
+
+@0645
+#Find and open the second gateway
+Find and open the second gateway
+
+@0646
+#Find and open the final gateway
+Find and open the final gateway
+
+@0647
+#Gain entrance to the tomb in the lake
+Gain entrance to the tomb in the lake
+
+@0648
+#The Grenade Launcher can be used to destroy objects at range.  Equip the Grenade Launcher and fire it toward destructible objects.
+The Grenade Launcher can be used to destroy objects at range.  Equip the Grenade Launcher and fire it toward destructible objects.
+
+@0649
+#Score 220,000 points
+Score 220,000 points
+
+@0650
+# 
+ 
+
+@0651
+#Score 320,000 points
+Score 320,000 points
+
+@0652
+# 
+ 
+
+@0653
+#Score 360,000 points
+Score 360,000 points
+
+@0654
+#Hand Cannons
+Hand Cannons
+
+@0655
+#Collect 10 Red Skulls
+Collect 10 Red Skulls
+
+@0656
+#Golden Arrow of Tezcatlipoca
+Golden Arrow of Tezcatlipoca
+
+@0657
+#Clear the maze without taking any poison damage
+Clear the maze without taking any poison damage
+
+@0658
+#Stone Lizard
+Stone Lizard
+
+@0659
+#Heal the rolling ball
+Heal the rolling ball
+
+@0660
+#Health Powerup
+Health Powerup
+
+@0661
+#Get the spinning ball into its fire pit in 00:30 or less
+Get the spinning ball into its fire pit in 00:30 or less
+
+@0662
+#Ammo Powerup
+Ammo Powerup
+
+@0663
+#Ammo
+Ammo
+
+@0664
+#Reach the exit in 9:00 or less
+Reach the exit in 9:00 or less
+
+@0665
+#Gold Arrow
+Gold Arrow
+
+@0666
+#Flooded Passage
+Flooded Passage
+
+@0667
+#Escape the Flooded Passage
+Escape the Flooded Passage
+
+@0668
+#Pursue Xolotl through his deadly traps
+Pursue Xolotl through his deadly traps
+
+@0669
+#Score 120,000 points
+Score 120,000 points
+
+@0670
+# 
+ 
+
+@0671
+#Score 160,000 points
+Score 160,000 points
+
+@0672
+# 
+ 
+
+@0673
+#Score 180,000 points
+Score 180,000 points
+
+@0674
+#Automatic Pistols
+Automatic Pistols
+
+@0675
+#Collect 10 Red Skulls
+Collect 10 Red Skulls
+
+@0676
+#War Drum
+War Drum
+
+@0677
+#Break down the wall with the giant ball in 8:00 or less
+Break down the wall with the giant ball in 8:00 or less
+
+@0678
+#Golden Eye of Cipactli
+Golden Eye of Cipactli
+
+@0679
+#Destroy all the arrow traps
+Destroy all the arrow traps
+
+@0680
+#Health Powerup
+Health Powerup
+
+@0681
+#Find and destroy the 3 hidden urns
+Find and destroy the 3 hidden urns
+
+@0682
+#Ammo Powerup
+Ammo Powerup
+
+@0683
+#Temple of Light
+Temple of Light
+
+@0684
+#Chase after Xolotl and return the Mirror of Smoke
+Chase after Xolotl and return the Mirror of Smoke
+
+@0685
+#Press ᠁ to drop a bomb and press ᠁ again to detonate.
+Press ᠁ to drop a bomb and press ᠁ again to detonate.
+
+@0686
+#Use ᠍ to draw and aim your weapon and hold down ᠇ to fire.
+#While aiming and firing use ᠌ to move and strafe.
+Use ᠍ to draw and aim your weapon and hold down ᠇ to fire.
+While aiming and firing use ᠌ to move and strafe.
+
+@0687
+#Bombs can be used to destroy objects in the world.
+Bombs can be used to destroy objects in the world.
+
+@0688
+#Totec can use his shield to block projectiles.
+#Hold ᠆ to raise the shield and then aim and move.
+Totec can use his shield to block projectiles.
+Hold ᠆ to raise the shield and then aim and move.
+
+@0689
+#Totec can hold ᠄ to raise his shield above his head. Once on the shield, Lara can use it to jump to higher areas.
+Totec can hold ᠄ to raise his shield above his head. Once on the shield, Lara can use it to jump to higher areas.
+
+@0690
+#Lara can throw her grapple rope to Totec by pressing and holding ᠆.  While hanging from the rope, move up to climb the wall.
+Lara can throw her grapple rope to Totec by pressing and holding ᠆.  While hanging from the rope, move up to climb the wall.
+
+@0691
+#Standing next to ancient health shines will regenerate your health.
+Standing next to ancient health shines will regenerate your health.
+
+@0692
+#Totec can use Lara's grapple line as a tightrope. Lara can connect to the golden grapple ring by pressing and holding ᠆.  Totec can then jump to the line and walk across it to the other side.
+Totec can use Lara's grapple line as a tightrope. Lara can connect to the golden grapple ring by pressing and holding ᠆.  Totec can then jump to the line and walk across it to the other side.
+
+@0693
+#Press ᠂ to grab onto the gold handle and move back to pull it out from the wall.
+Press ᠂ to grab onto the gold handle and move back to pull it out from the wall.
+
+@0694
+#Lara can jump to spears that have been thrown into walls to access higher areas.
+#Press ᠈ to switch to your spear.
+Lara can jump to spears that have been thrown into walls to access higher areas.
+Press ᠈ to switch to your spear.
+
+@0695
+#Lara can again pull Totec up with her grapple line.  Lara can aim at Totec and press ᠆ to launch her grapple line.  Totec can then jump at the wall and climb up.
+Lara can again pull Totec up with her grapple line.  Lara can aim at Totec and press ᠆ to launch her grapple line.  Totec can then jump at the wall and climb up.
+
+@0696
+#When near a rolling ball, hold ᠂ to engage.
+#Move around to roll the balls into enemies or to weigh down pressure plates.
+When near a rolling ball, hold ᠂ to engage.
+Move around to roll the balls into enemies or to weigh down pressure plates.
+
+@0697
+#Grapple the golden grapple ring with ᠆.  Jump at the wall and move left and right to swing and ᠃ to jump to the other side.
+Grapple the golden grapple ring with ᠆.  Jump at the wall and move left and right to swing and ᠃ to jump to the other side.
+
+@0698
+#Totec can walk along Lara's grapple line.  Lara can aim at the grapple ring with ᠍ and launch the grapple with ᠆.
+Totec can walk along Lara's grapple line.  Lara can aim at the grapple ring with ᠍ and launch the grapple with ᠆.
+
+@0699
+#Use ᠍ to aim the grapple at Totec and ᠆ to throw the grapple to him. Lara can then use Totec as an anchor in order to join Totec on the other side.
+Use ᠍ to aim the grapple at Totec and ᠆ to throw the grapple to him. Lara can then use Totec as an anchor in order to join Totec on the other side.
+
+@0700
+#Shoot or bomb these impact switches to close and open doors and to change objects in the world.
+Shoot or bomb these impact switches to close and open doors and to change objects in the world.
+
+@0701
+#Rooms marked with red lights are Challenge Tombs.
+#These optional tombs contain rare treasures and difficult challenges.
+Rooms marked with red lights are Challenge Tombs.
+These optional tombs contain rare treasures and difficult challenges.
+
+@0702
+#Press and hold ᠆ to attach to golden grapple rings in the world.
+#Move up to climb up walls.
+Press and hold ᠆ to attach to golden grapple rings in the world.
+Move up to climb up walls.
+
+@0703
+#Lara can use her spears to cross long gaps.
+Lara can use her spears to cross long gaps.
+
+@0704
+#Grapple the golden ring with ᠆.  Jump at the wall and move left and right to swing and ᠃ to jump to the other side.
+Grapple the golden ring with ᠆.  Jump at the wall and move left and right to swing and ᠃ to jump to the other side.
+
+@0705
+#Press ᠀ to dodge enemy attacks.
+Press ᠀ to dodge enemy attacks.
+
+@0706
+#Equip Artifacts on the Inventory Screen to increase your character attributes.
+Equip Artifacts on the Inventory Screen to increase your character attributes.
+
+@0707
+#Equip Relics on the Inventory Screen to unlock new abilities in Warrior Mode.
+Equip Relics on the Inventory Screen to unlock new abilities in Warrior Mode.
+
+@0708
+#Use ᠍ to AIM.
+Use ᠍ to AIM.
+
+@0709
+#Lara can jump to spears that have been thrown into walls to access higher areas.
+#Press ᠋ ᠈ ᠉ ᠊ to switch between your equipped weapons.
+Lara can jump to spears that have been thrown into walls to access higher areas.
+Press ᠋ ᠈ ᠉ ᠊ to switch between your equipped weapons.
+
+@0710
+#Score 100,000 points
+Score 100,000 points
+
+@0711
+# 
+ 
+
+@0712
+#Score 130,000 points
+Score 130,000 points
+
+@0713
+# 
+ 
+
+@0714
+#Score 160,000 points
+Score 160,000 points
+
+@0715
+#Magnums
+Magnums
+
+@0716
+#Stone Arrow
+Stone Arrow
+
+@0717
+#Reach the exit in 6:00 or less
+Reach the exit in 6:00 or less
+
+@0718
+#Headdress of Ehecatl
+Headdress of Ehecatl
+
+@0719
+#Jump between 7 spider pots without touching the ground
+Jump between 7 spider pots without touching the ground
+
+@0720
+#Health Powerup
+Health Powerup
+
+@0721
+#Disable Xolotl's fire trap in under 00:30
+Disable Xolotl's fire trap in under 00:30
+
+@0722
+#Clay Owl
+Clay Owl
+
+@0723
+#Destroy all the urns
+Destroy all the urns
+
+@0724
+#Ammo Powerup
+Ammo Powerup
+
+@0725
+#The Jaws of Death
+The Jaws of Death
+
+@0726
+#Find where Xolotl is waiting
+Find where Xolotl is waiting
+
+@0727
+#Explore further
+Explore further
+
+@0728
+#Score 60,000 points
+Score 60,000 points
+
+@0730
+#Score 80,000 points
+Score 80,000 points
+
+@0732
+#Score 110,000 points
+Score 110,000 points
+
+@0733
+#High Power Flame Thrower
+High Power Flame Thrower
+
+@0734
+#Collect 10 Red Skulls
+Collect 10 Red Skulls
+
+@0735
+#White Drum
+White Drum
+
+@0736
+#Escape in 2:00 or less
+Escape in 2:00 or less
+
+@0737
+#Wind Drum
+Wind Drum
+
+@0738
+#Destroy all of the enemies on columns
+Destroy all of the enemies on columns
+
+@0739
+#Gold Arrow
+Gold Arrow
+
+@0740
+#Forgotten Gate
+Forgotten Gate
+
+@0741
+#Find passage through this ancient tomb
+Find passage through this ancient tomb
+
+@0742
+#Open the Forgotten Gate
+Open the Forgotten Gate
+
+@0743
+#Escape the temple
+Escape the temple
+
+@0744
+#Remote bombs can be used to move balls.
+Remote bombs can be used to move balls.
+
+@0745
+#Score 140,000 points
+Score 140,000 points
+
+@0746
+# 
+ 
+
+@0747
+#Score 170,000 points
+Score 170,000 points
+
+@0748
+# 
+ 
+
+@0749
+#Score 230,000 points
+Score 230,000 points
+
+@0750
+#Double Barrel Shotgun
+Double Barrel Shotgun
+
+@0751
+#Collect 10 Red Skulls
+Collect 10 Red Skulls
+
+@0752
+#Clay Arrow
+Clay Arrow
+
+@0753
+#Reach the exit in 10:00 or less
+Reach the exit in 10:00 or less
+
+@0754
+#Golden Scepter Of Cihuacoatl
+Golden Scepter Of Cihuacoatl
+
+@0755
+#Get all the balls to the main room
+Get all the balls to the main room
+
+@0756
+#Ammo Powerup
+Ammo Powerup
+
+@0757
+#POWERUP EARNED
+POWERUP EARNED
+
+@0758
+#Navigate the trap hall on the first attempt
+Navigate the trap hall on the first attempt
+
+@0759
+#Gold Lizard
+Gold Lizard
+
+@0760
+#Bomb a ball onto the skull pedestal
+Bomb a ball onto the skull pedestal
+
+@0761
+#Health Powerup
+Health Powerup
+
+@0762
+#Twisting Bridge
+Twisting Bridge
+
+@0763
+#Travel to the tomb at the end of the canyon
+Travel to the tomb at the end of the canyon
+
+@0764
+#Create a path across the canyon
+Create a path across the canyon
+
+@0765
+#Cross the bridge and head up to the tomb at the end of the canyon
+Cross the bridge and head up to the tomb at the end of the canyon
+
+@0766
+#Score 190,000 points
+Score 190,000 points
+
+@0767
+# 
+ 
+
+@0768
+#Score 210,000 points
+Score 210,000 points
+
+@0769
+# 
+ 
+
+@0770
+#Score 250,000 points
+Score 250,000 points
+
+@0771
+#Submachine Gun
+Submachine Gun
+
+@0772
+#Collect 10 Red Skulls
+Collect 10 Red Skulls
+
+@0773
+#Serpent Drum
+Serpent Drum
+
+@0774
+#Navigate the Twisting Bridge in 6:00 or less
+Navigate the Twisting Bridge in 6:00 or less
+
+@0775
+#Mask of Itzli
+Mask of Itzli
+
+@0776
+#Bomb the rolling fire
+Bomb the rolling fire
+
+@0777
+#Health Powerup
+Health Powerup
+
+@0778
+#Knock the shield off a Shield Demon
+Knock the shield off a Shield Demon
+
+@0779
+#Ammo Powerup
+Ammo Powerup
+
+@0780
+#Belly of the Beast
+Belly of the Beast
+
+@0781
+#Use the rocket launcher to destroy the lava beast
+Use the rocket launcher to destroy the lava beast
+
+@0782
+#Score 30,000 points
+Score 30,000 points
+
+@0783
+# 
+ 
+
+@0784
+#Score 50,000 points
+Score 50,000 points
+
+@0785
+# 
+ 
+
+@0786
+#Score 70,000 points
+Score 70,000 points
+
+@0787
+#Heavy Grenade Launcher
+Heavy Grenade Launcher
+
+@0788
+#Step on all 11 spider tiles
+Step on all 11 spider tiles
+
+@0789
+#White Drum
+White Drum
+
+@0790
+#Defeat the T-Rex in 5:00 or less
+Defeat the T-Rex in 5:00 or less
+
+@0791
+#Clay Serpent
+Clay Serpent
+
+@0792
+#Collect 10 Red Skulls
+Collect 10 Red Skulls
+
+@0793
+#Serpent Drum
+Serpent Drum
+
+@0794
+#Xolotl's Stronghold
+Xolotl's Stronghold
+
+@0795
+#Defeat Xolotl and reclaim the Mirror of Smoke
+Defeat Xolotl and reclaim the Mirror of Smoke
+
+@0796
+#Score 80,000 points
+Score 80,000 points
+
+@0797
+# 
+ 
+
+@0798
+#Score 120,000 points
+Score 120,000 points
+
+@0799
+# 
+ 
+
+@0800
+#Score 140,000 points
+Score 140,000 points
+
+@0801
+#Spear of Light
+Spear of Light
+
+@0802
+#Defeat Xolotl in 10:00 or less
+Defeat Xolotl in 10:00 or less
+
+@0803
+#Spear of Darkness
+Spear of Darkness
+
+@0804
+#The Mirror's Wake
+The Mirror's Wake
+
+@0805
+#Open the gate to Xolotl's stronghold
+Open the gate to Xolotl's stronghold
+
+@0806
+#Chase Xolotl to his fortress in the wastelands
+Chase Xolotl to his fortress in the wastelands
+
+@0807
+#Defeat the two other gatekeepers and collect their keys
+Defeat the two other gatekeepers and collect their keys
+
+@0808
+#Defeat the last gatekeeper and collect its key
+Defeat the last gatekeeper and collect its key
+
+@0809
+#Return to the gate with all three keys
+Return to the gate with all three keys
+
+@0810
+#Score 150,000 points
+Score 150,000 points
+
+@0811
+# 
+ 
+
+@0812
+#Score 190,000 points
+Score 190,000 points
+
+@0813
+# 
+ 
+
+@0814
+#Score 240,000 points
+Score 240,000 points
+
+@0815
+#Golden Shotgun
+Golden Shotgun
+
+@0816
+#Collect 10 Red Skulls
+Collect 10 Red Skulls
+
+@0817
+#Jade Heart
+Jade Heart
+
+@0818
+#Reach Xolotl's Stronghold in 6:00 or less
+Reach Xolotl's Stronghold in 6:00 or less
+
+@0819
+#Mask of Xolotl
+Mask of Xolotl
+
+@0820
+#Achieve a hole-in-one
+Achieve a hole-in-one
+
+@0821
+#Stone Serpent
+Stone Serpent
+
+@0822
+#Break 2 shields with 1 truck
+Break 2 shields with 1 truck
+
+@0823
+#Health Powerup
+Health Powerup
+
+@0824
+#Get the first spinning ball into its fire pit in 15 seconds
+Get the first spinning ball into its fire pit in 15 seconds
+
+@0825
+#Ammo Powerup
+Ammo Powerup
+
+@0826
+#Ammo powerup
+Ammo powerup
+
+@0827
+#Health powerup
+Health powerup
+
+@0828
+#Fiery Depths
+Fiery Depths
+
+@0829
+#Pursue Xolotl through the fiery depths
+Pursue Xolotl through the fiery depths
+
+@0830
+#Enter the belly of the beast
+Enter the belly of the beast
+
+@0831
+#Score 90,000 points
+Score 90,000 points
+
+@0832
+# 
+ 
+
+@0833
+#Score 110,000 points
+Score 110,000 points
+
+@0834
+# 
+ 
+
+@0835
+#Score 130,000 points
+Score 130,000 points
+
+@0836
+#Spear of Fire
+Spear of Fire
+
+@0837
+#Collect 10 Red Skulls
+Collect 10 Red Skulls
+
+@0838
+#Golden Shroud of Cihuacoatl
+Golden Shroud of Cihuacoatl
+
+@0839
+#Reach the exit in 5:00 or less
+Reach the exit in 5:00 or less
+
+@0840
+#Dark Drum
+Dark Drum
+
+@0841
+#Heal the rolling ball
+Heal the rolling ball
+
+@0842
+#Wind Drum
+Wind Drum
+
+@0843
+#Sacrifice 3 skeletons to the scorpion crest
+Sacrifice 3 skeletons to the scorpion crest
+
+@0844
+#Health Powerup
+Health Powerup
+
+@0845
+#Skeletons sacrificed
+Skeletons sacrificed
+
+@0846
+#Jump to all 6 spider tile platforms
+Jump to all 6 spider tile platforms
+
+@0847
+#Ammo Powerup
+Ammo Powerup
+
+@0848
+#Stronghold Passage
+Stronghold Passage
+
+@0849
+#Find passage through this ancient tomb
+Find passage through this ancient tomb
+
+@0850
+#Find six rolling balls to extinguish the flames
+Find six rolling balls to extinguish the flames
+
+@0851
+#Escape the temple
+Escape the temple
+
+@0852
+#Score 60,000 points
+Score 60,000 points
+
+@0853
+# 
+ 
+
+@0854
+#Score 90,000 points
+Score 90,000 points
+
+@0855
+# 
+ 
+
+@0856
+#Score 120,000 points
+Score 120,000 points
+
+@0857
+#Railgun
+Railgun
+
+@0858
+#Collect 10 Red Skulls
+Collect 10 Red Skulls
+
+@0859
+#Fist of Tezcatlipoca
+Fist of Tezcatlipoca
+
+@0860
+#Reach the exit in 15:00 or less
+Reach the exit in 15:00 or less
+
+@0861
+#Jade Heart
+Jade Heart
+
+@0862
+#Rest a ball atop the skull pedestal
+Rest a ball atop the skull pedestal
+
+@0863
+#Health Powerup
+Health Powerup
+
+@0864
+#Step on the 3 hidden spider tiles
+Step on the 3 hidden spider tiles
+
+@0865
+#Ammo Powerup
+Ammo Powerup
+
+@0866
+#SKIP CINEMATIC?
+SKIP CINEMATIC?
+
+@0867
+#᠃ YES
+᠃ YES
+
+@0868
+#᠂ NO
+᠂ NO
+
+@0869
+#Blast Lifts
+Blast Lifts
+
+@0870
+#Escape in 3:00 or less
+Escape in 3:00 or less
+
+@0872
+#Escape in 2:00 or less
+Escape in 2:00 or less
+
+@0873
+# 
+ 
+
+@0874
+#Escape in 1:30 or less
+Escape in 1:30 or less
+
+@0875
+# 
+ 
+
+@0876
+#Temple Defense
+Temple Defense
+
+@0877
+#Score 200,000 points
+Score 200,000 points
+
+@0878
+# 
+ 
+
+@0879
+#Score 350,000 points
+Score 350,000 points
+
+@0880
+# 
+ 
+
+@0881
+#Score 500,000 points
+Score 500,000 points
+
+@0882
+# 
+ 
+
+@0883
+#Leglion's Lair
+Leglion's Lair
+
+@0884
+#Score 50,000 points
+Score 50,000 points
+
+@0885
+# 
+ 
+
+@0886
+#Score 75,000 points
+Score 75,000 points
+
+@0887
+# 
+ 
+
+@0888
+#Score 100,000 points
+Score 100,000 points
+
+@0889
+# 
+ 
+
+@0890
+#Crushing Expectations
+Crushing Expectations
+
+@0891
+#Double Crossings
+Double Crossings
+
+@0892
+#Escape in 3:30 or less
+Escape in 3:30 or less
+
+@0894
+#Escape in 3:00 or less
+Escape in 3:00 or less
+
+@0895
+# 
+ 
+
+@0896
+#Escape in 2:30 or less
+Escape in 2:30 or less
+
+@0897
+# 
+ 
+
+@0898
+#Firefighters
+Firefighters
+
+@0899
+#Score 50,000 points
+Score 50,000 points
+
+@0900
+# 
+ 
+
+@0901
+#Score 75,000 points
+Score 75,000 points
+
+@0902
+# 
+ 
+
+@0903
+#Score 100,000 points
+Score 100,000 points
+
+@0904
+# 
+ 
+
+@0905
+#Ill Valley
+Ill Valley
+
+@0906
+#Score 300,000 points
+Score 300,000 points
+
+@0907
+# 
+ 
+
+@0908
+#Score 450,000 points
+Score 450,000 points
+
+@0909
+# 
+ 
+
+@0910
+#Score 550,000 points
+Score 550,000 points
+
+@0911
+# 
+ 
+
+@0912
+#Tooth and Nail
+Tooth and Nail
+
+@0913
+#Puzzle Soup
+Puzzle Soup
+
+@0914
+#Escape in ?:00 or less
+Escape in ?:00 or less
+
+@0916
+#Escape in ?:00 or less
+Escape in ?:00 or less
+
+@0917
+# 
+ 
+
+@0918
+#Escape in ?:?? or less
+Escape in ?:?? or less
+
+@0919
+#Wind Drum
+Wind Drum
+
+@0920
+#Madness River
+Madness River
+
+@0921
+#Score 50,000 points
+Score 50,000 points
+
+@0922
+# 
+ 
+
+@0923
+#Score 75,000 points
+Score 75,000 points
+
+@0924
+# 
+ 
+
+@0925
+#Score 100,000 points
+Score 100,000 points
+
+@0926
+# 
+ 
+
+@0927
+#Mayan Mini-Golf
+Mayan Mini-Golf
+
+@0928
+#Lava Chompy
+Lava Chompy
+
+@0929
+#AIM
+AIM
+
+@4999
+#Lara Croft and the Guardian of Light Error
+Lara Croft and the Guardian of Light Error
+
+@5000
+#Extended Information
+Extended Information
+
+@5001
+#A fatal error has occured while playing Lara Croft and the Guardian of Light. Please refer to the ReadMe file for information which might help you solve this problem, or contact Eidos customer support.
+A fatal error has occured while playing Lara Croft and the Guardian of Light. Please refer to the ReadMe file for information which might help you solve this problem, or contact Eidos customer support.
+
+@5002
+#Show Extended Information
+Show Extended Information
+
+@5003
+#Hide Extended Information
+Hide Extended Information
+
+@5004
+#You do not have the appropriate permissions to play Lara Croft and the Guardian of Light.
+You do not have the appropriate permissions to play Lara Croft and the Guardian of Light.
+
+@5005
+#Lara Croft and the Guardian of Light is already running on this computer, but cannot switch to it. This is probably caused by the game running for a different user.
+Lara Croft and the Guardian of Light is already running on this computer, but cannot switch to it. This is probably caused by the game running for a different user.
+
+@5006
+#Lara Croft and the Guardian of Light can not run in a remote session!
+Lara Croft and the Guardian of Light can not run in a remote session!
+
+@5007
+#This game requires a DirectX9.0c capable graphics card with PS3.0 support, this is not supported by your current hardware.
+This game requires a DirectX9.0c capable graphics card with PS3.0 support, this is not supported by your current hardware.
+
+@5008
+#Lara Croft and the Guardian of Light can only be played on a PC that supports the SSE instruction set. Please read the readme.rtf or contact Eidos technical support
+#
+#
+Lara Croft and the Guardian of Light can only be played on a PC that supports the SSE instruction set. Please read the readme.rtf or contact Eidos technical support
+
+
+
+@5009
+#Lara Croft and the Guardian of Light can only be played on a PC that supports the MMX instruction set. Please read the readme.rtf or contact Eidos technical support
+#
+#
+Lara Croft and the Guardian of Light can only be played on a PC that supports the MMX instruction set. Please read the readme.rtf or contact Eidos technical support
+
+
+
+@5010
+#Lara Croft and the Guardian of Light requires a operating system like Windows 2000, Windows XP, or higher. Please read the readme.rtf or contact Eidos technical support
+#
+#
+Lara Croft and the Guardian of Light requires a operating system like Windows 2000, Windows XP, or higher. Please read the readme.rtf or contact Eidos technical support
+
+
+
+@5011
+#Failed to initialize Direct3D with current settings
+Failed to initialize Direct3D with current settings
+
+@5012
+#Could not initialise DirectInput!
+Could not initialise DirectInput!
+
+@5013
+#Your computer has the Direct3D Debug Runtime enabled. This can cause significantly reduced performance and will lower graphics quality.
+Your computer has the Direct3D Debug Runtime enabled. This can cause significantly reduced performance and will lower graphics quality.
+
+@5014
+#A problem has occured with your display driver. Your system may not have enough resources to run the game at the selected settings. You can retry using the same settings, or adjust them to lower settings. Make sure you have the latest drivers for your video hardware, and try rebooting your system to help clear up any issues.
+A problem has occured with your display driver. Your system may not have enough resources to run the game at the selected settings. You can retry using the same settings, or adjust them to lower settings. Make sure you have the latest drivers for your video hardware, and try rebooting your system to help clear up any issues.
+
+@5049
+#L Mouse
+L Mouse
+
+@5050
+#M Mouse
+M Mouse
+
+@5051
+#R Mouse
+R Mouse
+
+@5059
+#Xbox 360 Controller
+Xbox 360 Controller
+
+@5060
+#᠁
+᠁
+
+@5061
+#᠀
+᠀
+
+@5062
+#᠂
+᠂
+
+@5063
+#᠃
+᠃
+
+@5064
+#᠅
+᠅
+
+@5065
+#᠇
+᠇
+
+@5066
+#᠄
+᠄
+
+@5067
+#᠆
+᠆
+
+@5068
+#᠌
+᠌
+
+@5069
+#᠍
+᠍
+
+@5070
+#᠐
+᠐
+
+@5071
+#᠑
+᠑
+
+@5072
+#᠈
+᠈
+
+@5073
+#᠉
+᠉
+
+@5074
+#᠋
+᠋
+
+@5075
+#᠊
+᠊
+
+@5076
+#Left Stick X
+Left Stick X
+
+@5077
+#Left Stick Y
+Left Stick Y
+
+@5078
+#Right Stick X
+Right Stick X
+
+@5079
+#Right Stick Y
+Right Stick Y
+
+@5099
+#Lara Croft and the Guardian of Light - Setup
+Lara Croft and the Guardian of Light - Setup
+
+@5100
+#%d by %d
+%d by %d
+
+@5101
+#Brightness
+Brightness
+
+@5102
+#Cancel
+Cancel
+
+@5103
+#Contrast
+Contrast
+
+@5104
+#Display Adapter
+Display Adapter
+
+@5105
+#Enable Anti Aliasing
+Enable Anti Aliasing
+
+@5106
+#Enable Depth of Field
+Enable Depth of Field
+
+@5107
+#Enable Fullscreen Effects
+Enable Fullscreen Effects
+
+@5108
+#Enable Reflections
+Enable Reflections
+
+@5109
+#Enable Shadows
+Enable Shadows
+
+@5110
+#Enable VSync
+Enable VSync
+
+@5111
+#Enable Water Effects
+Enable Water Effects
+
+@5112
+#Next Generation Content
+Next Generation Content
+
+@5113
+#Ok
+Ok
+
+@5114
+#Refresh Rate
+Refresh Rate
+
+@5115
+#Rendering Setup
+Rendering Setup
+
+@5116
+#Resolution
+Resolution
+
+@5117
+#Set To Default
+Set To Default
+
+@5118
+#Texture Filtering
+Texture Filtering
+
+@5119
+#Antialiasing Mode
+Antialiasing Mode
+
+@5120
+#Texture Detail
+Texture Detail
+
+@5121
+#Aspect Ratio
+Aspect Ratio
+
+@5122
+#Enable Triple Buffering
+Enable Triple Buffering
+
+@5123
+#Enable Volumetric Effects
+Enable Volumetric Effects
+
+@5124
+#Low
+Low
+
+@5125
+#Medium
+Medium
+
+@5126
+#High
+High
+
+@5127
+#Point
+Point
+
+@5128
+#Bilinear
+Bilinear
+
+@5129
+#Trilinear
+Trilinear
+
+@5130
+#1x Anisotropic
+1x Anisotropic
+
+@5131
+#2x Anisotropic
+2x Anisotropic
+
+@5132
+#4x Anisotropic
+4x Anisotropic
+
+@5133
+#8x Anisotropic
+8x Anisotropic
+
+@5134
+#16x Anisotropic
+16x Anisotropic
+
+@5135
+#Steam initialization failed
+Steam initialization failed
+
+@5136
+#You must be running the Steam client to play this game
+You must be running the Steam client to play this game
+
+@5137
+#Login failed
+Login failed
+
+@5138
+#You do not have privileges to play this game.
+You do not have privileges to play this game.
+
+@5139
+#Unassigned
+Unassigned
+
