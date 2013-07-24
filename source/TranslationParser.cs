@@ -20,8 +20,8 @@ namespace TRTR
 
         // Dictionary<Int32, TranslationFileEntry> subTransEntries;
         Dictionary<Int32, TranslationFileEntry> menuTransEntries;
-        Dictionary<string, List<TranslationFileEntry>> moviesTransEntries2;
-        List<KeyValuePair<string, TranslationFileEntry>> moviesTransEntries;
+        Dictionary<string, List<TranslationFileEntry>> moviesTransEntries;
+
         CineTransFileList cineTransFiles;
         BackgroundWorker worker;
 
@@ -39,29 +39,26 @@ namespace TRTR
             Initialize(lang);
         }
 
-        [Conditional("DEBUG")]
         internal void Initialize(string lang)
         {
-            folder = FileNameUtils.IncludeTrailingBackSlash(Settings.TransRootDir) +
-                string.Format("{0}.{1}\\", TRGameInfo.InstallInfo.GameNameFull, lang);
+            folder = Path.Combine(Path.GetFullPath(Settings.TransRootDir), string.Format("{0}.{1}", TRGameInfo.Game.Name, lang));
 
-            if (!File.Exists(folder + "trans_info.xml"))
+            if (!File.Exists(Path.Combine(folder, "trans_info.xml")))
                 throw new Exception(string.Format("Translation info file ({0}) does not exist", Path.Combine(folder, "trans_info.xml")));
-            gti = new TRGameTransInfo(folder + "trans_info.xml");
+            gti = new TRGameTransInfo(Path.Combine(folder, "trans_info.xml"));
 
             // prepare 
             cineTransFiles = new CineTransFileList();
             menuTransEntries = new Dictionary<Int32, TranslationFileEntry>();
-            moviesTransEntries = new List<KeyValuePair<string, TranslationFileEntry>>();
-            entries = new FileEntryList(worker);
+            moviesTransEntries = new Dictionary<string, List<TranslationFileEntry>>();
+            entries = new FileEntryList(worker, "", "");
             entries.ReadFAT();
-
-            
 
             // parse
             ParseSubtitles(null);
             ParseMenu();
-            ParseMovies(null);
+            if (gti.MoviesFileName.Length > 0)
+                ParseMovies(null);
             entries.SortBy(FileEntryCompareField.Location);
 
             // create xml
@@ -86,15 +83,14 @@ namespace TRTR
             }
             finally
             {
-                doc.Save(".\\" + TRGameInfo.InstallInfo.GameNameFull + ".tra.xml");
+                doc.Save(".\\" + TRGameInfo.Game.Name + ".tra.xml");
             }
         }
 
-        [Conditional("DEBUG")]
         internal void ParseMenu()
         {
             //TODO: USE NEW FILE !!
-            string fileName = folder + gti.MenuFileName;
+            string fileName = Path.Combine(folder, gti.MenuFileName);
             string textContent = File.ReadAllText(fileName, Encoding.UTF8);
 
             List<string> entryTexts = new List<string>(Regex.Split(textContent, "^@", RegexOptions.Multiline));
@@ -171,10 +167,9 @@ namespace TRTR
             }
         }
 
-        [Conditional("DEBUG")]
         private void ParseSubtitles(XmlNode node)
         {
-            string fileName = folder + gti.SubtitleFileName;
+            string fileName = Path.Combine(folder, gti.SubtitleFileName);
             string textContent = File.ReadAllText(fileName, Encoding.UTF8);
 
             List<string> entryTexts = new List<string>(Regex.Split(textContent, "^HASH: ", RegexOptions.Multiline));
@@ -278,104 +273,61 @@ namespace TRTR
                     }
                 }
             }
-
         }
 
-        [Conditional("DEBUG")]
         private void ParseMovies(XmlNode node)
         {
-            string fileName = folder + gti.MoviesFileName;
-            string textContent = File.ReadAllText(fileName, Encoding.UTF8);
-
-            List<string> entryTexts = new List<string>(Regex.Split(textContent, "^@", RegexOptions.Multiline));
-
-            // remove comments from first line
-            if (!Regex.Match(entryTexts[0], @"^@(.*):(.*)\r\n", RegexOptions.Multiline).Success)
-                entryTexts.RemoveAt(0);
-
-            Regex rxFileName = new Regex(@"^@(.*)\r\n", RegexOptions.Multiline);
-            Regex rxOriginal = new Regex(@"^#(.*?):(.*)\r\n", RegexOptions.Multiline);
-            Regex rxComment = new Regex(@"^;(.*)\r\n", RegexOptions.Multiline);
-            Regex rxTrans = new Regex(@"^(.*?):(.*)\r\n", RegexOptions.Multiline);
-
-            // Dictionary<string, List<TranslationFileEntry>> moviesTransEntries2; 
-            string movieFileName = string.Empty;
-            TranslationFileEntry transEntry = null;
-            for (Int32 j = 0; j < entryTexts.Count; j++)
+            string fileName = Path.Combine(folder, gti.MoviesFileName);
+            if (File.Exists(fileName))
             {
-                if (entryTexts[j].Length > 0)
-                {
-                    // IDE
-                }
-                string txt = entryTexts[j];
-                transEntry = new TranslationFileEntry();
-                MatchCollection mtchs = null;
-                Match mtch = null;
+                string textContent = File.ReadAllText(fileName, Encoding.UTF8);
 
-                // process filename
-                mtch = rxFileName.Match(txt);
-                if (mtch.Success)
-                {
-                    movieFileName = mtch.Groups[1].Value;
-                    txt = string.Empty;
-                }
-                
-                if(txt.Length > 0)
-                { 
-                    
-                }
-                transEntry.Id = mtch.Result("$1");
-                txt = rxFileName.Replace(txt, string.Empty, 1);
+                // remove line comments
+                textContent = Regex.Replace(textContent, @"^;[^\r\n]*", "", RegexOptions.Multiline);
 
-                // process originals
-                mtchs = rxOriginal.Matches(txt);
-                foreach (Match m in mtchs)
-                    if (transEntry.Original.Length == 0)
-                        transEntry.Original = m.Result("$1").Replace("\r\n#", "\r\n");
-                    else
-                        transEntry.Original += "\r\n" + m.Result("$1").Replace("\r\n#", "\r\n");
-                txt = rxOriginal.Replace(txt, string.Empty);
+                // remove original texts
+                textContent = Regex.Replace(textContent, @"^#[^\r\n]*", "", RegexOptions.Multiline);
 
-                // process comments
-                mtchs = rxComment.Matches(txt);
-                foreach (Match m in mtchs)
-                    if (transEntry.Comments.Length == 0)
-                        transEntry.Comments = m.Result("$1").Replace("\r\n;", "\r\n");
-                    else
-                        transEntry.Comments += "\r\n" + m.Result("$1").Replace("\r\n;", "\r\n");
-                txt = rxComment.Replace(txt, string.Empty);
-/*
-                // process directives
-                mtchs = rxDirective.Matches(txt);
-                foreach (Match m in mtchs)
-                    if (transEntry.Directives.Length == 0)
-                        transEntry.Directives = m.Result("$1").Replace("\r\n$", "\r\n");
-                    else
-                        transEntry.Directives += "\r\n" + m.Result("$1").Replace("\r\n$", "\r\n");
-                txt = rxDirective.Replace(txt, string.Empty);
-*/
-                // process translations
-                mtchs = rxTrans.Matches(txt);
-                for (Int32 k = 0; k < mtchs.Count - 1; k++)
+                // remove empty lines 
+                textContent = Regex.Replace(textContent, @"^\r\n", "", RegexOptions.Multiline);
+
+                // split to pieces by file
+                List<string> movieFileContents = new List<string>(Regex.Split(textContent, "^@", RegexOptions.Multiline));
+
+                Regex rxTrans = new Regex(@"^(.*?):(.*)");
+
+                TranslationFileEntry transEntry = null;
+
+                foreach (string fileContent in movieFileContents)
                 {
-                    Match m = mtchs[k];
-                    if (transEntry.Translation.Length == 0)
-                        transEntry.Translation = m.Result("$1");
-                    else
-                        transEntry.Translation += "\r\n" + m.Result("$1");
+                    if (fileContent.Length > 0)
+                    {
+                        List<TranslationFileEntry> fileTransEntries = new List<TranslationFileEntry>();
+                        // split to lines
+                        List<string> lines = new List<string>(Regex.Split(fileContent, "\r\n", RegexOptions.Multiline));
+                        
+                        // first line is the filename
+                        string movieFileName = lines[0];
+                        lines.RemoveAt(0);
+
+                        foreach (string line in lines)
+                        {
+                            Match mtch = rxTrans.Match(line);
+                            if (mtch.Success)
+                            {
+                                transEntry = new TranslationFileEntry();
+                                transEntry.Id = mtch.Result("$1");
+                                transEntry.Translation = mtch.Result("$2");
+                                fileTransEntries.Add(transEntry);
+                            }
+                        }
+                        if (fileTransEntries.Count > 0)
+                            moviesTransEntries.Add(movieFileName, fileTransEntries);
+                    }
                 }
-                transEntry.Translation = transEntry.Translation.Replace("!TESZT! ", string.Empty);
-                // $del
-                if (transEntry.Directives.Contains("DEL"))
-                    transEntry.Translation = "?";
-                // $setup
-                transEntry.KeepAccentedChars = transEntry.Directives.Contains("SETUP");
-                moviesTransEntries.Add(new KeyValuePair<string, TranslationFileEntry>(transEntry.Id, transEntry));
             }
-
         }
 
-        [Conditional("DEBUG")]
         private void WriteXML(XmlDocument doc)
         {
             XmlNode menuNode = doc.SelectSingleNode("/translation/menu");
@@ -386,7 +338,7 @@ namespace TRTR
             #region write menu
             foreach (FileEntry entry in entries)
             {
-                if (entry.Stored.FileType == FileTypeEnum.BIN_MNU &&
+                if (entry.Extra.FileType == FileTypeEnum.BIN_MNU &&
                     entry.Raw.Language == FileLanguage.English)
                 {
                     MenuFile menu = new MenuFile(entry);
@@ -402,7 +354,7 @@ namespace TRTR
                             string translation = TRGameInfo.textConv.ToOriginalFormat(transEntry.Translation.Trim(strippedChars));
                             entryElement.SetAttribute("translation", translation);
                             if (translation.Length > 0)
-                                entryElement.SetAttribute("checksum", Hash.Get(translation + "m" + transEntry.Id + TRGameInfo.InstallInfo.GameNameFull));
+                                entryElement.SetAttribute("checksum", Hash.Get(translation + "m" + transEntry.Id + TRGameInfo.Game.Name));
                             if (transEntry.KeepAccentedChars)
                                 entryElement.SetAttribute("setup", "true");
                         }
@@ -414,7 +366,7 @@ namespace TRTR
             #region write subtitles
             foreach (FileEntry entry in entries)
             {
-                if (entry.Stored.FileType == FileTypeEnum.MUL_CIN &&
+                if (entry.Extra.FileType == FileTypeEnum.MUL_CIN &&
                     (entry.Raw.Language == FileLanguage.English || entry.Raw.Language == FileLanguage.NoLang))
                 {
 
@@ -424,17 +376,17 @@ namespace TRTR
                         CineFile cine = new CineFile(entry);
                         XmlElement cineElement = doc.CreateElement("cine");
                         cineElement.SetAttribute("hash", entry.Extra.HashText);
-                        if (entry.Stored.FileName.Length > 0)
-                            cineElement.SetAttribute("filename", entry.Stored.FileName);
+                        if (entry.Extra.FileName.Length > 0)
+                            cineElement.SetAttribute("filename", entry.Extra.FileName);
                         XmlNode cineNode = null;
 
                         for (UInt32 j = 0; j < cine.Blocks.Count; j++)
                         {
                             CineBlock block = cine.Blocks[(Int32)j];
-                            if (block.subtitles != null)
-                                if (block.subtitles.Count > 0)
+                            if (block.Subtitles != null)
+                                if (block.Subtitles.Count > 0)
                                 {
-                                    UInt32 textCount = block.subtitles.TextCount(FileLanguage.English);
+                                    UInt32 textCount = block.Subtitles.TextCount(FileLanguage.English);
                                     if (textCount > 0)
                                     {
                                         CineBlockTranslationTextList blockTexts = transBlocks[j];
@@ -448,14 +400,14 @@ namespace TRTR
                                             XmlNode blockNode = cineNode.AppendChild(blockElement);
                                             blockElement.SetAttribute("no", j.ToString("d5"));
                                             //if (transEntries.ContainsKey(hashCode))
-                                            string original = block.subtitles.Entry(FileLanguage.English, k).Text.Replace("\n", "\r\n");//checkthis
+                                            string original = block.Subtitles.Entry(FileLanguage.English, k).Text.Replace("\n", "\r\n");//checkthis
                                             original = original.Replace(" \r", "\r");
                                             UInt32 hashCode = (UInt32)original.GetHashCode();
 
                                             string translation = TRGameInfo.textConv.ToOriginalFormat(blockTexts[(Int32)k].Trim(strippedChars));
                                             blockElement.SetAttribute("translation", translation);
                                             if (translation.Length > 0)
-                                                blockElement.SetAttribute("checksum", Hash.Get(translation + "s" + j.ToString("d5") + TRGameInfo.InstallInfo.GameNameFull));
+                                                blockElement.SetAttribute("checksum", Hash.Get(translation + "s" + j.ToString("d5") + TRGameInfo.Game.Name));
                                         }
                                     }
                                 }
@@ -468,55 +420,23 @@ namespace TRTR
             #region write movies
             XmlNode movieNode = doc.SelectSingleNode("/translation/movies");
 
-            TextWriter subtitleWriter = null;
-            try
+            foreach (KeyValuePair<string, List<TranslationFileEntry>> movieFile in moviesTransEntries) // iterate files
             {
-/*
-                //List<KeyValuePair<string, TranslationFileEntry>> moviesTransEntries;
-                foreach (KeyValuePair<string, TranslationFileEntry> movieFile in moviesTransEntries) // iterate files
+                string movieFileName = movieFile.Key;
+                List<TranslationFileEntry> transEntries = movieFile.Value;
+
+                XmlElement movieFileElement = doc.CreateElement("file");
+                movieFileElement.SetAttribute("filename", movieFileName);
+                XmlNode movieFileNode = movieNode.AppendChild(movieFileElement);
+
+                foreach (TranslationFileEntry entry in transEntries) // iterate file translations
                 {
-                    XmlElement movieFileElement = doc.CreateElement("file");
-                    movieFileElement.SetAttribute("filename", movieFile.Key);
-                    XmlNode movieFileNode = movieNode.AppendChild(movieFileElement);
-
-                    foreach (MovieSubtitles.MovieSubtitleFile.SubtitleLanguage lang in movieFile.Value.Translation)
-                    {
-                        if (lang.Language == "english") // export only english texts as translation source
-                        {
-                            foreach (MovieSubtitles.MovieSubtitleFile.SubtitleLanguage.SubtitleFileEntry entry in lang.Entries.Values)
-                            {
-                                XmlElement movieTransEntry = doc.CreateElement("trans");
-                                movieTransEntry.SetAttribute("timestr", entry.TimeStr);
-                                movieTransEntry.SetAttribute("timestr", entry.Translated);
-                                XmlNode movieTransNode = movieFileNode.AppendChild(movieTransEntry);
-                            }
-                        }
-                    }
+                    XmlElement movieTransEntry = doc.CreateElement("entry");
+                    movieTransEntry.SetAttribute("time", entry.Id);
+                    movieTransEntry.SetAttribute("trans", entry.Translation);
+                    XmlNode movieTransNode = movieFileNode.AppendChild(movieTransEntry);
                 }
-*/
             }
-            finally
-            {
-                if (subtitleWriter != null)
-                    subtitleWriter.Close();
-            }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             #endregion
 
             #region write RAW font
@@ -524,7 +444,7 @@ namespace TRTR
             if (gti.NeedToReplaceChars)
                 foreach (FileEntry entry in entries)
                 {
-                    if (entry.Stored.FileType == FileTypeEnum.RAW_FNT)
+                    if (entry.Extra.FileType == FileTypeEnum.RAW_FNT)
                     {
                         string fileName = string.Format("{0}trans\\{1}", folder, gti.RawFontReplaced);
                         if (File.Exists(fileName))
@@ -562,7 +482,6 @@ namespace TRTR
 
     // entries of blocks
     class CineBlockTranslationTextList : List<string> { }
-
 
     class TranslationFileEntry
     {

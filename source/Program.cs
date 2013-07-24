@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.IO;
 
 namespace TRTR
 {
@@ -17,12 +18,16 @@ namespace TRTR
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        static void Main()
+        static void Main(string[] args)
         {
-            //Log.Write(); 
-            try
+            Settings.args = args;
+            Log.AddListener("debug", new DebugLogListener());
+            Log.AddListener("applog", new FileLogListener(@".\trtr.log"));
+            Log.Write(LogEntryType.Info, "Starting...");
+            Log.Write(LogEntryType.Info, "Command Line: " + Environment.CommandLine);
+            //try
             {
-                Process[] RunningProcesses = Process.GetProcessesByName("TRTR");
+                Process[] RunningProcesses = Process.GetProcessesByName("TRTR2");
                 if (RunningProcesses.Length < 2)
                 {
                     Application.EnableVisualStyles();
@@ -37,12 +42,13 @@ namespace TRTR
 
                 //Application.CurrentCulture = new CultureInfo("hu-HU");
             }
-            catch (Exception ex)
-            {
-                Log.Write(ex);
-                ErrorDialog.ShowError(ex);
-                //MessageBox.Show(ex.Message, StaticTexts.error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            //catch (Exception ex)
+            //{
+            //    Log.Write(ex);
+            //    //ErrorDialog.ShowError(ex);
+            //    //MessageBox.Show(ex.Message, StaticTexts.error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //    throw;
+            //}
         }
     }
 

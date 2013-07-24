@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.IO;
+using System.Resources; //resource writer
 
 namespace TRTR
 {
@@ -17,7 +18,7 @@ namespace TRTR
         internal FileEntry Entry { get { return entry; } }
         internal List<MenuFileEntry> MenuEntries { get { return menuEntries; } }
 
-
+        // constructor
         internal MenuFile(FileEntry entry)
         {
             menuEntries = new List<MenuFileEntry>();
@@ -33,17 +34,20 @@ namespace TRTR
             // entries
 
             byte[] content = entry.ReadContent();
-            entryCount = BitConverter.ToUInt32(content, 4) - 1;
-            
+
+            entryCount = BitConverter.ToUInt32(content, 8) - 1;
+
             for (Int32 i = 0; i < entryCount; i++)
             {
+                //bigfilev3
                 MenuFileEntry menuEntry = new MenuFileEntry();
-                menuEntry.index = i;
+                menuEntry.Index = i;
                 menuEntry.Original = string.Empty;
                 menuEntry.Current = string.Empty;
                 menuEntry.Translation = string.Empty;
                 menuEntry.EndIdx = 0;
-                menuEntry.StartIdx = BitConverter.ToUInt32(content, (Int32)((i + 3) * 4));
+                menuEntry.StartIdx = BitConverter.ToUInt32(content, (Int32)((i + 7) * 4));
+                menuEntry.PlaceHolder = (menuEntry.StartIdx <= entryCount * 4);
                 MenuEntries.Add(menuEntry);
             }
 
@@ -54,14 +58,14 @@ namespace TRTR
             {
                 MenuFileEntry menuEntry = menuEntries[i];
                 // StartIdx isn't zero if it has content
-                if (menuEntry.StartIdx > 0)
+                if ((menuEntry.StartIdx > 0) && !menuEntry.PlaceHolder)
                 {
                     if (lastValidEntry != null)
                     {
                         UInt32 startIdx = menuEntry.StartIdx;
 
-                        if (i == 1417)
-                            lastValidEntry.EndIdx = 0;
+                        //if (i == 1417)// xx whatisit??
+                        //    lastValidEntry.EndIdx = 0;
                         lastValidEntry.EndIdx = menuEntry.StartIdx;
                         Int32 textLen = (Int32)(lastValidEntry.EndIdx - lastValidEntry.StartIdx - 1);
                         if (textLen < 0)
@@ -70,6 +74,9 @@ namespace TRTR
                         Array.Copy(content, lastValidEntry.StartIdx, textBuf, 0, textLen);
 
                         lastValidEntry.Current = textConv.Enc.GetString(textBuf);
+                        lastValidEntry.Translation = TextParser.GetText(lastValidEntry.Current.Replace("\n", "\r\n"),
+                            string.Format("BF: {0} File: {1} Line: {2}", entry.Extra.BigFileName, entry.Extra.FileNameForced, i));
+
                     }
                     lastValidEntry = menuEntry;
                 }
@@ -82,6 +89,8 @@ namespace TRTR
                 Array.Copy(content, lastValidEntry.StartIdx, lastTextBuf, 0, lastTextLen);
                 lastValidEntry.EndIdx = (UInt32)lastNotNull;
                 lastValidEntry.Current = textConv.Enc.GetString(lastTextBuf);
+                lastValidEntry.Translation = TextParser.GetText(lastValidEntry.Current.Replace("\n", "\r\n"),
+                    string.Format("BF: {0} File: {1} Line: {2}", entry.Extra.BigFileName, entry.Extra.FileNameForced, "lastentry"));
             }
         }
 
@@ -101,7 +110,7 @@ namespace TRTR
                 {
                     Int32 indexOffset = 0;
                     MenuFileEntry menuEntry = menuEntries[i];
-                    if (!menuEntry.Empty)
+                    if (!menuEntry.PlaceHolder)
                     {
                         XmlNode node = menuNode.SelectSingleNode("entry[@no=\"" + i.ToString("d4") + "\"]");
                         if (node != null)
@@ -115,19 +124,6 @@ namespace TRTR
                                     translation = attr.Value;
                                     if (translation.Length > 0)
                                     {
-#if !DONT_CHECK_CHECKSUM
-                                        //if (!Hash.Check(translation + "m" + i.ToString("d4") +
-                                        //    TRGameInfo.InstallInfo.GameNameAbbrevFull, node.Attributes["checksum"].Value))
-                                        //{
-                                        //    Exception ex = new Exception(Errors.CorruptedTranslation);
-                                        //    ex.Data.Add("entryNo", i.ToString("d4"));
-                                        //    ex.Data.Add("storedChecksum", node.Attributes["checksum"].Value);
-                                        //    ex.Data.Add("textChecksum", Hash.Get(translation + "m" + i.ToString("d4") +
-                                        //        TRGameInfo.InstallInfo.GameNameAbbrevFull));
-                                        //    throw ex;
-                                        //}
-#endif
-
                                         XmlAttribute setupAttr = node.Attributes["setup"];
                                         bool replaceChars = true;
                                         if (setupAttr != null)
@@ -213,16 +209,101 @@ namespace TRTR
                 }
             }
         }
+
+        internal void ExtractN(string fileName, MenuFile menu)
+        {
+            TextWriter menuWriter = new StreamWriter(fileName + "_nemes", false, Encoding.UTF8);
+            int j = 0;
+            foreach (MenuFileEntry menuEntry in menu.MenuEntries)
+            {
+                if (!menuEntry.PlaceHolder)
+                {
+                    menuWriter.WriteLine("#" + j.ToString());
+                    menuWriter.WriteLine("{ENG");
+                    menuWriter.WriteLine(CineFile.textConv.ToOriginalFormat(menuEntry.Current).Replace("\n", "\r\n"));
+                    menuWriter.WriteLine("}");
+                    menuWriter.WriteLine("{HUN");
+                    //menuWriter.WriteLine(CineFile.textConv.ToOriginalFormat(menuEntry.Current).Replace("\n", "\r\n"));
+                    menuWriter.WriteLine("");
+                    menuWriter.WriteLine("}");
+                    j++;
+                }
+            }
+            menuWriter.Close();
+        }
+
+        internal void Extract(string destFolder, bool useDict)
+        {
+            if (entry.Raw.Language == FileLanguage.English)
+            {
+                MenuFile menu = new MenuFile(entry);
+                //ExtractText(fileName, menu);
+                //ExtractN(fileName, menu);
+                ExtractResX(destFolder, menu, useDict);
+            }
+        }
+
+        private static void ExtractText(string fileName, MenuFile menu, bool useDict)
+        {
+            TextWriter menuWriter = new StreamWriter(fileName, false, Encoding.UTF8);
+            menuWriter.WriteLine(";extracted from datafiles");
+
+            foreach (MenuFileEntry menuEntry in menu.MenuEntries)
+            {
+                if (!menuEntry.PlaceHolder)
+                {
+                    menuWriter.WriteLine(TransConsts.MenuEntryHeader + (menuEntry.Index).ToString("d4"));
+                    menuWriter.WriteLine(TransConsts.OriginalPrefix + CineFile.textConv.ToOriginalFormat(menuEntry.Current).Replace("\n", "\r\n" + TransConsts.OriginalPrefix));
+                    menuWriter.WriteLine(CineFile.textConv.ToOriginalFormat(menuEntry.Translation) + "\r\n");
+                }
+            }
+            menuWriter.Close();
+        }
+
+        private void ExtractResX(string destFolder, MenuFile menu, bool useDict)
+        {
+            // Create a resource writer.
+            string resXFileName = Path.Combine(destFolder, entry.Extra.ResXFileName); 
+            
+            ResXHelper helper = ResXPool.GetResX(resXFileName);
+            if (!helper.TryLockFor(ResXLockMode.Write))
+                throw new Exception(string.Format("Can not lock {0} for write", resXFileName));
+
+
+            // Add resources to the file.
+            List<int> keys = new List<int>();
+            foreach (MenuFileEntry menuEntry in menu.MenuEntries)
+            {
+                if (!menuEntry.PlaceHolder)
+                {
+                    string key = CineFile.textConv.ToOriginalFormat(menuEntry.Current).Replace("\n", "\r\n");
+                    int hash = key.GetHashCode();
+                    //if (!keys.Contains(hash))
+                    {
+                        ResXDataNode resNode = new ResXDataNode(
+                            CineFile.textConv.ToOriginalFormat(menuEntry.Current).Replace("\n", "\r\n"),
+                            useDict
+                                ? CineFile.textConv.ToOriginalFormat(TextParser.GetText(menuEntry.Current.Replace("\n", "\r\n"), "??"))
+                                : CineFile.textConv.ToOriginalFormat(menuEntry.Current.Replace("\n", "\r\n"))
+                            );
+                        resNode.Comment = "";
+                        helper.Writer.AddResource(resNode);
+                        keys.Add(hash);
+                    }
+                }
+            }
+        }
     }
 
     class MenuFileEntry
     {
-        internal bool Empty { get { return StartIdx == 0; } }
+        //internal bool Empty { get { return StartIdx == < } }
         internal string Current;
         internal string Original;
         internal string Translation;
         internal UInt32 StartIdx;
         internal UInt32 EndIdx;
-        internal Int32 index;
+        internal Int32 Index;
+        internal bool PlaceHolder;
     }
 }

@@ -221,8 +221,7 @@ namespace TRTR
             this.comboGame.FormattingEnabled = true;
             this.comboGame.Location = new System.Drawing.Point(5, 16);
             this.comboGame.Name = "comboGame";
-            this.comboGame.Size = new System.Drawing.Size(174, 21);
-            this.comboGame.Sorted = true;
+            this.comboGame.Size = new System.Drawing.Size(245, 21);
             this.comboGame.TabIndex = 24;
             this.comboGame.SelectionChangeCommitted += new System.EventHandler(this.comboGame_SelectionChangeCommitted);
             // 
@@ -248,6 +247,7 @@ namespace TRTR
             this.groupBoxGameInfo.TabIndex = 26;
             this.groupBoxGameInfo.TabStop = false;
             this.groupBoxGameInfo.Text = "Game Informations";
+            this.groupBoxGameInfo.Enter += new System.EventHandler(this.groupBoxGameInfo_Enter);
             // 
             // buttonTest1
             // 

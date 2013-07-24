@@ -11,7 +11,7 @@ using System.ComponentModel;
 
 namespace TRTR
 {
-    
+
     #region Primitives
 
     struct RawFileInfo
@@ -65,7 +65,7 @@ namespace TRTR
     }
 
 /*
- * static class RawFileInfoSize
+    static class RawFileInfoSize
     {
         internal static Int32 Size;
 
@@ -112,7 +112,7 @@ namespace TRTR
     }
 
     enum BoundaryDirection
-    { 
+    {
         Up = 1,
         Down = 0
     }
@@ -183,7 +183,7 @@ namespace TRTR
                 ex.Data.Add("filename", fileName);
                 throw ex;
             }
-            
+
             StreamReader sr = new StreamReader(fileName);
             try
             {
@@ -218,21 +218,28 @@ namespace TRTR
         }
     }
 
+    // calc
     class FileExtraInfo
     {
         //uint something_size = 0x12C00; // TRA/TRL v1.0.0.6
         uint something_size = 0xFFE00;  // TRU/LCGOL v1.1.0.7
 
+        #region private declarations
         private FileLanguage language;
         private string hashText;
+        private UInt32 offset;
+        private UInt32 absOffset;
+        private byte[] data = null;
+        private string text = string.Empty;
+        #endregion
 
         internal string HashText { get { return hashText; } }
         internal string LangText { get { return LangNames.Dict[language]; } }
         internal FileLanguage Language { get { return language; } }
-        internal UInt32 Offset;
-        internal UInt32 AbsOffset;
-        internal byte[] Data = null;
-        internal string Text = string.Empty;
+        internal UInt32 Offset { get { return offset; } set { offset = value; } }
+        internal UInt32 AbsOffset { get { return absOffset; } set { absOffset = value; } }
+        internal byte[] Data { get { return data; } set { data = value; } }
+        internal string Text { get { return text; } set { text = value; } }
         internal Int32 BigFile;
         private FileEntry parent;
         internal string BigFileName { get { return parent.Parent.Path + "bigfile." + 
@@ -280,6 +287,7 @@ namespace TRTR
 
     class FileEntry// : IComparable<FileEntry>
     {
+        #region private variables
         private UInt32 hash;
         private RawFileInfo raw;
         private FileExtraInfo extra = null;
@@ -287,13 +295,12 @@ namespace TRTR
 
         private FileEntryList parent = null;
         private Int32 originalIndex;
+        #endregion
 
         internal UInt32 Hash { get { return hash; } }
         internal RawFileInfo Raw { get { return raw; } }
         internal FileExtraInfo Extra { get { if (extra == null) extra = new FileExtraInfo(this); return extra; } }
-        internal FileStoredInfo Stored { 
-            get { if (stored == null) stored = new FileStoredInfo(); return stored; } 
-            set { stored = value; } }
+        internal FileStoredInfo Stored { get { if (stored == null) stored = new FileStoredInfo(); return stored; } set { stored = value; } }
 
         internal FileEntryList Parent { get { return parent; } }
         internal Int32 OriginalIndex { get { return originalIndex; } }
@@ -371,7 +378,7 @@ namespace TRTR
 
         internal byte[] ReadContent(Int32 maxLen)
         {
-            
+
             byte[] ret;
             FileStream fs = FilePool.Open(this);
             try
@@ -484,7 +491,7 @@ namespace TRTR
                             ex.Data.Add("bigfile", Extra.BigFileName);
                             ex.Data.Add("hash", Extra.HashText);
                             ex.Data.Add("diff", (fs.Length - fsLen).ToString() + " byte(s)");
-                            throw ex; 
+                            throw ex;
                         }
                     }
                 }
@@ -502,6 +509,7 @@ namespace TRTR
         }
     }
 
+    // Physical file
     class FilePoolEntry
     {
         internal FileStream Stream = null;
@@ -550,7 +558,9 @@ namespace TRTR
 
     static class FilePool
     {
+        #region private declarations
         static private Dictionary<Int32, FilePoolEntry> pool = new Dictionary<Int32, FilePoolEntry>();
+        #endregion
 
         static internal FileStream Open(FileEntry entry)
         {
@@ -621,9 +631,12 @@ namespace TRTR
     {
         const UInt32 MaxFileEntryCount = 20000;
         const UInt32 MaxFileSize = 30000000;
+        #region private declarations
         private Int32 entryCount;
         private bool oneBigFile;
         private string path;
+        #endregion
+
         private List<FileEntryCompareField> compareFields =
                 new List<FileEntryCompareField>(3) { FileEntryCompareField.Location };
 
@@ -686,10 +699,10 @@ namespace TRTR
                 this[i].VirtualSize = (this[i + 1].Raw.Location - this[i].Raw.Location) * 0x800;
                 if (this[i].VirtualSize == 0)
                 {
-//                    if (i == entryCount - 2)
-//                        ;//                        throw new Exception(string.Format(DebugErrors.FATParseError, this[i].Hash));
-//                    else
-                     this[i].VirtualSize = (this[i + 2].Raw.Location - this[i].Raw.Location) * 0x800;
+                    // if (i == entryCount - 2)
+                    //     ;//                        throw new Exception(string.Format(DebugErrors.FATParseError, this[i].Hash));
+                    // else
+                    this[i].VirtualSize = (this[i + 2].Raw.Location - this[i].Raw.Location) * 0x800;
                 }
             }
             this[entryCount - 1].VirtualSize = (uint)Boundary.Extend((int)(this[entryCount - 1].Raw.Length), 0x800);
@@ -697,10 +710,10 @@ namespace TRTR
             // add stored infos
             SortBy(FileEntryCompareField.Hash);
             FileStoredInfoList infoList = new FileStoredInfoList();
-/**/
+            /**/
             // determine file type
-/*
- * // unnecessary
+            /*
+             * // unnecessary
             if ( File.Exists(".\\" + TRGameInfo.InstallInfo.GameNameFull + ".files.txt"))
             {
                 infoList.LoadFromFile(".\\" + TRGameInfo.InstallInfo.GameNameFull + ".files.txt");
@@ -717,7 +730,7 @@ namespace TRTR
                     }
             }
 
- */ 
+             */ 
             for (Int32 i = 0; i < entryCount - 1; i++)
             {
                 this[i].Stored.FileType = FileTypeEnum.Unknown;
@@ -748,10 +761,12 @@ namespace TRTR
 
                         default:
                             // MUL file test
-                            if (this[i].Raw.Length > 8) {
+                            if (this[i].Raw.Length > 8)
+                            {
                                 bufMagic = this[i].ReadContent(4, 4);
                                 int magicInt = BitConverter.ToInt32(bufMagic, 0);
-                                if (magicInt == -1 || magicInt == 0) {
+                                if (magicInt == -1 || magicInt == 0)
+                                {
                                     this[i].Stored.FileType = FileTypeEnum.MUL2;
                                 }
                             }
@@ -808,7 +823,7 @@ namespace TRTR
                             {
                                 CineFile cine = new CineFile(entry);
                                 cine.CreateRestoration(subtitleElement, subtitleNode);
-                            } 
+                            }
                             break;
                         }
                     case FileTypeEnum.RAW_FNT:
@@ -835,33 +850,31 @@ namespace TRTR
             worker.ReportProgress(lastReported, StaticTexts.creatingFilesTxt);
             ReadFAT();
             TextWriter twEntries = new StreamWriter(@"c:\tmp\fat.entries.txt");
-            for (Int32 i = 0; i < this.Count; i++) {
+            for (Int32 i = 0; i < this.Count; i++)
+            {
                 twEntries.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8}", this[i].Hash, this[i].Raw.Location, this[i].Raw.Length, this[i].Raw.LangCode));
             }
             twEntries.Close();
 
             SortBy(FileEntryCompareField.Location);
             TextWriter tw = new StreamWriter(@"c:\tmp\custom.files.txt");
-            
+
             for (Int32 i = 0; i < this.Count; i++)
             {
-                
+
                 FileEntry entry = this[i];
                 string magic = string.Empty;
                 bool writeIt = false;
 
-                
                 if (entry.Raw.Language == FileLanguage.NoLang || entry.Raw.Language == FileLanguage.Unknown || entry.Raw.Language ==  FileLanguage.English)
                 {
                     writeIt = true; // entry.Stored.FileType == FileTypeEnum.MUL_CIN;
                 }
-                if(writeIt)
+                if (writeIt)
                     tw.WriteLine(string.Format("{0:X8}\t{1:X8}\t{2}", entry.Hash, entry.Hash, entry.Stored.FileType.ToString(), entry.Raw.Language.ToString()));
-                
-                
+
             }
             tw.Close();
-            
         }
 
         [Conditional("DEBUG")]
@@ -878,8 +891,7 @@ namespace TRTR
             {
                 // write english subtitles of cinematics to text
                 Directory.CreateDirectory(destFolder);
-                
-                
+
                 cineWriter = new StreamWriter(System.IO.Path.Combine(destFolder, "subtitles.txt"), false, Encoding.UTF8);
                 cineWriter.WriteLine(";extracted from datafiles");
                 foreach (FileEntry entry in this)
@@ -984,7 +996,7 @@ namespace TRTR
                                         if (block.subtitles != null)
                                         {
                                             UInt32 textCount = block.subtitles.TextCount(FileLanguage.English);
-                                            for(UInt32 k = 0 ; k < textCount; k++)
+                                            for (UInt32 k = 0; k < textCount; k++)
                                             {
                                                 string text = block.subtitles.Entry(FileLanguage.English, k).Text;
                                                 text = text.Replace("\r\n", "\n");
@@ -1012,7 +1024,7 @@ namespace TRTR
                                 {
                                     if (menuWriter == null)
                                         menuWriter = new StreamWriter(System.IO.Path.Combine(destFolder, "menu.txt"), false, Encoding.UTF8);
-                                        menuWriter.WriteLine(";extracted from datafiles");
+                                    menuWriter.WriteLine(";extracted from datafiles");
                                     MenuFile menu = new MenuFile(entry);
                                     for (Int32 i = 0; i < menu.MenuEntries.Count; i++)
                                     {
@@ -1035,7 +1047,8 @@ namespace TRTR
                                 {
                                     fs.Write(buf, 0, buf.Length);
                                 }
-                                finally {
+                                finally
+                                {
                                     fs.Close();
                                 }
                                 break;

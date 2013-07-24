@@ -13,24 +13,150 @@ namespace TRTR
 {
     public delegate void GameChangeHandler();
 
+    public enum InstallType { Unknown, Regular, Steam, Custom };
+
+    class GameDetails
+    {
+        private string name;
+        private InstallType installType;
+        private string installFolder;
+        private string steamAppId;
+
+        public string Name { get { return name; } set { name = value; } }
+        public InstallType InstallType { get { return installType; } set { installType = value; } }
+        public string InstallFolder { get { return installFolder; } set { installFolder = value; } }
+        public string SteamAppId { get { return steamAppId; } set { steamAppId = value; } }
+
+    }
+
+    static class TRGameList
+    {
+        static string[] knownSteamAppIds = {
+                                               "7000", // Legend
+                                               "8000", // Anniversary
+                                               "8140", // Underworld
+                                               "35130", // Guardian of Light
+                                               "203160" // Tomb Raider
+                                    };
+        static string[] knownRegularAppNames = {
+                                                   "Tomb Raider: Underworld"
+                                               };
+
+        private static void checkRegistry()
+        {
+            // \\\Registry\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\"Tomb Raider[colon] Underworld" 
+            // \\\Registry\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\"Steam App 35130" 
+            RegistryKey reg;
+            reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Crystal Dynamics");
+            if (reg == null)
+                reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\wow6432node\Crystal Dynamics");
+            if (reg == null)
+                throw new Exception(Errors.CannotFoundInstalledGame);
+            string[] games = reg.GetSubKeyNames();
+            foreach (string game in games)
+            {
+                reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\wow6432node\Crystal Dynamics\" + game);
+
+                GameDetails det = new GameDetails();
+                det.Name = game;
+                det.InstallType = InstallType.Regular;
+                det.InstallFolder = reg.GetValue("InstallPath").ToString();
+                det.SteamAppId = string.Empty;
+                items.Add(det);
+            }
+        }
+
+        private static void checkSteam()
+        {
+            foreach (string app in knownSteamAppIds)
+            {
+                RegistryKey reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App " + app);
+                if (reg == null)
+                    reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App " + app);
+                if (reg != null)
+                {
+                    GameDetails det = new GameDetails();
+                    det.Name = reg.GetValue("DisplayName").ToString();
+                    det.InstallType = InstallType.Steam;
+                    det.InstallFolder = reg.GetValue("InstallLocation").ToString();
+                    det.SteamAppId = app;
+                    items.Add(det);
+                }
+            }
+        }
+
+        private static void checkConfig()
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load(".\\games.xml");
+            foreach (XmlNode node in doc.SelectNodes(@"/games/game"))
+            {
+                GameDetails det = new GameDetails();
+                det.Name = node.Attributes["name"].Value;
+                det.InstallType = InstallType.Custom;
+                det.InstallFolder = node.Attributes["folder"].Value;
+                items.Add(det);
+            }
+        }
+
+        public static string[] GetInstalledGameList()
+        {
+            items.Clear();
+            checkRegistry();
+            checkSteam();
+            checkConfig();
+
+            List<string> ret = new List<string>();
+            foreach (GameDetails det in items)
+            {
+                switch (det.InstallType)
+                {
+                    case InstallType.Steam:
+                        ret.Add(det.Name + " (steam)");
+                        break;
+
+                    case InstallType.Custom:
+                        ret.Add(det.Name + " (custom)");
+                        break;
+
+                    default:
+                        ret.Add(det.Name);
+                        break;
+                }
+            }
+            return ret.ToArray();
+        }
+
+        private static List<GameDetails> items = new List<GameDetails>();
+
+        public static List<GameDetails> Items { get { return items; } }
+
+        static TRGameList()
+        {
+            SteamVDFDoc doc = new SteamVDFDoc(@"c:\Program Files (x86)\Steam\config\config.vdf");
+        }
+
+    }
+
     static class TRGameInfo
     {
-        internal static TextConv textConv = new TextConv(new char[0], new char[0], Encoding.UTF8);
-        internal static FileLanguage OverwriteLang = FileLanguage.English; 
-        
-        private static List<string> processors = new List<string>();
-
-        internal static TRGameStatus GameStatus { get { return gameStatus; } }
         private static GameChangeHandler ChangeDelegate = null;
         private static Object changeLock = new Object();
         private static TRGameStatus gameStatus = new TRGameStatus();
+        private static List<string> processors = new List<string>();
+        private static XmlDocument gameDataDocument;
+
+        internal static FileLanguage OverwriteLang = FileLanguage.English;
+        internal static TextConv textConv = new TextConv(new char[0], new char[0], Encoding.UTF8);
+        internal static TRGameStatus GameStatus { get { return gameStatus; } }
+
         internal static event GameChangeHandler Change2
         {
             add { lock (changeLock) { ChangeDelegate += value; } }
             remove { lock (changeLock) { ChangeDelegate -= value; } }
         }
 
-        static internal void OnChange()
+        internal static void OnChange()
         {
             if (ChangeDelegate != null)
                 ChangeDelegate();
@@ -68,7 +194,7 @@ namespace TRTR
 
         static internal class InstallInfo
         {
-            internal enum InstallTypeEnum { Unknown, Steam, Regular };
+            internal enum InstallTypeEnum { Unknown, Steam, Regular, Custom };
 
             #region private variables
             private static string installPath;
@@ -96,7 +222,6 @@ namespace TRTR
             internal static InstallTypeEnum InstallType { get { return installType; } set { installType = value; } }
             internal static string DataFile { get { return dataFile; } set { dataFile = value; } }
 
-
             internal static string InstallPath
             {
                 get { return installPath; }
@@ -104,20 +229,16 @@ namespace TRTR
             }
 
             internal static string ExePath__ { get { return Path.Combine(installPath, exeName); } }
-
             #endregion
-
         }
 
         internal static List<string> Processors { get { return processors; } }
-
-        private static XmlDocument gameDataDocument;
 
         private static void processGameRegistry()
         {
 
             // process game install data
-            
+
             RegistryKey reg;
             reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Crystal Dynamics\" + InstallInfo.GameName);
             if (reg == null)
@@ -155,12 +276,30 @@ namespace TRTR
             }
         }
 
+        private static void processGameCustomConfig()
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load("");
+        }
+
         private static void processSteamGameData()
         {
-/**/
+
+            /*
+            Computer\HKLM\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall
+             * HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\GameUX
+             * c:\users\<username>\appdata\local\Microsoft\windows\game explorer 
+             clientregistry.blob
+             * 
+             
+             
+             */
+            /**/
             // process game install data
 
             InstallInfo.InstallPath = @"c:\Program Files (x86)\LCGOL";//"c:\tools\lcgol";
+            InstallInfo.InstallPath = @"f:\TombRaiderX";//"c:\tools\lcgol";
+
             Int32 version = 103;
             InstallInfo.MajorVersion = version / 0x100;
             InstallInfo.MinorVersion = version % 0x100;
@@ -173,18 +312,15 @@ namespace TRTR
             Settings.ProfileName = "";
             Settings.LangCode = 0;
             Settings.SubLangCode = 0;
-/**/
-        
+            /**/
+
         }
 
-        internal static void Load(string name)
+        internal static void Load(GameDetails game)
         {
-            //XmlNode n;
             XmlNode interfacesNode = null;
-            XmlNode rootNode;
 
-
-            string gameDataDocumentFileName = Path.GetFullPath(TextConv.CanonizeFileName(string.Format("{0}.xml", name)));
+            string gameDataDocumentFileName = Path.GetFullPath(TextConv.CanonizeFileName(string.Format("{0}.xml", game.Name)));
             try
             {
                 if (!File.Exists(gameDataDocumentFileName))
@@ -192,23 +328,27 @@ namespace TRTR
 
                 gameDataDocument = new XmlDocument();
                 gameDataDocument.Load(gameDataDocumentFileName);
-
-                rootNode = gameDataDocument.SelectSingleNode("/gamedata");
-
+                XmlNode rootNode = gameDataDocument.SelectSingleNode("/gamedata");
                 // extract install type
-                switch (rootNode.SelectSingleNodeAttrDef(@"entry[@name=""installtype""]/@value", "regular"))
+                switch (game.InstallType)
                 {
-                    case "steam":
+                    case InstallType.Regular:
+                        InstallInfo.InstallType = InstallInfo.InstallTypeEnum.Regular;
+                        // load game data from registry
+                        processGameRegistry();
+                        break;
+
+                    case InstallType.Steam:
                         InstallInfo.InstallType = InstallInfo.InstallTypeEnum.Steam;
                         // load game data from steam source
                         processSteamGameData();
                         break;
-                    case "regular":
-                        InstallInfo.InstallType = InstallInfo.InstallTypeEnum.Regular;
-                        // load game data from registry
-                        processGameRegistry();
 
+                    case InstallType.Custom:
+                        processGameCustomConfig();
+                        // load game data from external config 
                         break;
+
                     default:
                         throw new Exception(Errors.UnknownInstallType);
                 }
@@ -217,15 +357,14 @@ namespace TRTR
                 string exeName = rootNode.SelectSingleNodeAttrDef(@"entry[@name=""exename""]/@value", "");
                 if (exeName.Length == 0)
                     throw new Exception("");
-                TRGameInfo.InstallInfo.ExeName = exeName;
+                InstallInfo.ExeName = exeName;
 
                 // extract main datafile
                 string dataFile = rootNode.SelectSingleNodeAttrDef(@"entry[@name=""datafile""]/@value", "bigfile.000");
-                TRGameInfo.InstallInfo.DataFile = dataFile;
+                InstallInfo.DataFile = dataFile;
                 int dummy;
                 // oneBigFile = File.Exists(Path.Combine(installPath, "bigfile.dat"));
-                TRGameInfo.InstallInfo.OneBigFile = !int.TryParse(Path.GetExtension(dataFile).Replace(".", ""), out dummy);
-
+                InstallInfo.OneBigFile = !int.TryParse(Path.GetExtension(dataFile).Replace(".", ""), out dummy);
 
                 // extract interfaces
                 interfacesNode = rootNode.SelectSingleNode("interfaces");
@@ -237,10 +376,7 @@ namespace TRTR
                 throw new Exception(e.Message);
             }
 
-
-
-            InstallInfo.GameName = name;
-            string gameName = name;
+            InstallInfo.GameName = game.Name;
 
             processors.Clear();
             if (interfacesNode.SelectSingleNode(@"interface[@type=""MNU""]") != null)
@@ -248,15 +384,14 @@ namespace TRTR
             if (interfacesNode.SelectSingleNode(@"interface[@type=""CINE""]") != null)
                 processors.Add("CINE");
 
-
             if (InstallInfo.InstallType == InstallInfo.InstallTypeEnum.Regular)
             {
             }
 
 
-            Trans.InfoDocFileName = ".\\" + InstallInfo.GameNameFull + ".xml";
-            Trans.RestorationDocumentFileName = ".\\" + InstallInfo.GameNameFull + ".res.xml";
-            Trans.TranslationDocumentFileName = ".\\" + InstallInfo.GameNameFull + ".tra.xml";
+            Trans.InfoDocFileName = @".\" + InstallInfo.GameNameFull + ".xml";
+            Trans.RestorationDocumentFileName = @".\" + InstallInfo.GameNameFull + ".res.xml";
+            Trans.TranslationDocumentFileName = @".\" + InstallInfo.GameNameFull + ".tra.xml";
 
             if (File.Exists(Trans.InfoDocFileName))
             {
@@ -303,15 +438,15 @@ namespace TRTR
 
         static private void workerLoad_DoWork(object sender, DoWorkEventArgs e)
         {
-            Load((string)(e.Argument));
+            Load((GameDetails)(e.Argument));
         }
 
-        static internal class Worker
+        internal static class Worker
         {
-            static public DoWorkEventHandler WorkerStart = null;
-            static public ProgressChangedEventHandler ProgressChanged = null;
-            static public RunWorkerCompletedEventHandler RunWorkerCompleted = null;
-            static public CultureInfo CurrentCulture = null;
+            public static DoWorkEventHandler WorkerStart = null;
+            public static ProgressChangedEventHandler ProgressChanged = null;
+            public static RunWorkerCompletedEventHandler RunWorkerCompleted = null;
+            public static CultureInfo CurrentCulture = null;
         }
     }
 
@@ -412,12 +547,11 @@ namespace TRTR
         TranslationDataFileNotFound = 0x10,
     }
 
-
-
     class TRGameTransInfo
     {
         private string version;
 
+        #region private variables
         private string translationVersion;
         private string langEnglishName;
         private string langLocalName;
@@ -431,6 +565,7 @@ namespace TRTR
         private char[] replacedChars;
         private bool needToReplaceChars;
         private string folder;
+        #endregion
 
         internal string Version { get { return version; } set { version = value; } }
         internal string TranslationVersion { get { return translationVersion; } set { translationVersion = value; } }
@@ -484,7 +619,7 @@ namespace TRTR
 
             menuFileName = nodeValue(node, "menu/@filename", "menuFileName");
             subtitleFileName = nodeValue(node, "subtitle/@filename", "subtitleFileName");
-            moviesFileName = nodeValue(node, "movies/@filename", "moviesFileName");
+            moviesFileName = nodeValueDef(node, "movies/@filename", "moviesFileName", "");
 
             rawFontOriginal = nodeValue(node, "font/@original", "fontOriginal");
             rawFontReplaced = nodeValue(node, "font/@replaced", "fontReplaced");

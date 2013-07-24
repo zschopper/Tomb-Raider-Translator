@@ -54,26 +54,34 @@ namespace TRTR
         {
             Thread.CurrentThread.CurrentCulture = Application.CurrentCulture;
             Thread.CurrentThread.CurrentUICulture = Application.CurrentCulture;
-            if (!ignoreGame && string.IsNullOrEmpty(TRGameInfo.InstallInfo.GameName))
+            if (!ignoreGame && string.IsNullOrEmpty(TRGameInfo.Game.Name))
                 throw new Exception(Errors.GameIsNotSelected);
         }
 
         // initiate game info update
         private void UpdateGameInfo()
         {
-            string gameName = TRGameInfo.InstallInfo.GameName;
-            TRGameInfo.Load(gameName);
+            string gameName = TRGameInfo.Game.Name;
+            GameInstance selGame = null;
+            foreach (GameInstance game in InstalledGames.Items)
+            {
+                if (game.Name == TRGameInfo.Game.Name)
+                    selGame = game;
+            }
+
+            if (selGame != null)
+                TRGameInfo.Load(selGame);
         }
 
- /**/
+        /**/
         private void workerRefreshGameInfo_DoWork(object sender, DoWorkEventArgs e)
         {
             InitializeWorker((BackgroundWorker)sender, true);
-            if (!(e.Argument is string))
+            if (!(e.Argument is GameInstance))
                 throw new Exception(Errors.InvalidParameter);
-            TRGameInfo.Load(/*(BackgroundWorker)sender, */(string)(e.Argument));
+            TRGameInfo.Load(/*(BackgroundWorker)sender, */(GameInstance)(e.Argument));
         }
-/**/
+        /**/
         private void workerRefreshGameInfo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             //UpdateGameInfo();
@@ -89,47 +97,48 @@ namespace TRTR
 
         private void workerExtract_DoWork(object sender, DoWorkEventArgs e)
         {
-            InitializeWorker((BackgroundWorker)sender);
-            FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
-            entryList.Extract(System.IO.Path.Combine(TRGameInfo.InstallInfo.InstallPath, "trans"));
-            MovieSubtitles sub = new MovieSubtitles();
-            sub.Extract(TRGameInfo.InstallInfo.InstallPath);
+            TRGameInfo.Extract();
+            //InitializeWorker((BackgroundWorker)sender);
+            //FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
+            //entryList.Extract(TRGameInfo.Game.WorkFolder);
+            //MovieSubtitles sub = new MovieSubtitles();
+            //sub.Extract(TRGameInfo.Game.WorkFolder);
         }
 
         private void workerTranslate_DoWork(object sender, DoWorkEventArgs e)
         {
-            InitializeWorker((BackgroundWorker)sender);
-            FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
-            entryList.simulateWrite = (Int32)(e.Argument) != 0;
-            entryList.Translate();
+            //InitializeWorker((BackgroundWorker)sender);
+            //FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
+            //entryList.simulateWrite = (Int32)(e.Argument) != 0;
+            //entryList.Translate();
         }
 
         private void workerCreateRestoration_DoWork(object sender, DoWorkEventArgs e)
         {
-            InitializeWorker((BackgroundWorker)sender);
-            FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
-            entryList.CreateRestoration();
+            //InitializeWorker((BackgroundWorker)sender);
+            //FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
+            //entryList.CreateRestoration();
         }
 
         private void workerGenerateFilesTxt_DoWork(object sender, DoWorkEventArgs e)
         {
-            InitializeWorker((BackgroundWorker)sender);
-            FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
-            entryList.GenerateFilesTxt();
+            //InitializeWorker((BackgroundWorker)sender);
+            //FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
+            //entryList.GenerateFilesTxt();
         }
 
         private void workerRestore_DoWork(object sender, DoWorkEventArgs e)
         {
-            InitializeWorker((BackgroundWorker)sender);
-            FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
-            entryList.simulateWrite = (Int32)(e.Argument) != 0;
-            entryList.Restore();
+            //InitializeWorker((BackgroundWorker)sender);
+            //FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
+            //entryList.simulateWrite = (Int32)(e.Argument) != 0;
+            //entryList.Restore();
         }
 
         private void workerCompileTexts_DoWork(object sender, DoWorkEventArgs e)
         {
             InitializeWorker((BackgroundWorker)sender);
-            TranslationParser parser = new TranslationParser((string)e.Argument, 
+            TranslationParser parser = new TranslationParser((string)e.Argument,
                 (BackgroundWorker)sender);
         }
     }

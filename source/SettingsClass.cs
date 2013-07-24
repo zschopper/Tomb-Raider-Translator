@@ -14,18 +14,22 @@ namespace TRTR
 {
     static class Settings
     {
+        #region private declarations
         static private string fileName = ".\\TRTR.xml";
         static private string transRootDir = string.Empty;
         static private Point formLocation = Screen.PrimaryScreen.WorkingArea.Location;
         static private string lastLocale = Thread.CurrentThread.CurrentCulture.Name;
         static private string lastGame = string.Empty;
         static private Dictionary<string, CultureInfo> cultures = new Dictionary<string, CultureInfo>();
+        static internal string[] args = { };
+        #endregion
 
         static internal string TransRootDir { get { return transRootDir; } set { transRootDir = value; } }
         static internal Point FormLocation { get { return formLocation; } set { formLocation = value; } }
         static internal string LastLocale { get { return lastLocale; } set { lastLocale = value; } }
         static internal string LastGame { get { return lastGame; } set { lastGame = value; } }
         static internal Dictionary<string, CultureInfo> Cultures { get { return cultures; } }
+        static internal string[] Args { get { return args; } set { args = value; } }
 
         static internal void Load()
         {

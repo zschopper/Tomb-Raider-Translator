@@ -18,8 +18,18 @@ using System.Reflection;
 
 namespace TRTR
 {
+
     internal partial class form_Main : Form
     {
+
+        internal class GamesComboBoxItem
+        {
+            public int Value { get; set; }
+            public string Text { get; set; }
+            public bool Selectable { get; set; }
+            public GameInstance Game { get; set; }
+        }
+
         /*[DllImport("user32.dll")]
         internal static extern void
             SetWindowPos(IntPtr hwnd, IntPtr hwndInsertAfter,
@@ -29,15 +39,15 @@ namespace TRTR
         internal form_Main()
         {
             Settings.Load();
-//            Application.CurrentCulture = new CultureInfo(Settings.LastLocale);
-//            Thread.CurrentThread.CurrentCulture = new CultureInfo(Settings.LastLocale);
+            //            Application.CurrentCulture = new CultureInfo(Settings.LastLocale);
+            //            Thread.CurrentThread.CurrentCulture = new CultureInfo(Settings.LastLocale);
             ChangeCulture(new CultureInfo(Settings.LastLocale));
         }
 
         private void InitializeLocalizations()
         {
             contextLang.Items.Clear();
-//            foreach(string key in Settings.Cultures.Keys)
+            //            foreach(string key in Settings.Cultures.Keys)
             foreach (string Key in Settings.Cultures.Keys)
             {
                 CultureInfo ci = Settings.Cultures[Key];
@@ -75,23 +85,59 @@ namespace TRTR
                     c.Top = top;
                     c.Left = left;
                 }
-                
+
                 // search for installed games in registry and fill game selector combo
-                #region Initialize game list
-                RegistryKey reg;
-                reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Crystal Dynamics");
-                if (reg == null)
-                    reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\wow6432node\Crystal Dynamics");
-                if (reg == null)
-                    throw new Exception(Errors.CannotFoundInstalledGame);
-                comboGame.Items.Clear();
-                foreach (string s in reg.GetSubKeyNames())
-                    comboGame.Items.Add(s);
-                #endregion
+
+                //ezvanelbaszva:
                 
+                comboGame.Items.Clear();
+
+                comboGame.ValueMember = "Game";
+                comboGame.DisplayMember = "Text";
+                InstallTypeEnum categ = InstallTypeEnum.Unknown;
+
+                foreach (GameInstance game in InstalledGames.Items)
+                {
+                    if (categ != game.InstallType)
+                    {
+                        categ = game.InstallType;
+                        comboGame.Items.Add(new GamesComboBoxItem()
+                        {
+                            Selectable = false,
+                            Text = categ.ToString(),
+                            Game = null
+                        });
+
+                    }
+                    string typeString = string.Empty;
+                    switch (game.InstallType)
+                    {
+                        case InstallTypeEnum.Steam:
+                            typeString = " (steam)";
+                            break;
+
+                        case InstallTypeEnum.Custom:
+                            typeString = " (custom)";
+                            break;
+
+                        default:
+                            
+                            break;
+                    }
+
+                    comboGame.Items.Add(
+                        new GamesComboBoxItem()
+                        {
+                            Selectable = true,
+                            Text = "  " + game.Name + typeString,
+                            Game = game
+                        }
+                    );
+                }
+
                 // update version and language label label
                 FileVersionInfo info = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-                labelVersion.Text = String.Format(GeneralTexts.Version, info.FileVersion) + (info.IsDebug ? "D" : string.Empty);
+                labelVersion.Text = String.Format(GeneralTexts.Version, info.FileVersion) + (info.IsDebug ? " (dev)" : string.Empty);
                 labelLang.Text = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName.ToUpper();
 
                 menuItemCompileTexts.Visible = false;
@@ -100,16 +146,17 @@ namespace TRTR
                 //menuItemSimulateTranslation.Visible = false;
 
                 // show debug menu items in debug mode
+                
                 ShowExtraDebugMenuItems();
                 #region FullScreen settings
-		        /*
+                /*
                 this.FormBorderStyle = FormBorderStyle.None;
                 this.WindowState = FormWindowState.Maximized;
                 this.MaximizeBox = false;
                 this.MinimizeBox = false;
                 this.TopMost = true;
                 */
- 
+
                 #endregion
 
 
@@ -173,7 +220,6 @@ namespace TRTR
             //    comboGame_SelectionChangeCommitted(comboGame, null);
         }
 
-        [Conditional("DEBUG")]
         private void ShowExtraDebugMenuItems()
         {
             menuItemCompileTexts.Visible = true;
@@ -202,7 +248,7 @@ namespace TRTR
                 Initialize();
                 InitializeLocalizations();
             }
-    
+
             ResTexts.Refresh();
             ChangeTexts(this);
             foreach (ToolStripItem item in contextExtra.Items)
@@ -243,19 +289,28 @@ namespace TRTR
 
         // initiate current game change
         private void comboGame_SelectionChangeCommitted(object sender, EventArgs e)
-        {                                                  
-            LockThreadControls();
-            BackgroundWorker bw = new BackgroundWorker();
-            bw.DoWork += new DoWorkEventHandler(workerRefreshGameInfo_DoWork);
-            bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(workerRefreshGameInfo_RunWorkerCompleted);
-            bw.ProgressChanged += new ProgressChangedEventHandler(generalWorker_ProgressChanged);
-            bw.RunWorkerAsync(comboGame.Text);
+        {
+            GameInstance game = ((GamesComboBoxItem)(comboGame.SelectedItem)).Game;
+            if (game != null)
+            {
+                LockThreadControls();
+                BackgroundWorker bw = new BackgroundWorker();
+                bw.DoWork += new DoWorkEventHandler(workerRefreshGameInfo_DoWork);
+                bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(workerRefreshGameInfo_RunWorkerCompleted);
+                bw.ProgressChanged += new ProgressChangedEventHandler(generalWorker_ProgressChanged);
 
-            //BackgroundWorker bw = new BackgroundWorker();
-            //bw.DoWork += new DoWorkEventHandler(workerRefreshGameInfo_DoWork);
-            //bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(workerRefreshGameInfo_RunWorkerCompleted);
-            //bw.ProgressChanged += new ProgressChangedEventHandler(generalWorker_ProgressChanged);
-            //bw.RunWorkerAsync(comboGame.Text);
+                bw.RunWorkerAsync(game);
+
+                //BackgroundWorker bw = new BackgroundWorker();
+                //bw.DoWork += new DoWorkEventHandler(workerRefreshGameInfo_DoWork);
+                //bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(workerRefreshGameInfo_RunWorkerCompleted);
+                //bw.ProgressChanged += new ProgressChangedEventHandler(generalWorker_ProgressChanged);
+                //bw.RunWorkerAsync(comboGame.Text);
+            }
+            else
+            {
+                comboGame.DroppedDown = true;
+            }
         }
 
         // initiate translation
@@ -368,7 +423,7 @@ namespace TRTR
         // update application text translations
         private void menuItemLangSelect_Click(object sender, EventArgs e)
         {
-            if (sender is ToolStripMenuItem) 
+            if (sender is ToolStripMenuItem)
             {
                 ToolStripMenuItem item = (ToolStripMenuItem)sender;
                 if (item.Checked)
@@ -386,7 +441,7 @@ namespace TRTR
         {
             Process pr = new Process();
             pr.StartInfo.FileName = Path.Combine("", "");
-            pr.StartInfo.WorkingDirectory = TRGameInfo.InstallInfo.InstallPath;
+            pr.StartInfo.WorkingDirectory = TRGameInfo.Game.InstallFolder;
             pr.Start();
         }
 
@@ -395,9 +450,9 @@ namespace TRTR
         {
             Process pr = new Process();
 
-            pr.StartInfo.FileName = TRGameInfo.InstallInfo.ExePath__;
+            pr.StartInfo.FileName = Path.Combine(TRGameInfo.Game.InstallFolder, TRGameInfo.Game.GameDefaults.ExeName);
             pr.StartInfo.Arguments = "-configure";
-            pr.StartInfo.WorkingDirectory = TRGameInfo.InstallInfo.InstallPath;
+            pr.StartInfo.WorkingDirectory = TRGameInfo.Game.InstallFolder;
             pr.Start();
         }
 
@@ -456,15 +511,15 @@ namespace TRTR
                 if ((gameStatus & TRGameStatus.InstallDirectoryNotExist) != TRGameStatus.None)
                     labelInstallPath.Text = Errors.InstallDirectoryNotExist;
                 else
-                    labelInstallPath.Text = TRGameInfo.InstallInfo.InstallPath;
+                    labelInstallPath.Text = TRGameInfo.Game.InstallFolder;
 
                 if ((gameStatus & TRGameStatus.DataFilesNotFound) != TRGameStatus.None)
-                    labelInstallPath.Text = TRGameInfo.InstallInfo.InstallPath + " (" + Errors.DataFilesNotFound + ")";
+                    labelInstallPath.Text = TRGameInfo.Game.InstallFolder + " (" + Errors.DataFilesNotFound + ")";
 
-                labelInstalledVersion.Text = TRGameInfo.InstallInfo.VersionString;
-                labelLastUsedProfile.Text = TRGameInfo.Settings.ProfileName.Length > 0 ? TRGameInfo.Settings.ProfileName : GeneralTexts.None;
-                labelSelectedLanguage.Text = (TRGameInfo.Settings.LangCode >= 0) ? LangNames.Localized((FileLanguage)TRGameInfo.Settings.LangCode) : GeneralTexts.None;
-                labelSelectedSubtitleLanguage.Text = (TRGameInfo.Settings.SubLangCode >= 0) ? LangNames.Localized((FileLanguage)TRGameInfo.Settings.SubLangCode) : GeneralTexts.None;
+                labelInstalledVersion.Text = TRGameInfo.Game.VersionString;
+                labelLastUsedProfile.Text = TRGameInfo.Game.UserSettings.ProfileName.Length > 0 ? TRGameInfo.Game.UserSettings.ProfileName : GeneralTexts.None;
+                labelSelectedLanguage.Text = (TRGameInfo.Game.UserSettings.LangCode >= 0) ? LangNames.Localized((FileLanguage)TRGameInfo.Game.UserSettings.LangCode) : GeneralTexts.None;
+                labelSelectedSubtitleLanguage.Text = (TRGameInfo.Game.UserSettings.SubLangCode >= 0) ? LangNames.Localized((FileLanguage)TRGameInfo.Game.UserSettings.SubLangCode) : GeneralTexts.None;
             }
             labelProgressText.Visible = false;
             labelProgressText.Text = string.Empty;
@@ -497,13 +552,19 @@ namespace TRTR
                 activeBeforeLocked.Focus();
         }
 
-        public void valami(object sender, DoWorkEventArgs e){
+        public void valami(object sender, DoWorkEventArgs e)
+        {
         }
 
         private void buttonTest1_Click(object sender, EventArgs e)
         {
             TranslationHandler.Init();
-            TRGameInfo.LoadAsync(comboGame.Text);
+            TRGameInfo.LoadAsync(((GamesComboBoxItem)(comboGame.SelectedItem)).Game);
+        }
+
+        private void groupBoxGameInfo_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

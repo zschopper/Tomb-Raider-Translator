@@ -28,9 +28,12 @@ namespace TRTR
         UKEnglish = 8,
         Russian = 9,
         Czech = 10,
-        Holland = 11, // v1.0.0.6
+        Dutch = 11, // v1.0.0.6
         Hungarian = 12, // v1.0.0.6
         Croatian = 13, // v1.0.0.6
+        Arabic = 14,
+        Korean = 15,
+        Chinese = 16,
         NoLang = 0xF0,
         Unknown = 0xFF
     }
@@ -61,15 +64,18 @@ namespace TRTR
         internal static string UKEnglish = "UK English";
         internal static string Russian = "Russian";
         internal static string Czech = "Czech";
-        internal static string Holland = "Holland"; // v1.0.0.6
+        internal static string Dutch = "Dutch"; // v1.0.0.6
         internal static string Hungarian = "Hungarian"; // v1.0.0.6
         internal static string Croatian = "Croatian"; // v1.0.0.6
+        internal static string Arabic = "Arabic";
+        internal static string Korean = "Korean";
+        internal static string Chinese = "Chinese";
         internal static string NoLang = "No language";
         internal static string Unknown = GeneralTexts.Unknown;
 
         internal static string[] Names = {Default, English, French, German, Italian, Spanish, 
                                         Japanese, Portuguese, Polish, UKEnglish, Russian, 
-                                        Czech, Holland, Hungarian, Croatian, NoLang, Unknown}; // v1.0.0.6
+                                        Czech, Dutch, Hungarian, Croatian, NoLang, Unknown}; // v1.0.0.6
 
         internal static string LocalizedDefault { get { return ResTexts.GetValue("LangDefault"); } }
         internal static string LocalizedEnglish { get { return ResTexts.GetValue("LangEnglish"); } }
@@ -83,10 +89,11 @@ namespace TRTR
         internal static string LocalizedUKEnglish { get { return ResTexts.GetValue("LangUKEnglish"); } }
         internal static string LocalizedRussian { get { return ResTexts.GetValue("LangRussian"); } }
         internal static string LocalizedCzech { get { return ResTexts.GetValue("LangCzech"); } }
-        internal static string LocalizedHolland { get { return ResTexts.GetValue("LangHolland"); } } // v1.0.0.6
+        internal static string LocalizedDutch { get { return ResTexts.GetValue("LangDutch"); } } // v1.0.0.6
         internal static string LocalizedHungarian { get { return ResTexts.GetValue("LangHungarian"); } } // v1.0.0.6
         internal static string LocalizedCroatian { get { return ResTexts.GetValue("LangCroatian"); } } // v1.0.0.6
         internal static string LocalizedNoLang { get { return ResTexts.GetValue("LangNoLang"); } }
+        internal static string LocalizedArabic { get { return ResTexts.GetValue("LangArabic"); } }
 
 
         static internal Dictionary<FileLanguage, string> Dict { get { return dict; } }
@@ -114,9 +121,12 @@ namespace TRTR
             dict.Add(FileLanguage.UKEnglish, UKEnglish);
             dict.Add(FileLanguage.Russian, Russian);
             dict.Add(FileLanguage.Czech, Czech);
-            dict.Add(FileLanguage.Holland, Holland); // v1.0.0.6
+            dict.Add(FileLanguage.Dutch, Dutch); // v1.0.0.6
             dict.Add(FileLanguage.Hungarian, Hungarian); // v1.0.0.6
             dict.Add(FileLanguage.Croatian, Croatian); // v1.0.0.6
+            dict.Add(FileLanguage.Arabic, Arabic);
+            dict.Add(FileLanguage.Korean, Korean);
+            dict.Add(FileLanguage.Chinese, Chinese);
             dict.Add(FileLanguage.NoLang, NoLang);
             dict.Add(FileLanguage.Unknown, Unknown);
 
@@ -132,9 +142,12 @@ namespace TRTR
             locStrings.Add(FileLanguage.UKEnglish, "LangUKEnglish");
             locStrings.Add(FileLanguage.Russian, "LangRussian");
             locStrings.Add(FileLanguage.Czech, "LangCzech");
-            locStrings.Add(FileLanguage.Holland, "LangHolland"); // v1.0.0.6
+            locStrings.Add(FileLanguage.Dutch, "LangDutch"); // v1.0.0.6
             locStrings.Add(FileLanguage.Hungarian, "LangHungarian"); // v1.0.0.6
             locStrings.Add(FileLanguage.Croatian, "LangCroatian"); // v1.0.0.6
+            locStrings.Add(FileLanguage.Arabic, "LangArabic");
+            locStrings.Add(FileLanguage.Korean, "LangKorean");
+            locStrings.Add(FileLanguage.Chinese, "LangChinese");
             locStrings.Add(FileLanguage.NoLang, "LangNoLang");
             locStrings.Add(FileLanguage.Unknown, "LangUnknown");
         }

@@ -29,8 +29,8 @@ namespace TRTR.Processors
             string valueSep = ";";
             TextWriter cineWriter = null;
             // write english subtitles of cinematics to text
-            //            Directory.CreateDirectory(TRGameInfo.InstallInfo.InstallPath + "trans");
-            cineWriter = new StreamWriter(TRGameInfo.InstallInfo.InstallPath + @"trans\subtitles.txt", false, Encoding.UTF8);
+            //            Directory.CreateDirectory(TRGameInfo.Game.WorkFolder);
+            cineWriter = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, "subtitles.txt"), false, Encoding.UTF8);
             cineWriter.WriteLine(";extracted from datafiles");
 
             foreach (FileEntry file in entryList)
@@ -42,7 +42,7 @@ namespace TRTR.Processors
 
                     /*
                                     string header = "HASH: " + entry.Extra.HashText + 
-                                        (entry.Stored.FileName.Length > 0 ? valueSep + "FILENAME: " + entry.Stored.FileName : string.Empty)
+                                        (entry.Extra.FileName.Length > 0 ? valueSep + "FILENAME: " + entry.Extra.FileName : string.Empty)
                                         //                            + " BLOCKS: "
                                         ;
                                     string blocks = string.Empty;
@@ -117,7 +117,7 @@ namespace TRTR.Processors
 
                     #endregion
                     string header = "HASH: " + file.Extra.HashText +
-                        (file.Stored.FileName.Length > 0 ? valueSep + "FILENAME: " + file.Stored.FileName : string.Empty);
+                        (file.Extra.FileName.Length > 0 ? valueSep + "FILENAME: " + file.Extra.FileName : string.Empty);
                     if (file.Raw.Language == FileLanguage.English)
                         header += ";sub";
                     else
@@ -128,12 +128,12 @@ namespace TRTR.Processors
                     for (Int32 j = 0; j < cine.Blocks.Count; j++)
                     {
                         CineBlock block = cine.Blocks[j];
-                        if (block.subtitles != null)
+                        if (block.Subtitles != null)
                         {
-                            UInt32 textCount = block.subtitles.TextCount(FileLanguage.English);
+                            UInt32 textCount = block.Subtitles.TextCount(FileLanguage.English);
                             for (UInt32 k = 0; k < textCount; k++)
                             {
-                                string text = block.subtitles.Entry(FileLanguage.English, k).Text;
+                                string text = block.Subtitles.Entry(FileLanguage.English, k).Text;
                                 text = text.Replace("\r\n", "\n");
                                 text = text.Replace(" \n", "\n");
                                 text = text.Replace("\n", "\r\n");
