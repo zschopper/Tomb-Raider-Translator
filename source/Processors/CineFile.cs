@@ -134,14 +134,7 @@ namespace TRTR
         {
             string resXFileName = Path.Combine(destFolder, entry.Extra.ResXFileName);
 
-            ResXHelper helper = ResXPool.GetResX(resXFileName);
-            if (!helper.TryLockFor(ResXLockMode.Write))
-                throw new Exception(string.Format("Can not lock {0} for write", resXFileName));
-            //if (entry.Extra.BigFilePrefix == "bigfile_ENGLISH" /*&& entry.Extra.HashText == "3E2465EC"*/)
-            //{
-            //    Log.LogDebugMsg(string.Format("dump: {0:8,X} {1} {2:8,X} {3:8,X}", entry.Extra.HashText, entry.Extra.FileName, entry.Raw.Location, entry.Raw.Length));
-            //    entry.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, entry.Extra.HashText + ".dump"));
-            //}
+            ResXHelper helper = null;
 
             CineFile cine = new CineFile(entry);
             string blockOrig = String.Empty;
@@ -178,6 +171,12 @@ namespace TRTR
                                         : subtEntry.NormalizedText
                                         );
                                     resNode.Comment = string.Format("blockNo: {0:X8}\r\nprefix: {1}\r\nfilename: {2}\r\nhash: {3}", blockNo, block.Subtitles.Entry(FileLanguage.English, textIdx).Prefix, block.Subtitles.ParentCineBlock.CineFile.Entry.Extra.FileNameForced, block.Subtitles.ParentCineBlock.CineFile.Entry.Extra.HashText);
+                                    if (helper == null)
+                                    {
+                                        helper = ResXPool.GetResX(resXFileName);
+                                        if (!helper.TryLockFor(ResXLockMode.Write))
+                                            throw new Exception(string.Format("Can not lock {0} for write", resXFileName));
+                                    }
                                     helper.Writer.AddResource(resNode);
                                 }
                             }

@@ -20,93 +20,41 @@ namespace TRTR
         internal UInt32 LangCode;
         internal UInt32 Length;
         internal UInt32 Location;
-        internal FileLanguage Language
+        internal FileLanguage Language { get { return getLanguage(); } }
+
+        private FileLanguage getLanguage()
         {
-            get
-            {
-                switch (LangCode & 0xFFFF)
-                {
-                    //case 0xDD43:
-                    //case 0xDD45:
-                    //case 0xDD49:
-                    //case 0xDD4D:
-                    //case 0xDD51:
-                    //case 0xDD59:
-                    //case 0xDD5F:
-                    //case 0xDD61:
-                    //case 0xDD63:
-                    //case 0xDDC1:
-                    //case 0xDDC5:
-                    //case 0xDDDF:
-                    //case 0xDDE7:
-                    //case 0xDDFF:
+            if (LangCode == 0xFFFFFFFF)
+                return FileLanguage.NoLang;
 
-                    //case 0xDF41:
-                    //case 0xDF5D:
-                    //case 0xDF7B:
-                    //case 0xDF7F:
-                    //case 0xDFFF:
+            if ((LangCode & 1) != 0)
+                return FileLanguage.English;
+            if ((LangCode & 1 << 0x1) != 0)
+                return FileLanguage.French;
+            if ((LangCode & 1 << 0x2) != 0)
+                return FileLanguage.German;
+            if ((LangCode & 1 << 0x3) != 0)
+                return FileLanguage.Italian;
+            if ((LangCode & 1 << 0x4) != 0)
+                return FileLanguage.Spanish;
+            if ((LangCode & 1 << 0x6) != 0)
+                return FileLanguage.Portuguese;
+            if ((LangCode & 1 << 0x7) != 0)
+                return FileLanguage.Polish;
+            if ((LangCode & 1 << 0x9) != 0)
+                return FileLanguage.Russian;
+            if ((LangCode & 1 << 0xA) != 0)
+                return FileLanguage.Czech;
+            if ((LangCode & 1 << 0xB) != 0)
+                return FileLanguage.Dutch;
+            if ((LangCode & 1 << 0xD) != 0)
+                return FileLanguage.Arabic;
+            if ((LangCode & 1 << 0xE) != 0)
+                return FileLanguage.Korean;
+            if ((LangCode & 1 << 0xF) != 0)
+                return FileLanguage.Chinese;
 
-                    //case 0xFD41:
-                    //case 0xFD43:
-                    //case 0xFD49:
-                    //case 0xFD4B:
-                    //case 0xFD51:
-                    //case 0xFD55:
-                    //case 0xFD59:
-                    //case 0xFD5D:
-                    //case 0xFD5F:
-                    //case 0xFD61:
-                    //case 0xFD69:
-                    //case 0xFDD1:
-                    //case 0xFDD7:
-                    //case 0xFDD9:
-                    //case 0xFDDB:
-                    //case 0xFDDF:
-                    //case 0xFDE1:
-                    //case 0xFDE9:
-                    //case 0xFDFF:
-                    //case 0xFF5F:
-                    //case 0xFF61:
-                    //case 0xFF6B:
-                    //case 0xFF7B:
-                    //case 0xFFDF:
-                    //case 0xFFF7:
-                    case 0xDD41:
-                    case 0xDD45:
-                    case 0x1101:
-                        return FileLanguage.English;
-                    case 0x1102:
-                        return FileLanguage.French;
-                    case 0x1104:
-                        return FileLanguage.German;
-                    case 0x1108:
-                        return FileLanguage.Italian;
-                    case 0x1110:
-                        return FileLanguage.Spanish;
-                    case 0x1140:
-                        return FileLanguage.Portuguese;
-                    case 0x1180:
-                        return FileLanguage.Polish;
-                    case 0x1300:
-                        return FileLanguage.Russian;
-                    case 0x1500:
-                        return FileLanguage.Czech;
-                    case 0x1900:
-                        return FileLanguage.Dutch;
-                    case 0x3100:
-                        return FileLanguage.Arabic;
-                    case 0x5100:
-                        return FileLanguage.Korean;
-                    case 0x9100:
-                        return FileLanguage.Chinese;
-                    case 0xFFFF:
-                        return FileLanguage.NoLang;
-                    default:
-                        return FileLanguage.Unknown; // throw new Exception(Errors.InvalidLanguageCode); 
-                }
-
-            }
+            return FileLanguage.Unknown;
         }
 
         static internal Int32 Size = 0x10;
@@ -144,8 +92,8 @@ namespace TRTR
     [Flags]
     enum FileTypeEnum
     {
-        Undefined = 0,
-        Unknown = 1,
+        Unknown = 0,
+        Special = 1,
         DRM = 2,
         CDRM = 4,
         MUL_CIN = 8,
@@ -159,7 +107,8 @@ namespace TRTR
         PNG = 2048,
         FSB4 = 4096,
         MUS = 8192,
-        SCH = 16384
+        SCH = 16384,
+        PCD9 = 32768
     }
 
     /*enum FileLanguage
@@ -292,7 +241,9 @@ namespace TRTR
             UInt32 loc = (entry.Raw.Location / 0x800) * 0x800;
 
             this.offset = loc % 0x7FF00000;
-            this.bigFileIndex = loc / 0x7FF00000;
+            this.bigFileIndex = entry.Raw.Location & 0x0F;
+            if (this.bigFileIndex > 0)
+                Debug.WriteLine("test");
             this.bigfileName = string.Format(entry.Parent.FilePattern, bigFileIndex);
             this.bigfilePrefix = entry.Parent.FilePrefix;
         }
@@ -465,6 +416,39 @@ namespace TRTR
             return ret;
         }
 
+        internal Int32 ReadInt32(Int32 startPos)
+        {
+            FileStream fs = filePool.Open(this);
+            try
+            {
+                fs.Seek(Extra.Offset + startPos, SeekOrigin.Begin);
+                byte[] buf = new byte[4];
+                fs.Read(buf, 0, 4);
+
+                return BitConverter.ToInt32(buf, 0);
+            }
+            finally
+            {
+                filePool.Close(this);
+            }
+        }
+
+        internal UInt32 ReadUInt32(Int32 startPos)
+        {
+            FileStream fs = filePool.Open(this);
+            try
+            {
+                fs.Seek(Extra.Offset + startPos, SeekOrigin.Begin);
+                byte[] buf = new byte[4];
+                fs.Read(buf, 0, 4);
+
+                return BitConverter.ToUInt32(buf, 0);
+            }
+            finally
+            {
+                filePool.Close(this);
+            }
+        }
         internal uint CopyContentToStream(Stream str, UInt32 startPos = 0, UInt32 maxLen = 0)
         {
             uint readLength = (maxLen > 0) ? maxLen : raw.Length - startPos;
@@ -947,73 +931,96 @@ namespace TRTR
                  */
 
                 TextWriter twEntries = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, filePrefix + "__fat_entries.txt"));
-                twEntries.WriteLine(string.Format("{0,-8} {1,-8} {2,-8} {3,-8} | {4,-8} {5} {6} {7,-8} {8} {9} {10}", "hash", "location", "length", "lang", "filetype", "language", "magic", "offset", "bfindex", "origidx", "filename"));
+                twEntries.WriteLine(string.Format("{0,-8} {1,-8} {2,-8} {3,-8} | {4,-8} {5} {6} {7,-8} {8} {9} {10} {11}", "hash", "location", "length", "lang", "filetype", "language", "magic", "offset", "bfindex", "origidx", "langmask", "filename"));
                 SortBy(FileEntryCompareField.Location);
                 for (Int32 i = 0; i < entryCount; i++)
                 {
                     FileEntry entry = this[i];
-                    entry.Extra.FileType = FileTypeEnum.Undefined;
-                    if (entry.Extra.HashText == "7CD333D3") // pc-w\local\locals.bin
-                    {
-                        entry.Extra.FileType = FileTypeEnum.BIN_MNU;
-                        if (entry.Raw.Language == FileLanguage.English)
-                            entry.Translatable = true;
+                    entry.Extra.FileType = FileTypeEnum.Unknown;
+                    List<string> specialFiles = new List<string>(new string[] {
+                        "489CD608", // pc-w\symbol.ids
+                        "9809A8EE", // pc-w\objectlist.txt
+                        "97836E8F", // pc-w\objlist.dat
+                        "F36C0FB8", // pc-w\unitlist.txt
+                        "478596A2", // pc-w\padshock\padshocklib.tfb
+                        "0A7B8340", // ??
 
-                        //Log.LogMsg(LogEntryType.Debug, string.Format("ReatFat: {0} locals.bin ({1}) found ", Path.GetFileName(fileName), fileEntry.Extra.LangText));
-                    }
+                    });
+
+                    if (specialFiles.Contains(entry.Extra.HashText))
+                        entry.Extra.FileType = FileTypeEnum.Special;
                     else
-                    {
-                        #region Filetype detection
-                        byte[] bufMagic = entry.ReadContent(4);
-
-                        entry.Extra.Magic = Encoding.ASCII.GetString(bufMagic);
-                        switch (entry.Extra.Magic)
+                        if (entry.Extra.HashText == "7CD333D3") // pc-w\local\locals.bin
                         {
-                            case "CDRM":
-                                entry.Extra.FileType = FileTypeEnum.CDRM;
-                                break;
-                            case "!WAR":
-                                entry.Extra.FileType = FileTypeEnum.RAW;
-                                break;
-                            case "FSB4":
-                                entry.Extra.FileType = FileTypeEnum.FSB4;
-                                break;
-                            case "MUS!":
-                                entry.Extra.FileType = FileTypeEnum.MUS;
-                                break;
-                            case "Vers":
-                                entry.Extra.FileType = FileTypeEnum.SCH;
-                                break;
+                            entry.Extra.FileType = FileTypeEnum.BIN_MNU;
+                            if (entry.Raw.Language == FileLanguage.English)
+                                entry.Translatable = true;
 
-                            case "\x16\x00\x00\x00":
-                                // MUL file test
-                                entry.Extra.FileType = FileTypeEnum.DRM;
-                                if (entry.Raw.Length > 8)
-                                {
-                                    bufMagic = entry.ReadContent(4, 4);
-                                    //int magicInt = BitConverter.ToInt32(bufMagic, 0);
-                                    //if (magicInt == -1 || magicInt == 0)
-                                    //{
-                                    //    entry.Extra.FileType = FileTypeEnum.MUL2;
-                                    //}
-                                }
-
-                                if (entry.Raw.Length > 0x814)
-                                    if (Encoding.ASCII.GetString(entry.ReadContent(0x810, 4)) == "ENIC")
-                                        entry.Extra.FileType = FileTypeEnum.MUL_CIN;
-
-                                if (entry.Raw.Length > 0x2014)
-                                    if (Encoding.ASCII.GetString(entry.ReadContent(0x2010, 4)) == "ENIC")
-                                        entry.Extra.FileType = FileTypeEnum.MUL_CIN;
-                                break;
-                            default:
-                                entry.Extra.FileType = FileTypeEnum.Undefined;
-                                break;
+                            //Log.LogMsg(LogEntryType.Debug, string.Format("ReatFat: {0} locals.bin ({1}) found ", Path.GetFileName(fileName), fileEntry.Extra.LangText));
                         }
-                        #endregion
-                        if (entry.Extra.FileType == FileTypeEnum.MUL_CIN || entry.Extra.FileType == FileTypeEnum.RAW_FNT || entry.Extra.FileType == FileTypeEnum.SCH)
-                            entry.Translatable = true;
-                    }
+                        else
+                        {
+                            #region Filetype detection
+                            byte[] bufMagic = entry.ReadContent(4);
+
+                            entry.Extra.Magic = Encoding.Default.GetString(bufMagic);
+                            switch (entry.Extra.Magic)
+                            {
+                                case "CDRM":
+                                    entry.Extra.FileType = FileTypeEnum.CDRM;
+                                    break;
+                                case "!WAR":
+                                    entry.Extra.FileType = FileTypeEnum.RAW;
+                                    break;
+                                case "FSB4":
+                                    entry.Extra.FileType = FileTypeEnum.FSB4;
+                                    break;
+                                case "MUS!":
+                                    entry.Extra.FileType = FileTypeEnum.MUS;
+                                    break;
+                                case "Vers":
+                                    entry.Extra.FileType = FileTypeEnum.SCH;
+                                    break;
+                                case "PCD9":
+                                    entry.Extra.FileType = FileTypeEnum.PCD9;
+                                    break;
+                                case "\x16\x00\x00\x00":
+                                    // MUL file test
+                                    entry.Extra.FileType = FileTypeEnum.DRM;
+                                    if (entry.Raw.Length > 8)
+                                    {
+                                        bufMagic = entry.ReadContent(4, 4);
+                                        //int magicInt = BitConverter.ToInt32(bufMagic, 0);
+                                        //if (magicInt == -1 || magicInt == 0)
+                                        //{
+                                        //    entry.Extra.FileType = FileTypeEnum.MUL2;
+                                        //}
+                                    }
+                                    break;
+                                default:
+                                    entry.Extra.FileType = FileTypeEnum.Unknown;
+                                    if (entry.Raw.Length > 0x814)
+                                        if (Encoding.ASCII.GetString(entry.ReadContent(0x810, 4)) == "ENIC")
+                                            entry.Extra.FileType = FileTypeEnum.MUL_CIN;
+
+                                    if (entry.Extra.FileType == FileTypeEnum.Unknown && entry.Raw.Length > 0x2014)
+                                        if (Encoding.ASCII.GetString(entry.ReadContent(0x2010, 4)) == "ENIC")
+                                            entry.Extra.FileType = FileTypeEnum.MUL_CIN;
+
+                                    if (entry.Extra.FileType == FileTypeEnum.Unknown)
+                                    {
+                                        UInt32 m = entry.ReadUInt32(0);
+                                        if (m == 0xBB80 || m == 0xAC44)
+                                            entry.Extra.FileType = FileTypeEnum.MUL2;
+                                        else
+                                            Debug.WriteLine("what?");
+                                    }
+                                    break;
+                            }
+                            #endregion
+                            if (entry.Extra.FileType == FileTypeEnum.MUL_CIN || entry.Extra.FileType == FileTypeEnum.RAW_FNT || entry.Extra.FileType == FileTypeEnum.SCH)
+                                entry.Translatable = true;
+                        }
 
                     //if (entry.Extra.HashText == "3533B8DF" && entry.Extra.BigFilePrefix == "patch")
                     //    Debug.WriteLine("stop here!");
@@ -1036,7 +1043,7 @@ namespace TRTR
                         entry.Extra.ResXFileName = entry.Extra.HashText + ".resx";
                     #endregion
 
-                    bool dumpIt = entry.Extra.FileType == FileTypeEnum.DRM; // && entry.Raw.Length <= 68; // fileEntry.Translatable; //false //xx
+                    bool dumpIt = entry.Extra.FileType == FileTypeEnum.Unknown; // && entry.Raw.Length <= 68; // fileEntry.Translatable; //false //xx
 
                     //if (fileEntry.Raw.Language == FileLanguage.NoLang || fileEntry.Raw.Language == FileLanguage.Unknown || fileEntry.Raw.Language == FileLanguage.English)
                     //{
@@ -1045,7 +1052,7 @@ namespace TRTR
                     //if (dumpIt)
                     {
 
-                        twEntries.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8} | {4,-8} {5} \"{6}\" {7:X8} {8:D3} {9:D6} {10}",
+                        twEntries.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8} | {4,-8} {5} \"{6}\" {7:X8} {8:D3} {9:D6} {10} {11}",
                             entry.Raw.Hash,
                             entry.Raw.Location,
                             entry.Raw.Length,
@@ -1056,6 +1063,7 @@ namespace TRTR
                             entry.Extra.Offset,
                             entry.Extra.BigFileIndex,
                             entry.OriginalIndex,
+                            Convert.ToString(entry.Raw.LangCode, 2),
                             entry.Extra.FileNameForced));
                     }
 
@@ -1241,7 +1249,7 @@ namespace TRTR
                     {
                         case FileTypeEnum.MUL_CIN:
                             {
-                                if (entry.Raw.Language == FileLanguage.English)
+                                if (entry.Raw.Language == FileLanguage.English || entry.Raw.Language == FileLanguage.NoLang)
                                 {
                                     //break; //xxbreak
                                     CineFile.Extract(extractFolder, entry, useDict);
