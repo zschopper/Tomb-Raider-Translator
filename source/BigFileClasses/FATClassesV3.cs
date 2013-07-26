@@ -119,16 +119,14 @@ namespace TRTR
             Location = BitConverter.ToUInt32(buf, startIndex + 0x0C);
             if (ofs < 0)
                 Location = checked((UInt32)(Location + ofs));
-
         }
 
         internal void GetBytes(byte[] buf, Int32 startIndex)
         {
             Array.Copy(BitConverter.GetBytes(Hash), 0, buf, startIndex + 0x00, 4);
-            Array.Copy(BitConverter.GetBytes(Length), 0, buf, startIndex + 0x04, 4);
-            Array.Copy(BitConverter.GetBytes(Location), 0, buf, startIndex + 0x08, 4);
-            Array.Copy(BitConverter.GetBytes(LangCode), 0, buf, startIndex + 0x0C, 4);
-            Location += 0x410; //xx: ezt kiszedni
+            Array.Copy(BitConverter.GetBytes(LangCode), 0, buf, startIndex + 0x04, 4);
+            Array.Copy(BitConverter.GetBytes(Length), 0, buf, startIndex + 0x08, 4);
+            Array.Copy(BitConverter.GetBytes(Location), 0, buf, startIndex + 0x0C, 4);
         }
     }
 
@@ -146,21 +144,22 @@ namespace TRTR
     [Flags]
     enum FileTypeEnum
     {
+        Undefined = 0,
         Unknown = 1,
-        CDRM = 2,
-        MUL_CIN = 4,
-        MUL2 = 8,
-        MUL4 = 16,
-        MUL6 = 32,
-        RAW = 64,
-        RAW_FNT = 128,
-        BIN = 256,
-        BIN_MNU = 512,
-        PNG = 1024,
-        FSB4 = 2048,
-        MUS = 4096,
-        SCH = 8192,
-
+        DRM = 2,
+        CDRM = 4,
+        MUL_CIN = 8,
+        MUL2 = 16,
+        MUL4 = 32,
+        MUL6 = 64,
+        RAW = 128,
+        RAW_FNT = 256,
+        BIN = 512,
+        BIN_MNU = 1024,
+        PNG = 2048,
+        FSB4 = 4096,
+        MUS = 8192,
+        SCH = 16384
     }
 
     /*enum FileLanguage
@@ -470,7 +469,7 @@ namespace TRTR
         {
             uint readLength = (maxLen > 0) ? maxLen : raw.Length - startPos;
             uint bufSize = 1024 * 1024;
-            byte[] buf = new byte[bufSize+1];
+            byte[] buf = new byte[bufSize + 1];
             FileStream fs = filePool.Open(this);
             try
             {
@@ -484,7 +483,7 @@ namespace TRTR
                     str.Write(buf, 0, readBytes);
                 }
                 if (str.Length != readLength)
-                    Log.LogDebugMsg("ejj");
+                    Log.LogDebugMsg("Steam copy error"); //xx translate?
 
             }
             finally
@@ -497,7 +496,7 @@ namespace TRTR
         internal uint DumpToFile(string fileName)
         {
             uint ret = 0;
-            FileStream fs = new FileStream(fileName, FileMode.Create,FileAccess.ReadWrite,FileShare.Read);
+            FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
             try
             {
                 ret = CopyContentToStream(fs);
@@ -835,235 +834,247 @@ namespace TRTR
         {
             byte[] buf = null;
 
-
-            //            foreach (KnownGame.KnownBigfileData bigFileData in TRGameInfo.Game.GameDefaults.BigFiles)
+            Dictionary<uint, string> hashFileNames = LoadFileNamesFile(Path.Combine(TRGameInfo.Game.WorkFolder, string.Format("filelist.txt", filePrefix)));
+            Dictionary<int, string> folderAliases, fileNameAliases;
+            LoadPathAliasesFile(Path.Combine(TRGameInfo.Game.WorkFolder, "path_aliases.txt"), out folderAliases, out fileNameAliases);
+            string fileName = string.Format(filePattern, 0);
+            string fileNameOnly = Path.GetFileName(fileName);
+            FileStream fs = filePool.Open(0);
+            BinaryReader br = new BinaryReader(fs);
+            try
             {
+                fs.Position = 0x0C;
+                entryCount = br.ReadInt32();
+                if (/*entryCount == 0 ||*/ entryCount > MaxFileEntryCount)
+                    throw new Exception(string.Format(Errors.FATEntryCountError, entryCount));
+                buf = new byte[entryCount * RawFileInfo.Size];
+                fs.Position = 0x34;
+                fs.Read(buf, 0, buf.Length);
+                Log.LogMsg(LogEntryType.Debug, string.Format("ReatFat: {0} entry count: {1}", fileNameOnly, entryCount));
+            }
+            finally
+            {
+                filePool.Close(0);
+            }
+            if (entryCount > 0)
+            {
+                RawFileInfo[] fileInfo = new RawFileInfo[entryCount];
 
-                Dictionary<uint, string> hashFileNames = LoadFileNamesFile(Path.Combine(TRGameInfo.Game.WorkFolder, string.Format("filelist.txt", filePrefix)));
-                Dictionary<int, string> folderAliases, fileNameAliases;
-                LoadPathAliasesFile(Path.Combine(TRGameInfo.Game.WorkFolder, "path_aliases.txt"), out folderAliases, out fileNameAliases);
-                string fileName = string.Format(filePattern, 0);
-                string fileNameOnly = Path.GetFileName(fileName);
-                FileStream fs = filePool.Open(0);
-                BinaryReader br = new BinaryReader(fs);
-                try
+                // fill hashTable & fileinfo table;
+                // **hashes[i] = BitConverter.ToUInt32(buf, i * 4);
+                TextWriter twEntriesByOrigOrder = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, filePrefix + "__fat_entries_raw.txt"));
+                twEntriesByOrigOrder.WriteLine(string.Format("{0,-8} {1,-8} {2,-8} {3,-8}", "hash", "lang", "length", "location"));
+                for (Int32 i = 0; i < entryCount; i++)
                 {
-                    fs.Position = 0x0C;
-                    entryCount = br.ReadInt32();
-                    if (/*entryCount == 0 ||*/ entryCount > MaxFileEntryCount)
-                        throw new Exception(string.Format(Errors.FATEntryCountError, entryCount));
-                    buf = new byte[entryCount * RawFileInfo.Size];
-                    fs.Position = 0x34;
-                    fs.Read(buf, 0, buf.Length);
-                    Log.LogMsg(LogEntryType.Debug, string.Format("ReatFat: {0} entry count: {1}", fileNameOnly, entryCount));
+                    // fileInfo[i].ToRawFileInfo(buf, RawFileInfo.Size * i);
+
+                    int startIndex = RawFileInfo.Size * i;
+
+                    fileInfo[i].Hash = BitConverter.ToUInt32(buf, startIndex + 0x00);
+                    fileInfo[i].LangCode = BitConverter.ToUInt32(buf, startIndex + 0x04);
+                    fileInfo[i].Length = BitConverter.ToUInt32(buf, startIndex + 0x08);
+                    fileInfo[i].Location = BitConverter.ToUInt32(buf, startIndex + 0x0C);
+
+                    RawFileInfo raw = fileInfo[i];
+                    //if (ofs < 0)
+                    //    raw.Location = checked((UInt32)(Location + ofs));
+
+                    //if ((fileInfo[i].Location & 0x000000FF) == 3)
+                    //    fileInfo[i].Location -= 0xDEDB003;
+                    twEntriesByOrigOrder.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8}",
+                        raw.Hash,
+                        raw.LangCode,
+                        raw.Length,
+                        raw.Location
+                        ));
                 }
-                finally
+                twEntriesByOrigOrder.Close();
+
+                Clear();
+                // assign file name from hash code
+
+                for (Int32 i = 0; i < entryCount; i++)
                 {
-                    filePool.Close(0);
+                    FileEntry entry = new FileEntry(fileInfo[i].Hash, fileInfo[i], i, this, filePool);
+                    Add(entry);
+                    string matchedFileName = string.Empty;
+                    entry.Extra.NameResolved = hashFileNames.TryGetValue(entry.Hash, out matchedFileName);
+                    entry.Extra.ResXFileName = string.Empty;
+                    if (entry.Extra.NameResolved)
+                    {
+                        entry.Extra.FileName = matchedFileName;
+                    }
                 }
-                if (entryCount > 0)
+
+                // calculate virtual sizes
+                SortBy(FileEntryCompareField.Location);
+                for (Int32 i = 0; i <= entryCount - 2; i++)
                 {
-                    RawFileInfo[] fileInfo = new RawFileInfo[entryCount];
-
-                    // fill hashTable & fileinfo table;
-                    // **hashes[i] = BitConverter.ToUInt32(buf, i * 4);
-                    for (Int32 i = 0; i < entryCount; i++)
+                    this[i].VirtualSize = (this[i + 1].Raw.Location - this[i].Raw.Location) * 0x800;
+                    if (this[i].VirtualSize == 0)
                     {
-                        fileInfo[i].ToRawFileInfo(buf, RawFileInfo.Size * i);
+                        // if (i == entryCount - 2)
+                        //     ;//                        throw new Exception(string.Format(DebugErrors.FATParseError, this[i].Hash));
+                        // else
+                        this[i].VirtualSize = (this[i + 2].Raw.Location - this[i].Raw.Location) * 0x800;
                     }
+                }
+                this[entryCount - 1].VirtualSize = (uint)Boundary.Extend((int)(this[entryCount - 1].Raw.Length), 0x800);
 
-                    Clear();
-                    // assign file name from hash code
-
-                    for (Int32 i = 0; i < entryCount; i++)
-                    {
-                        FileEntry entry = new FileEntry(fileInfo[i].Hash, fileInfo[i], i, this, filePool);
-                        Add(entry);
-                        string matchedFileName = string.Empty;
-                        entry.Extra.NameResolved = hashFileNames.TryGetValue(entry.Hash, out matchedFileName);
-                        entry.Extra.ResXFileName = string.Empty;
-                        if (entry.Extra.NameResolved)
+                // add stored infos
+                SortBy(FileEntryCompareField.Hash);
+                //FileStoredInfoList infoList = new FileStoredInfoList();
+                /**/
+                // determine file type
+                /*
+                 * // unnecessary
+                if ( File.Exists(".\\" + TRGameInfo.Game.Name + ".files.txt"))
+                {
+                    infoList.LoadFromFile(".\\" + TRGameInfo.Game.Name + ".files.txt");
+                    for (Int32 i = 0; i < entryCount - 1; i++)
+                        if (infoList.ContainsKey(this[i].Hash))
                         {
-                            entry.Extra.FileName = matchedFileName;
-                        }
-                    }
-
-                    // calculate virtual sizes
-                    SortBy(FileEntryCompareField.Location);
-                    for (Int32 i = 0; i <= entryCount - 2; i++)
-                    {
-                        this[i].VirtualSize = (this[i + 1].Raw.Location - this[i].Raw.Location) * 0x800;
-                        if (this[i].VirtualSize == 0)
-                        {
-                            // if (i == entryCount - 2)
-                            //     ;//                        throw new Exception(string.Format(DebugErrors.FATParseError, this[i].Hash));
-                            // else
-                            this[i].VirtualSize = (this[i + 2].Raw.Location - this[i].Raw.Location) * 0x800;
-                        }
-                    }
-                    this[entryCount - 1].VirtualSize = (uint)Boundary.Extend((int)(this[entryCount - 1].Raw.Length), 0x800);
-
-                    // add stored infos
-                    SortBy(FileEntryCompareField.Hash);
-                    //FileStoredInfoList infoList = new FileStoredInfoList();
-                    /**/
-                    // determine file type
-                    /*
-                     * // unnecessary
-                    if ( File.Exists(".\\" + TRGameInfo.Game.Name + ".files.txt"))
-                    {
-                        infoList.LoadFromFile(".\\" + TRGameInfo.Game.Name + ".files.txt");
-                        for (Int32 i = 0; i < entryCount - 1; i++)
-                            if (infoList.ContainsKey(this[i].Hash))
+                            if (this[i].Raw.Language == FileLanguage.Unknown ||
+                                this[i].Raw.Language == FileLanguage.NoLang ||
+                                this[i].Raw.Language == FileLanguage.English)
                             {
-                                if (this[i].Raw.Language == FileLanguage.Unknown ||
-                                    this[i].Raw.Language == FileLanguage.NoLang ||
-                                    this[i].Raw.Language == FileLanguage.English)
-                                {
-                                    this[i].Stored = infoList[this[i].Hash];
-                                    this[i].Translatable = true;
-                                }
+                                this[i].Stored = infoList[this[i].Hash];
+                                this[i].Translatable = true;
                             }
+                        }
+                }
+
+                 */
+
+                TextWriter twEntries = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, filePrefix + "__fat_entries.txt"));
+                twEntries.WriteLine(string.Format("{0,-8} {1,-8} {2,-8} {3,-8} | {4,-8} {5} {6} {7,-8} {8} {9} {10}", "hash", "location", "length", "lang", "filetype", "language", "magic", "offset", "bfindex", "origidx", "filename"));
+                SortBy(FileEntryCompareField.Location);
+                for (Int32 i = 0; i < entryCount; i++)
+                {
+                    FileEntry entry = this[i];
+                    entry.Extra.FileType = FileTypeEnum.Undefined;
+                    if (entry.Extra.HashText == "7CD333D3") // pc-w\local\locals.bin
+                    {
+                        entry.Extra.FileType = FileTypeEnum.BIN_MNU;
+                        if (entry.Raw.Language == FileLanguage.English)
+                            entry.Translatable = true;
+
+                        //Log.LogMsg(LogEntryType.Debug, string.Format("ReatFat: {0} locals.bin ({1}) found ", Path.GetFileName(fileName), fileEntry.Extra.LangText));
+                    }
+                    else
+                    {
+                        #region Filetype detection
+                        byte[] bufMagic = entry.ReadContent(4);
+
+                        entry.Extra.Magic = Encoding.ASCII.GetString(bufMagic);
+                        switch (entry.Extra.Magic)
+                        {
+                            case "CDRM":
+                                entry.Extra.FileType = FileTypeEnum.CDRM;
+                                break;
+                            case "!WAR":
+                                entry.Extra.FileType = FileTypeEnum.RAW;
+                                break;
+                            case "FSB4":
+                                entry.Extra.FileType = FileTypeEnum.FSB4;
+                                break;
+                            case "MUS!":
+                                entry.Extra.FileType = FileTypeEnum.MUS;
+                                break;
+                            case "Vers":
+                                entry.Extra.FileType = FileTypeEnum.SCH;
+                                break;
+
+                            case "\x16\x00\x00\x00":
+                                // MUL file test
+                                entry.Extra.FileType = FileTypeEnum.DRM;
+                                if (entry.Raw.Length > 8)
+                                {
+                                    bufMagic = entry.ReadContent(4, 4);
+                                    //int magicInt = BitConverter.ToInt32(bufMagic, 0);
+                                    //if (magicInt == -1 || magicInt == 0)
+                                    //{
+                                    //    entry.Extra.FileType = FileTypeEnum.MUL2;
+                                    //}
+                                }
+
+                                if (entry.Raw.Length > 0x814)
+                                    if (Encoding.ASCII.GetString(entry.ReadContent(0x810, 4)) == "ENIC")
+                                        entry.Extra.FileType = FileTypeEnum.MUL_CIN;
+
+                                if (entry.Raw.Length > 0x2014)
+                                    if (Encoding.ASCII.GetString(entry.ReadContent(0x2010, 4)) == "ENIC")
+                                        entry.Extra.FileType = FileTypeEnum.MUL_CIN;
+                                break;
+                            default:
+                                entry.Extra.FileType = FileTypeEnum.Undefined;
+                                break;
+                        }
+                        #endregion
+                        if (entry.Extra.FileType == FileTypeEnum.MUL_CIN || entry.Extra.FileType == FileTypeEnum.RAW_FNT || entry.Extra.FileType == FileTypeEnum.SCH)
+                            entry.Translatable = true;
                     }
 
-                     */
+                    //if (entry.Extra.HashText == "3533B8DF" && entry.Extra.BigFilePrefix == "patch")
+                    //    Debug.WriteLine("stop here!");
 
-                    TextWriter twEntriesByOrigOrder = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, filePrefix + "__fat_entries_original.txt"));
-                    twEntriesByOrigOrder.WriteLine(string.Format("{0,-8} {1,-8} {2,-8} {3,-8} | {4,-8} {5} {6} {7,-8} {8} {9} {10}", "hash", "location", "length", "lang", "filetype", "language", "magic", "offset", "bfindex", "origidx", "filename"));
-                    for (Int32 i = 0; i < entryCount; i++)
+                    #region Search filename or path alias
+                    if (entry.Extra.NameResolved && entry.Translatable)
                     {
-                        FileEntry entry = this[i]; 
-                        twEntriesByOrigOrder.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8}",
+                        string path = Path.GetDirectoryName(entry.Extra.FileName);
+                        int pathHash = path.GetHashCode();
+                        string alias;
+
+                        if (fileNameAliases.TryGetValue(pathHash, out alias))
+                            entry.Extra.ResXFileName = alias;
+                        else
+                            if (folderAliases.TryGetValue(pathHash, out alias))
+                                entry.Extra.ResXFileName = Path.ChangeExtension(entry.Extra.FileName.Replace(path, alias), ".resx");
+
+                    }
+                    if (entry.Extra.ResXFileName == string.Empty)
+                        entry.Extra.ResXFileName = entry.Extra.HashText + ".resx";
+                    #endregion
+
+                    bool dumpIt = entry.Extra.FileType == FileTypeEnum.DRM; // && entry.Raw.Length <= 68; // fileEntry.Translatable; //false //xx
+
+                    //if (fileEntry.Raw.Language == FileLanguage.NoLang || fileEntry.Raw.Language == FileLanguage.Unknown || fileEntry.Raw.Language == FileLanguage.English)
+                    //{
+                    //    dumpIt = true; // fileEntry.Extra.FileType == FileTypeEnum.MUL_CIN;
+                    //}
+                    //if (dumpIt)
+                    {
+
+                        twEntries.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8} | {4,-8} {5} \"{6}\" {7:X8} {8:D3} {9:D6} {10}",
                             entry.Raw.Hash,
                             entry.Raw.Location,
                             entry.Raw.Length,
-                            entry.Raw.LangCode));
+                            entry.Raw.LangCode,
+                            entry.Extra.FileType.ToString(),
+                            entry.Raw.Language.ToString(),
+                            entry.Extra.Magic,
+                            entry.Extra.Offset,
+                            entry.Extra.BigFileIndex,
+                            entry.OriginalIndex,
+                            entry.Extra.FileNameForced));
                     }
-                    twEntriesByOrigOrder.Close();
 
-                    TextWriter twEntries = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, filePrefix + "__fat_entries.txt"));
-                    twEntries.WriteLine(string.Format("{0,-8} {1,-8} {2,-8} {3,-8} | {4,-8} {5} {6} {7,-8} {8} {9} {10}", "hash", "location", "length", "lang", "filetype", "language", "magic", "offset", "bfindex", "origidx", "filename"));
-                    SortBy(FileEntryCompareField.Location);
-                    for (Int32 i = 0; i < entryCount; i++)
+                    if (dumpIt) //(((fileEntry.Extra.FileType & (/*FileTypeEnum.RAW_FNT | FileTypeEnum.MUL_CIN |*/ FileTypeEnum.SCH)) != 0))
                     {
-                        FileEntry entry = this[i];
-                        entry.Extra.FileType = FileTypeEnum.Unknown;
-                        if (entry.Extra.HashText == "7CD333D3") // pc-w\local\locals.bin
-                        {
-                            entry.Extra.FileType = FileTypeEnum.BIN_MNU;
-                            if (entry.Raw.Language == FileLanguage.English)
-                                entry.Translatable = true;
-
-                            //Log.LogMsg(LogEntryType.Debug, string.Format("ReatFat: {0} locals.bin ({1}) found ", Path.GetFileName(fileName), fileEntry.Extra.LangText));
-                        }
-                        else
-                        {
-                            #region Filetype detection
-                            byte[] bufMagic = entry.ReadContent(4);
-
-                            entry.Extra.Magic = Encoding.ASCII.GetString(bufMagic);
-                            switch (entry.Extra.Magic)
-                            {
-                                case "CDRM":
-                                    entry.Extra.FileType = FileTypeEnum.CDRM;
-                                    break;
-                                case "!WAR":
-                                    entry.Extra.FileType = FileTypeEnum.RAW;
-                                    break;
-                                case "FSB4":
-                                    entry.Extra.FileType = FileTypeEnum.FSB4;
-                                    break;
-                                case "MUS!":
-                                    entry.Extra.FileType = FileTypeEnum.MUS;
-                                    break;
-                                case "Vers":
-                                    entry.Extra.FileType = FileTypeEnum.SCH;
-                                    break;
-
-                                default:
-                                    // MUL file test
-                                    if (entry.Raw.Length > 8)
-                                    {
-                                        bufMagic = entry.ReadContent(4, 4);
-                                        int magicInt = BitConverter.ToInt32(bufMagic, 0);
-                                        if (magicInt == -1 || magicInt == 0)
-                                        {
-                                            entry.Extra.FileType = FileTypeEnum.MUL2;
-                                        }
-                                    }
-
-                                    if (entry.Raw.Length > 0x814)
-                                        if (Encoding.ASCII.GetString(entry.ReadContent(0x2010, 4)) == "ENIC")
-                                            entry.Extra.FileType = FileTypeEnum.MUL_CIN;
-
-                                    if (entry.Raw.Length > 0x2014)
-                                        if (Encoding.ASCII.GetString(entry.ReadContent(0x2010, 4)) == "ENIC")
-                                            entry.Extra.FileType = FileTypeEnum.MUL_CIN;
-                                    break;
-                            }
-                            #endregion
-                            if (entry.Extra.FileType == FileTypeEnum.MUL_CIN || entry.Extra.FileType == FileTypeEnum.RAW_FNT || entry.Extra.FileType == FileTypeEnum.SCH)
-                                entry.Translatable = true;
-                        }
-
-                        if (entry.Extra.HashText == "3533B8DF" && entry.Extra.BigFilePrefix == "patch")
-                            Debug.WriteLine("ez");
-                        if (entry.Extra.NameResolved && entry.Translatable)
-                        {
-                            string path = Path.GetDirectoryName(entry.Extra.FileName);
-                            int pathHash = path.GetHashCode();
-                            string alias;
-
-                            if (fileNameAliases.TryGetValue(pathHash, out alias))
-                                entry.Extra.ResXFileName = alias;
-                            else
-                                if (folderAliases.TryGetValue(pathHash, out alias))
-                                    entry.Extra.ResXFileName = Path.ChangeExtension(entry.Extra.FileName.Replace(path, alias), ".resx");
-
-                        }
-                        if (entry.Extra.ResXFileName == string.Empty)
-                            entry.Extra.ResXFileName = entry.Extra.HashText + ".resx";
-
-                        bool dumpIt = false; // fileEntry.Translatable; //false //xx
-
-                        //if (fileEntry.Raw.Language == FileLanguage.NoLang || fileEntry.Raw.Language == FileLanguage.Unknown || fileEntry.Raw.Language == FileLanguage.English)
-                        //{
-                        //    dumpIt = true; // fileEntry.Extra.FileType == FileTypeEnum.MUL_CIN;
-                        //}
-                        //if (dumpIt)
-                        {
-
-                            twEntries.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8} | {4,-8} {5} \"{6}\" {7:X8} {8:D3} {9:D6} {10}",
-                                entry.Hash,
-                                entry.Raw.Location,
-                                entry.Raw.Length,
-                                entry.Raw.LangCode,
-                                entry.Extra.FileType.ToString(),
-                                entry.Raw.Language.ToString(),
-                                entry.Extra.Magic,
-                                entry.Extra.Offset,
-                                entry.Extra.BigFileIndex,
-                                entry.OriginalIndex,
-                                entry.Extra.FileNameForced));
-                            //twEntries.WriteLine(string.Format("{0:X8}\t{1:X8}\t{2}", fileEntry.Hash, fileEntry.Hash, fileEntry.Extra.FileType.ToString(), fileEntry.Raw.Language.ToString()));
-                        }
-
-                        if (dumpIt) //(((fileEntry.Extra.FileType & (/*FileTypeEnum.RAW_FNT | FileTypeEnum.MUL_CIN |*/ FileTypeEnum.SCH)) != 0))
-                        {
-                            byte[] content = entry.ReadContent();
-                            string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "raw",
-                                    string.Format("{0}.{1}.{2}.txt", entry.Extra.BigFilePrefix, entry.Extra.FileNameOnlyForced, entry.Extra.LangText));
-                            Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
-                            FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
-                            fx.Write(content, 0, content.Length);
-                            fx.Close();
-                        }
-
-
+                        byte[] content = entry.ReadContent();
+                        string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "raw",
+                                string.Format("{0}.{1}.{2}.txt", entry.Extra.BigFilePrefix, entry.Extra.FileNameOnlyForced, entry.Extra.LangText));
+                        Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
+                        FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
+                        fx.Write(content, 0, content.Length);
+                        fx.Close();
                     }
-                    twEntries.Close();
+
+
                 }
+                twEntries.Close();
             }
+
         }
 
         internal void CreateRestoration()
