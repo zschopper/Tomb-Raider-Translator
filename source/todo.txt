@@ -1,0 +1,90 @@
+﻿+ Indító exe meghatározása
+- Új fordítás formátumának kezelése xml összeállításakor (régiből új, újból xml)
+- Opció: Nyelv és felirat átváltása angolra (ha nem az), vagy figyelmeztetés
++ kiírni hogy épp min dolgozik.
++ valami figyelmeztetés hogy elkészült.
+
+fájlokat nyitni művelet előtt
+(bekérni a fájlneveket)
+
+
+- Játékinformációk:
+  detektálási metódus (reg. stb)
+  install path
+  verzió
+  fordítási eljárások listája
+
+
+
+  fájltípusok:
+
+  fat (spec)
+  menu
+  cine
+  sch (plain text subtitlefiles - GoL)
+  font (v1)
+  font (v2 - TRU, GoL)
+
+
+  GameInfo
+  - Részleges betöltés?
+
+keresni:
+throw new Exception("");
+
+HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Applications\steam.exe\shell\open\command
+HKEY_LOCAL_MACHINE\SOFTWARE\Classes\steam 
+HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Valve.SteamP2P\shell\open\command\@
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 35150
+HKEY_LOCAL_MACHINE\SOFTWARE\Valve\Steam\InstallPath 
+
+
+\\\Registry\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 35150
+"DisplayIcon"="D:\\Program Files (x86)\\Steam\\steam\\games\\6616490c230100166ebb2a80617ed8605e3e7882.ico"
+"DisplayName"="Lara Croft and the Guardian of Light Demo"
+"InstallLocation"="d:\\program files (x86)\\steam\\steamapps\\common\\lara croft and the guardian of light"
+"Publisher"="Crystal Dynamics"
+
+
+CineFile
+  List<CineBlock> Blocks
+	CineSubtitles Subtitles (CineSubtitles : List<CineSubtitleEntry>)
+	
+	
+ 10466CE1.unknown 
+ 
+4 Bytes - Language ID (0xFFFFE0 -> %0.2x) - (0x05 - DUTCH) , (0x08 - PORTUGUESE)
+4 Bytes - Version? (0x36 Always)
+4 Bytes - Total Records
+216 Bytes - 0xFF
+4 Bytes - Null
+
+Next values - strings offsets
+
+for (uint i = 0; i < count; i++)
+  {
+    Here, some cool operations with strings :)
+  }
+
+  
+xenon-w\objectlist.txt
+xenon-w\objlist.dat
+xenon-w\unitlist.txt
+\tras\game\xenon\tras.arg
+\tras\xenon-w\objectlist.txt
+\tras\xenon-w\objlist.dat
+\tras\xenon-w\unitlist.txt
+\tras\local\localization\movies\%.sch - Where % Movie filename without extension
+
+4 Bytes - PS3T (Always)
+4 Bytes - Compressed Size (Without Header (size 0x24) - Endian Big)
+4 Bytes - Decomrpessed Size ? (Endian Big)
+4 Bytes - Unknown (Endian Little)
+4 Bytes - Unknown (Endian Little)
+4 Bytes - Unknown (Endian Little)
+4 Bytes - Unknown (Endian Little)
+8 Bytes - Nulls
+
+Open MUL, go to offset 0x2050 and you can see real name
+
+In this folder pc-w\audio\streams\vo\act_03\305_mb_monastery_b\305_mb_040_ready_room\ only 3 files:

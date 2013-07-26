@@ -1,0 +1,254 @@
+C pc-w\local                                                                                               menu\locals.resx
+S pc-w\cinstream                                                                                           cinematics
+S local\localization\movies                                                                                movies
+
+C pc-w\audio\streams\vo\act_01\102_sd_scavenger_den\102_sd_010_sack_swing                                  cinematics\act_01\102_scavenger_den_010_sack_swing.resx
+C pc-w\audio\streams\vo\act_01\102_sd_scavenger_den\102_sd_020_spike_pull                                  cinematics\act_01\102_scavenger_den_020_spike_pull.resx
+C pc-w\audio\streams\vo\act_01\102_sd_scavenger_den\102_sd_030_sacrifice                                   cinematics\act_01\102_scavenger_den_030_sacrifice.resx
+C pc-w\audio\streams\vo\act_01\102_sd_scavenger_den\102_sd_040_fuse_room                                   cinematics\act_01\102_scavenger_den_040_fuse_room.resx
+C pc-w\audio\streams\vo\act_01\102_sd_scavenger_den\102_sd_050_puzzle_room                                 cinematics\act_01\102_scavenger_den_050_puzzle_room.resx
+C pc-w\audio\streams\vo\act_01\102_sd_scavenger_den\102_sd_060_cave_in                                     cinematics\act_01\102_scavenger_den_060_cave_in.resx
+
+C pc-w\audio\streams\vo\act_01\103_ac_amelias_camp\103_ac_010_ocean_vista                                  cinematics\act_01\103_amelias_camp_010_ocean_vista.resx
+C pc-w\audio\streams\vo\act_01\103_ac_amelias_camp\103_ac_015_tipping_plane                                cinematics\act_01\103_amelias_camp_015_tipping_plane.resx
+C pc-w\audio\streams\vo\act_01\103_ac_amelias_camp\103_ac_020_signs_of_life                                cinematics\act_01\103_amelias_camp_020_signs_of_life.resx
+C pc-w\audio\streams\vo\act_01\103_ac_amelias_camp\103_ac_030_woman_vs_nature                              cinematics\act_01\103_amelias_camp_030_woman_vs_nature.resx
+C pc-w\audio\streams\vo\act_01\103_ac_amelias_camp\103_ac_043_pry_axe_door                                 cinematics\act_01\103_amelias_camp_043_pry_axe_door.resx
+C pc-w\audio\streams\vo\act_01\103_ac_amelias_camp\103_ac_045_not_alone                                    cinematics\act_01\103_amelias_camp_045_not_alone.resx
+C pc-w\audio\streams\vo\act_01\103_ac_amelias_camp\103_ac_070_kong_gate                                    cinematics\act_01\103_amelias_camp_070_kong_gate.resx
+C pc-w\audio\streams\vo\act_01\103_ac_amelias_camp\103_ac_090_forest                                       cinematics\act_01\103_amelias_camp_090_forest.resx
+C pc-w\audio\streams\vo\act_01\103_ac_amelias_camp\103_ac_095_clearing_path                                cinematics\act_01\103_amelias_camp_095_clearing_path.resx
+C pc-w\audio\streams\vo\act_01\103_ac_amelias_camp\103_ac_100_roth_lessons                                 cinematics\act_01\103_amelias_camp_100_roth_lessons.resx
+
+C pc-w\audio\streams\vo\act_01\104_mc_mountain_climb\104_mc_010_shop_talk2                                 cinematics\act_01\104_mountain_climb_010_shop_talk2.resx
+C pc-w\audio\streams\vo\act_01\104_mc_mountain_climb\104_mc_035_run_for_your_life                          cinematics\act_01\104_mountain_climb_035_run_for_your_life.resx
+C pc-w\audio\streams\vo\act_01\104_mc_mountain_climb\104_mc_040_first_blood                                cinematics\act_01\104_mountain_climb_040_first_blood.resx
+C pc-w\audio\streams\vo\act_01\104_mc_mountain_climb\104_mc_042_new_gun                                    cinematics\act_01\104_mountain_climb_042_new_gun.resx
+C pc-w\audio\streams\vo\act_01\104_mc_mountain_climb\104_mc_045_buyers_remorse                             cinematics\act_01\104_mountain_climb_045_buyers_remorse.resx
+C pc-w\audio\streams\vo\act_01\104_mc_mountain_climb\104_mc_050_checking_in                                cinematics\act_01\104_mountain_climb_050_checking_in.resx
+C pc-w\audio\streams\vo\act_01\104_mc_mountain_climb\104_mc_075_ladder_hut                                 cinematics\act_01\104_mountain_climb_075_ladder_hut.resx
+C pc-w\audio\streams\vo\act_01\104_mc_mountain_climb\104_mc_085_upper_village                              cinematics\act_01\104_mountain_climb_085_upper_village.resx
+C pc-w\audio\streams\vo\act_01\104_mc_mountain_climb\104_mc_095_kings_hut                                  cinematics\act_01\104_mountain_climb_095_kings_hut.resx
+C pc-w\audio\streams\vo\act_01\104_mc_mountain_climb\104_mc_110_experience_way                             cinematics\act_01\104_mountain_climb_110_experience_way.resx
+
+C pc-w\audio\streams\vo\act_01\105_vh_mountain_hub\105_vh_010_village_intro                                cinematics\act_01\105_mountain_hub_010_village_intro.resx
+C pc-w\audio\streams\vo\act_01\105_vh_mountain_hub\105_vh_020_lower_village                                cinematics\act_01\105_mountain_hub_020_lower_village.resx
+C pc-w\audio\streams\vo\act_01\105_vh_mountain_hub\105_vh_030_wolf_den                                     cinematics\act_01\105_mountain_hub_030_wolf_den.resx
+C pc-w\audio\streams\vo\act_01\105_vh_mountain_hub\105_vh_040_roth_interact                                cinematics\act_01\105_mountain_hub_040_roth_interact.resx
+C pc-w\audio\streams\vo\act_01\105_vh_mountain_hub\105_vh_050_axe_climb                                    cinematics\act_01\105_mountain_hub_050_axe_climb.resx
+C pc-w\audio\streams\vo\act_01\105_vh_mountain_hub\105_vh_060_pre_combat                                   cinematics\act_01\105_mountain_hub_060_pre_combat.resx
+C pc-w\audio\streams\vo\act_01\105_vh_mountain_hub\105_vh_070_connector                                    cinematics\act_01\105_mountain_hub_070_connector.resx
+
+C pc-w\audio\streams\vo\act_01\106_so_ww2_sos\106_so_010_sc_14_5_crew_memories                             cinematics\act_01\106_ww2_sos_010_sc_14_5_crew_memories.resx
+C pc-w\audio\streams\vo\act_01\106_so_ww2_sos\106_so_015_pre_combat                                        cinematics\act_01\106_ww2_sos_015_pre_combat.resx
+C pc-w\audio\streams\vo\act_01\106_so_ww2_sos\106_so_025_snare_trap_combat                                 cinematics\act_01\106_ww2_sos_025_snare_trap_combat.resx
+C pc-w\audio\streams\vo\act_01\106_so_ww2_sos\106_so_030_building                                          cinematics\act_01\106_ww2_sos_030_building.resx
+C pc-w\audio\streams\vo\act_01\106_so_ww2_sos\106_so_040_ambush                                            cinematics\act_01\106_ww2_sos_040_ambush.resx
+C pc-w\audio\streams\vo\act_01\106_so_ww2_sos\106_so_045_barrel                                            cinematics\act_01\106_ww2_sos_045_barrel.resx
+C pc-w\audio\streams\vo\act_01\106_so_ww2_sos\106_so_050_gas_chamber                                       cinematics\act_01\106_ww2_sos_050_gas_chamber.resx
+C pc-w\audio\streams\vo\act_01\106_so_ww2_sos\106_so_060_spotlight                                         cinematics\act_01\106_ww2_sos_060_spotlight.resx
+C pc-w\audio\streams\vo\act_01\106_so_ww2_sos\106_so_080_town                                              cinematics\act_01\106_ww2_sos_080_town.resx
+C pc-w\audio\streams\vo\act_01\106_so_ww2_sos\106_so_110_fuel_tank                                         cinematics\act_01\106_ww2_sos_110_fuel_tank.resx
+
+C pc-w\audio\streams\vo\act_01\107_cl_slide_and_cliffs\107_cl_010_get_to_the_pilot                         cinematics\act_01\107_slide_and_cliffs_010_get_to_the_pilot.resx
+C pc-w\audio\streams\vo\act_01\107_cl_slide_and_cliffs\107_cl_020_pilot_death                              cinematics\act_01\107_slide_and_cliffs_020_pilot_death.resx
+C pc-w\audio\streams\vo\act_01\107_cl_slide_and_cliffs\107_cl_030_rope_connector                           cinematics\act_01\107_slide_and_cliffs_030_rope_connector.resx
+
+C pc-w\audio\streams\vo\act_01\108_vh_mountain_hub\108_vh_015_roth_interact                                cinematics\act_01\108_mountain_hub_015_roth_interact.resx
+C pc-w\audio\streams\vo\act_01\108_vh_mountain_hub\108_vh_020_wreckage                                     cinematics\act_01\108_mountain_hub_020_wreckage.resx
+C pc-w\audio\streams\vo\act_01\108_vh_mountain_hub\108_vh_030_rope_crossing                                cinematics\act_01\108_mountain_hub_030_rope_crossing.resx
+C pc-w\audio\streams\vo\act_01\108_vh_mountain_hub\108_vh_090_radio                                        cinematics\act_01\108_mountain_hub_090_radio.resx
+C pc-w\audio\streams\vo\act_01\108_vh_mountain_hub\108_vh_100_connector                                    cinematics\act_01\108_mountain_hub_100_connector.resx
+C pc-w\audio\streams\vo\act_01\108_vh_mountain_hub\108_vh_110_survivor_chatter                             cinematics\act_01\108_mountain_hub_110_survivor_chatter.resx
+
+C pc-w\audio\streams\vo\act_01\109_ma_monastery_escape\109_ma_010_eatery                                   cinematics\act_01\109_monastery_escape_010_eatery.resx
+C pc-w\audio\streams\vo\act_01\109_ma_monastery_escape\109_ma_020_vista                                    cinematics\act_01\109_monastery_escape_020_vista.resx
+C pc-w\audio\streams\vo\act_01\109_ma_monastery_escape\109_ma_030_queens_tomb                              cinematics\act_01\109_monastery_escape_030_queens_tomb.resx
+C pc-w\audio\streams\vo\act_01\109_ma_monastery_escape\109_ma_040_tunnel                                   cinematics\act_01\109_monastery_escape_040_tunnel.resx
+C pc-w\audio\streams\vo\act_01\109_ma_monastery_escape\109_ma_050_bell                                     cinematics\act_01\109_monastery_escape_050_bell.resx
+
+C pc-w\audio\streams\vo\act_02\201_vh_mountain_hub\201_vh_015_hub_return                                   cinematics\act_02\201_mountain_hub_015_hub_return.resx
+C pc-w\audio\streams\vo\act_02\201_vh_mountain_hub\201_vh_025_pre_combat_1                                 cinematics\act_02\201_mountain_hub_025_pre_combat_1.resx
+C pc-w\audio\streams\vo\act_02\201_vh_mountain_hub\201_vh_032_pre_combat_2                                 cinematics\act_02\201_mountain_hub_032_pre_combat_2.resx
+C pc-w\audio\streams\vo\act_02\201_vh_mountain_hub\201_vh_045_rescued_radio                                cinematics\act_02\201_mountain_hub_045_rescued_radio.resx
+C pc-w\audio\streams\vo\act_02\201_vh_mountain_hub\201_vh_100_combat                                       cinematics\act_02\201_mountain_hub_100_combat.resx
+
+C pc-w\audio\streams\vo\act_02\202_de_the_descent\202_de_010_river_crossing                                cinematics\act_02\202_the_descent_010_river_crossing.resx
+
+C pc-w\audio\streams\vo\act_02\203_sh_scavtown_hub\203_sh_005_scav_hub_intro                               cinematics\act_02\203_scavtown_hub_005_scav_hub_intro.resx
+C pc-w\audio\streams\vo\act_02\203_sh_scavtown_hub\203_sh_010_torture_way                                  cinematics\act_02\203_scavtown_hub_010_torture_way.resx
+C pc-w\audio\streams\vo\act_02\203_sh_scavtown_hub\203_sh_015_pre_combat                                   cinematics\act_02\203_scavtown_hub_015_pre_combat.resx
+C pc-w\audio\streams\vo\act_02\203_sh_scavtown_hub\203_sh_045_scav_combat                                  cinematics\act_02\203_scavtown_hub_045_scav_combat.resx
+C pc-w\audio\streams\vo\act_02\203_sh_scavtown_hub\203_sh_070_fire_gate                                    cinematics\act_02\203_scavtown_hub_070_fire_gate.resx
+
+C pc-w\audio\streams\vo\act_02\204_sh_scavtown_hub\204_sh_010_courtyard                                    cinematics\act_02\204_scavtown_hub_010_courtyard.resx
+C pc-w\audio\streams\vo\act_02\204_sh_scavtown_hub\204_sh_020_dynamite_fight                               cinematics\act_02\204_scavtown_hub_020_dynamite_fight.resx
+C pc-w\audio\streams\vo\act_02\204_sh_scavtown_hub\204_sh_025_cargo_lanes                                  cinematics\act_02\204_scavtown_hub_025_cargo_lanes.resx
+C pc-w\audio\streams\vo\act_02\204_sh_scavtown_hub\204_sh_025_grim_intro                                   cinematics\act_02\204_scavtown_hub_025_grim_intro.resx
+C pc-w\audio\streams\vo\act_02\204_sh_scavtown_hub\204_sh_028_grim_death                                   cinematics\act_02\204_scavtown_hub_028_grim_death.resx
+C pc-w\audio\streams\vo\act_02\204_sh_scavtown_hub\204_sh_030_rope_bridge                                  cinematics\act_02\204_scavtown_hub_030_rope_bridge.resx
+C pc-w\audio\streams\vo\act_02\204_sh_scavtown_hub\204_sh_036_before_big_bridge                            cinematics\act_02\204_scavtown_hub_036_before_big_bridge.resx
+C pc-w\audio\streams\vo\act_02\204_sh_scavtown_hub\204_sh_040_big_bridge                                   cinematics\act_02\204_scavtown_hub_040_big_bridge.resx
+C pc-w\audio\streams\vo\act_02\204_sh_scavtown_hub\204_sh_040_big_bridge_bark                              cinematics\act_02\204_scavtown_hub_040_big_bridge_bark.resx
+C pc-w\audio\streams\vo\act_02\204_sh_scavtown_hub\204_sh_050_going_in                                     cinematics\act_02\204_scavtown_hub_050_going_in.resx
+
+C pc-w\audio\streams\vo\act_02\205_bi_base_infiltration\205_bi_020_pit                                     cinematics\act_02\205_base_infiltration_020_pit.resx
+C pc-w\audio\streams\vo\act_02\205_bi_base_infiltration\205_bi_030_catacombs                               cinematics\act_02\205_base_infiltration_030_catacombs.resx
+C pc-w\audio\streams\vo\act_02\205_bi_base_infiltration\205_bi_035_climbhall                               cinematics\act_02\205_base_infiltration_035_climbhall.resx
+C pc-w\audio\streams\vo\act_02\205_bi_base_infiltration\205_bi_040_altar_room                              cinematics\act_02\205_base_infiltration_040_altar_room.resx
+C pc-w\audio\streams\vo\act_02\205_bi_base_infiltration\205_bi_050_puzzle                                  cinematics\act_02\205_base_infiltration_050_puzzle.resx
+C pc-w\audio\streams\vo\act_02\205_bi_base_infiltration\205_bi_060_radio                                   cinematics\act_02\205_base_infiltration_060_radio.resx
+
+C pc-w\audio\streams\vo\act_02\206_ge_great_escape\206_ge_010_entrance                                     cinematics\act_02\206_great_escape_010_entrance.resx
+C pc-w\audio\streams\vo\act_02\206_ge_great_escape\206_ge_020_rooftops                                     cinematics\act_02\206_great_escape_020_rooftops.resx
+C pc-w\audio\streams\vo\act_02\206_ge_great_escape\206_ge_030_palace                                       cinematics\act_02\206_great_escape_030_palace.resx
+C pc-w\audio\streams\vo\act_02\206_ge_great_escape\206_ge_040_turret                                       cinematics\act_02\206_great_escape_040_turret.resx
+C pc-w\audio\streams\vo\act_02\206_ge_great_escape\206_ge_070_basetown                                     cinematics\act_02\206_great_escape_070_basetown.resx
+
+C pc-w\audio\streams\vo\act_02\207_tt_two_towers\207_tt_020_higher_ground                                  cinematics\act_02\207_two_towers_020_higher_ground.resx
+
+C pc-w\audio\streams\vo\act_03\300_rc_return_from_chopper\300_rc_015_transition_to_camp                    cinematics\act_03\300_return_from_chopper_015_transition_to_camp.resx
+C pc-w\audio\streams\vo\act_03\300_rc_return_from_chopper\300_rc_020_hunter_intro                          cinematics\act_03\300_return_from_chopper_020_hunter_intro.resx
+C pc-w\audio\streams\vo\act_03\300_rc_return_from_chopper\300_rc_030_hunter_interacts                      cinematics\act_03\300_return_from_chopper_030_hunter_interacts.resx
+C pc-w\audio\streams\vo\act_03\300_rc_return_from_chopper\300_rc_050_hunter_success                        cinematics\act_03\300_return_from_chopper_050_hunter_success.resx
+C pc-w\audio\streams\vo\act_03\300_rc_return_from_chopper\300_rc_060_forest                                cinematics\act_03\300_return_from_chopper_060_forest.resx
+C pc-w\audio\streams\vo\act_03\300_sh_scavtown_hub\300_sh_010_radio                                        cinematics\act_03\300_scavtown_hub_010_radio.resx
+C pc-w\audio\streams\vo\act_03\300_sh_scavtown_hub\300_sh_020_sam_radio                                    cinematics\act_03\300_scavtown_hub_020_sam_radio.resx
+
+C pc-w\audio\streams\vo\act_03\301_tb_to_the_beach\301_tb_010_kick_the_bucket                              cinematics\act_03\301_to_the_beach_010_kick_the_bucket.resx
+C pc-w\audio\streams\vo\act_03\301_tb_to_the_beach\301_tb_020_wrecking_boat                                cinematics\act_03\301_to_the_beach_020_wrecking_boat.resx
+C pc-w\audio\streams\vo\act_03\301_tb_to_the_beach\301_tb_040_skyboat_combat                               cinematics\act_03\301_to_the_beach_040_skyboat_combat.resx
+
+C pc-w\audio\streams\vo\act_03\302_bh_beach_hub\302_bh_010_survivors1                                      cinematics\act_03\302_beach_hub_010_survivors1.resx
+C pc-w\audio\streams\vo\act_03\302_bh_beach_hub\302_bh_020_galleon                                         cinematics\act_03\302_beach_hub_020_galleon.resx
+C pc-w\audio\streams\vo\act_03\302_bh_beach_hub\302_bh_030_survivors2                                      cinematics\act_03\302_beach_hub_030_survivors2.resx
+C pc-w\audio\streams\vo\act_03\302_bh_beach_hub\302_bh_050_survivors3                                      cinematics\act_03\302_beach_hub_050_survivors3.resx
+C pc-w\audio\streams\vo\act_03\302_bh_beach_hub\302_bh_070_beach_cliffs                                    cinematics\act_03\302_beach_hub_070_beach_cliffs.resx
+C pc-w\audio\streams\vo\act_03\302_bh_beach_hub\302_bh_090_survivors4                                      cinematics\act_03\302_beach_hub_090_survivors4.resx
+C pc-w\audio\streams\vo\act_03\302_bh_beach_hub\302_bh_110_alex_radio                                      cinematics\act_03\302_beach_hub_110_alex_radio.resx
+C pc-w\audio\streams\vo\act_03\302_bh_beach_hub\302_bh_120_galleon_precombat                               cinematics\act_03\302_beach_hub_120_galleon_precombat.resx
+
+C pc-w\audio\streams\vo\act_03\303_sb_scavenger_beach\303_sb_015_endurance_bow                             cinematics\act_03\303_scavenger_beach_015_endurance_bow.resx
+C pc-w\audio\streams\vo\act_03\303_sb_scavenger_beach\303_sb_016_flashbacks                                cinematics\act_03\303_scavenger_beach_016_flashbacks.resx
+C pc-w\audio\streams\vo\act_03\303_sb_scavenger_beach\303_sb_017_break                                     cinematics\act_03\303_scavenger_beach_017_break.resx
+C pc-w\audio\streams\vo\act_03\303_sb_scavenger_beach\303_sb_020_puzzle_alex                               cinematics\act_03\303_scavenger_beach_020_puzzle_alex.resx
+C pc-w\audio\streams\vo\act_03\303_sb_scavenger_beach\303_sb_050_bunker_interior                           cinematics\act_03\303_scavenger_beach_050_bunker_interior.resx
+C pc-w\audio\streams\vo\act_03\303_sb_scavenger_beach\303_sb_070_logbook                                   cinematics\act_03\303_scavenger_beach_070_logbook.resx
+
+C pc-w\audio\streams\vo\act_03\304_si_secret_of_the_island\304_si_010_pre_combat                           cinematics\act_03\304_secret_of_the_island_010_pre_combat.resx
+C pc-w\audio\streams\vo\act_03\304_si_secret_of_the_island\304_si_020_elevator                             cinematics\act_03\304_secret_of_the_island_020_elevator.resx
+C pc-w\audio\streams\vo\act_03\304_si_secret_of_the_island\304_si_080_combat                               cinematics\act_03\304_secret_of_the_island_080_combat.resx
+C pc-w\audio\streams\vo\act_03\304_si_secret_of_the_island\304_si_090_reyes_radio                          cinematics\act_03\304_secret_of_the_island_090_reyes_radio.resx
+C pc-w\audio\streams\vo\act_03\304_si_secret_of_the_island\304_si_100_reyes_battle                         cinematics\act_03\304_secret_of_the_island_100_reyes_battle.resx
+
+C pc-w\audio\streams\vo\act_03\305_mb_monastery_b\305_mb_030_face_to_face                                  cinematics\act_03\305_monastery_b_030_face_to_face.resx
+C pc-w\audio\streams\vo\act_03\305_mb_monastery_b\305_mb_040_ready_room                                    cinematics\act_03\305_monastery_b_040_ready_room.resx
+C pc-w\audio\streams\vo\act_03\305_mb_monastery_b\305_mb_060_chasm_bridge                                  cinematics\act_03\305_monastery_b_060_chasm_bridge.resx
+
+C pc-w\audio\streams\vo\act_03\306_qt_queens_tomb\306_qt_020_hall_of_queens                                cinematics\act_03\306_queens_tomb_020_hall_of_queens.resx
+C pc-w\audio\streams\vo\act_03\306_qt_queens_tomb\306_qt_040_trial_by_fire                                 cinematics\act_03\306_queens_tomb_040_trial_by_fire.resx
+C pc-w\audio\streams\vo\act_03\306_qt_queens_tomb\306_qt_050_down_to_you                                   cinematics\act_03\306_queens_tomb_050_down_to_you.resx
+C pc-w\audio\streams\vo\act_03\306_qt_queens_tomb\306_qt_060_the_ritual                                    cinematics\act_03\306_queens_tomb_060_the_ritual.resx
+C pc-w\audio\streams\vo\act_03\306_qt_queens_tomb\306_qt_080_mathias_fight                                 cinematics\act_03\306_queens_tomb_080_mathias_fight.resx
+C pc-w\audio\streams\vo\act_03\306_qt_queens_tomb\306_qt_085_mathias_iss                                   cinematics\act_03\306_queens_tomb_085_mathias_iss.resx
+
+C pc-w\audio\streams\vo\act_03\307_tr_epilogue\307_tr_020_extra                                            cinematics\act_03\307_epilogue_020_extra.resx
+C pc-w\audio\streams\vo\act_03\307_tr_epilogue\307_tr_030_lara_extra                                       cinematics\act_03\307_epilogue_030_lara_extra.resx
+C pc-w\audio\streams\vo\act_03\307_tr_epilogue\307_tr_040_scav_extra                                       cinematics\act_03\307_epilogue_040_scav_extra.resx
+
+C pc-w\audio\streams\vo\systemic\401_co_combat_scavenger\401_co_340_tank_resists_damage                    cinematics\systemic\401_combat_scavenger_340_tank_resists_damage.resx
+C pc-w\audio\streams\vo\systemic\401_co_combat_scavenger\401_co_355_tank_takes_damage                      cinematics\systemic\401_combat_scavenger_355_tank_takes_damage.resx
+C pc-w\audio\streams\vo\systemic\401_co_combat_scavenger\401_co_360_tank_berserk_state                     cinematics\systemic\401_combat_scavenger_360_tank_berserk_state.resx
+C pc-w\audio\streams\vo\systemic\401_co_combat_scavenger\401_co_375_tank_exhausted                         cinematics\systemic\401_combat_scavenger_375_tank_exhausted.resx
+C pc-w\audio\streams\vo\systemic\401_co_combat_scavenger\401_co_380_tank_defensive                         cinematics\systemic\401_combat_scavenger_380_tank_defensive.resx
+C pc-w\audio\streams\vo\systemic\401_co_combat_scavenger\401_co_390_tank_finisher_response                 cinematics\systemic\401_combat_scavenger_390_tank_finisher_response.resx
+C pc-w\audio\streams\vo\systemic\401_co_combat_scavenger\401_co_400_tank_taunts                            cinematics\systemic\401_combat_scavenger_400_tank_taunts.resx
+C pc-w\audio\streams\vo\systemic\401_co_combat_scavenger\401_co_410_tank_off_screen                        cinematics\systemic\401_combat_scavenger_410_tank_off_screen.resx
+C pc-w\audio\streams\vo\systemic\401_co_combat_scavenger\401_co_420_tank_player_killed                     cinematics\systemic\401_combat_scavenger_420_tank_player_killed.resx
+C pc-w\audio\streams\vo\systemic\401_co_combat_scavenger\401_co_430_tank_player_takes_damage               cinematics\systemic\401_combat_scavenger_430_tank_player_takes_damage.resx
+C pc-w\audio\streams\vo\systemic\401_co_combat_scavenger\401_co_450_tank_incapacitated                     cinematics\systemic\401_combat_scavenger_450_tank_incapacitated.resx
+
+C pc-w\audio\streams\vo\systemic\402_lc_lara_systemic\402_lc_010_torchway                                  cinematics\systemic\402_lara_systemic_010_torchway.resx
+C pc-w\audio\streams\vo\systemic\402_lc_lara_systemic\402_lc_020_curse_reactions                           cinematics\systemic\402_lara_systemic_020_curse_reactions.resx
+C pc-w\audio\streams\vo\systemic\402_lc_lara_systemic\402_lc_030_generic_reactions                         cinematics\systemic\402_lara_systemic_030_generic_reactions.resx
+
+C pc-w\audio\streams\vo\extras                                                                             cinematics\extras.resx
+
+C pc-w\audio\streams\vo\multiplayer\506_mp_cry_mode_barks\506_mp_030_survivor_enter_towerzone              cinematics\multiplayer\506_cry_mode_barks_030_survivor_enter_towerzone.resx
+C pc-w\audio\streams\vo\multiplayer\506_mp_cry_mode_barks\506_mp_040_survivor_alone_towerzone              cinematics\multiplayer\506_cry_mode_barks_040_survivor_alone_towerzone.resx
+C pc-w\audio\streams\vo\multiplayer\506_mp_cry_mode_barks\506_mp_050_survivor_tower_almost_activated       cinematics\multiplayer\506_cry_mode_barks_050_survivor_tower_almost_activated.resx
+C pc-w\audio\streams\vo\multiplayer\506_mp_cry_mode_barks\506_mp_060_survivor_tower_activated              cinematics\multiplayer\506_cry_mode_barks_060_survivor_tower_activated.resx
+C pc-w\audio\streams\vo\multiplayer\506_mp_cry_mode_barks\506_mp_080_domination_intro_survivor             cinematics\multiplayer\506_cry_mode_barks_080_domination_intro_survivor.resx
+C pc-w\audio\streams\vo\multiplayer\506_mp_cry_mode_barks\506_mp_090_domination_win_extro_survivor         cinematics\multiplayer\506_cry_mode_barks_090_domination_win_extro_survivor.resx
+C pc-w\audio\streams\vo\multiplayer\506_mp_cry_mode_barks\506_mp_110_domination_intro_scav                 cinematics\multiplayer\506_cry_mode_barks_110_domination_intro_scav.resx
+C pc-w\audio\streams\vo\multiplayer\506_mp_cry_mode_barks\506_mp_120_domination_win_extro_scav             cinematics\multiplayer\506_cry_mode_barks_120_domination_win_extro_scav.resx
+C pc-w\audio\streams\vo\multiplayer\506_mp_cry_mode_barks\506_mp_150_domination_towers_only_one_left       cinematics\multiplayer\506_cry_mode_barks_150_domination_towers_only_one_left.resx
+C pc-w\audio\streams\vo\multiplayer\506_mp_cry_mode_barks\506_mp_170_domination_battery_collected          cinematics\multiplayer\506_cry_mode_barks_170_domination_battery_collected.resx
+C pc-w\audio\streams\vo\multiplayer\506_mp_cry_mode_barks\506_mp_180_domination_only_one_battery_left      cinematics\multiplayer\506_cry_mode_barks_180_domination_only_one_battery_left.resx
+C pc-w\audio\streams\vo\multiplayer\506_mp_cry_mode_barks\506_mp_230_domination_sos_loop                   cinematics\multiplayer\506_cry_mode_barks_230_domination_sos_loop.resx
+C pc-w\audio\streams\vo\multiplayer\506_mp_cry_mode_barks\506_mp_260_domination_pa_almost_activated        cinematics\multiplayer\506_cry_mode_barks_260_domination_pa_almost_activated.resx
+
+C pc-w\audio\streams\vo\multiplayer\507_mp_rescue_mode_barks\507_mp_010_survivor_collect_item              cinematics\multiplayer\507_rescue_mode_barks_010_survivor_collect_item.resx
+C pc-w\audio\streams\vo\multiplayer\507_mp_rescue_mode_barks\507_mp_020_survivor_drop_item                 cinematics\multiplayer\507_rescue_mode_barks_020_survivor_drop_item.resx
+C pc-w\audio\streams\vo\multiplayer\507_mp_rescue_mode_barks\507_mp_040_scav_downs_survivor                cinematics\multiplayer\507_rescue_mode_barks_040_scav_downs_survivor.resx
+C pc-w\audio\streams\vo\multiplayer\507_mp_rescue_mode_barks\507_mp_050_rescue_intro_survivor              cinematics\multiplayer\507_rescue_mode_barks_050_rescue_intro_survivor.resx
+C pc-w\audio\streams\vo\multiplayer\507_mp_rescue_mode_barks\507_mp_080_rescue_intro_scav                  cinematics\multiplayer\507_rescue_mode_barks_080_rescue_intro_scav.resx
+C pc-w\audio\streams\vo\multiplayer\507_mp_rescue_mode_barks\507_mp_110_revived_more_than_twice            cinematics\multiplayer\507_rescue_mode_barks_110_revived_more_than_twice.resx
+C pc-w\audio\streams\vo\multiplayer\507_mp_rescue_mode_barks\507_mp_140_rescue_survivors_one_kit_left      cinematics\multiplayer\507_rescue_mode_barks_140_rescue_survivors_one_kit_left.resx
+C pc-w\audio\streams\vo\multiplayer\507_mp_rescue_mode_barks\507_mp_150_rescue_scavenger_one_kill_left     cinematics\multiplayer\507_rescue_mode_barks_150_rescue_scavenger_one_kill_left.resx
+C pc-w\audio\streams\vo\multiplayer\507_mp_rescue_mode_barks\507_mp_190_rescue_contextual_barks            cinematics\multiplayer\507_rescue_mode_barks_190_rescue_contextual_barks.resx
+C pc-w\audio\streams\vo\multiplayer\507_mp_rescue_mode_barks\507_mp_200_rescue_pa_pickup_medkit            cinematics\multiplayer\507_rescue_mode_barks_200_rescue_pa_pickup_medkit.resx
+C pc-w\audio\streams\vo\multiplayer\507_mp_rescue_mode_barks\507_mp_210_rescue_pa_drop_medkit              cinematics\multiplayer\507_rescue_mode_barks_210_rescue_pa_drop_medkit.resx
+
+C pc-w\audio\streams\vo\multiplayer\508_mp_team_deathmatch_barks\508_mp_010_survivor_kill_streak           cinematics\multiplayer\508_team_deathmatch_barks_010_survivor_kill_streak.resx
+C pc-w\audio\streams\vo\multiplayer\508_mp_team_deathmatch_barks\508_mp_030_scav_kill_streak               cinematics\multiplayer\508_team_deathmatch_barks_030_scav_kill_streak.resx
+C pc-w\audio\streams\vo\multiplayer\508_mp_team_deathmatch_barks\508_mp_070_survivor_intro                 cinematics\multiplayer\508_team_deathmatch_barks_070_survivor_intro.resx
+C pc-w\audio\streams\vo\multiplayer\508_mp_team_deathmatch_barks\508_mp_080_scav_intro                     cinematics\multiplayer\508_team_deathmatch_barks_080_scav_intro.resx
+
+C pc-w\audio\streams\vo\multiplayer\509_mp_free_for_all_barks\509_mp_010_survivor_kills_scav               cinematics\multiplayer\509_free_for_all_barks_010_survivor_kills_scav.resx
+C pc-w\audio\streams\vo\multiplayer\509_mp_free_for_all_barks\509_mp_020_scav_kills_survivor               cinematics\multiplayer\509_free_for_all_barks_020_scav_kills_survivor.resx
+C pc-w\audio\streams\vo\multiplayer\509_mp_free_for_all_barks\509_mp_040_player_gets_mvp                   cinematics\multiplayer\509_free_for_all_barks_040_player_gets_mvp.resx
+
+C pc-w\audio\streams\vo\multiplayer\510_mp_generic_barks\510_mp_010_revive_call_for_help                   cinematics\multiplayer\510_generic_barks_010_revive_call_for_help.resx
+C pc-w\audio\streams\vo\multiplayer\510_mp_generic_barks\510_mp_020_revive_initiated                       cinematics\multiplayer\510_generic_barks_020_revive_initiated.resx
+C pc-w\audio\streams\vo\multiplayer\510_mp_generic_barks\510_mp_040_revive_thank_you                       cinematics\multiplayer\510_generic_barks_040_revive_thank_you.resx
+C pc-w\audio\streams\vo\multiplayer\510_mp_generic_barks\510_mp_070_reloading                              cinematics\multiplayer\510_generic_barks_070_reloading.resx
+C pc-w\audio\streams\vo\multiplayer\510_mp_generic_barks\510_mp_080_out_of_ammo                            cinematics\multiplayer\510_generic_barks_080_out_of_ammo.resx
+C pc-w\audio\streams\vo\multiplayer\510_mp_generic_barks\510_mp_140_planting_mine                          cinematics\multiplayer\510_generic_barks_140_planting_mine.resx
+C pc-w\audio\streams\vo\multiplayer\510_mp_generic_barks\510_mp_150_setting_bear_trap                      cinematics\multiplayer\510_generic_barks_150_setting_bear_trap.resx
+C pc-w\audio\streams\vo\multiplayer\510_mp_generic_barks\510_mp_160_melee_attack_taunt                     cinematics\multiplayer\510_generic_barks_160_melee_attack_taunt.resx
+C pc-w\audio\streams\vo\multiplayer\510_mp_generic_barks\510_mp_190_shooting_turret                        cinematics\multiplayer\510_generic_barks_190_shooting_turret.resx
+C pc-w\audio\streams\vo\multiplayer\510_mp_generic_barks\510_mp_200_adaptation_affirmation                 cinematics\multiplayer\510_generic_barks_200_adaptation_affirmation.resx
+
+C pc-w\audio\streams\vo\collectibles\701_hd_historical_documents\701_hd_010_ancient                        cinematics\collectibles\701_historical_documents_010_ancient.resx
+C pc-w\audio\streams\vo\collectibles\701_hd_historical_documents\701_hd_020_scavenger                      cinematics\collectibles\701_historical_documents_020_scavenger.resx
+C pc-w\audio\streams\vo\collectibles\701_hd_historical_documents\701_hd_030_ww2                            cinematics\collectibles\701_historical_documents_030_ww2.resx
+C pc-w\audio\streams\vo\collectibles\701_hd_historical_documents\701_hd_040_survivor                       cinematics\collectibles\701_historical_documents_040_survivor.resx
+C pc-w\audio\streams\vo\collectibles\701_hd_historical_documents\701_hd_050_lara                           cinematics\collectibles\701_historical_documents_050_lara.resx
+C pc-w\audio\streams\vo\collectibles\701_hd_historical_documents\701_hd_060_gps_cache                      cinematics\collectibles\701_historical_documents_060_gps_cache.resx
+
+C pc-w\audio\streams\vo\collectibles\702_rs_relics\702_rs_010_lara_reactions                               cinematics\collectibles\702_relics_010_lara_reactions.resx
+
+C pc-w\audio\streams\vo\collectibles\703_st_side_tombs\703_st_010_fishery                                  cinematics\collectibles\703_side_tombs_010_fishery.resx
+C pc-w\audio\streams\vo\collectibles\703_st_side_tombs\703_st_020_well                                     cinematics\collectibles\703_side_tombs_020_well.resx
+C pc-w\audio\streams\vo\collectibles\703_st_side_tombs\703_st_030_chop_shop                                cinematics\collectibles\703_side_tombs_030_chop_shop.resx
+C pc-w\audio\streams\vo\collectibles\703_st_side_tombs\703_st_040_paddock                                  cinematics\collectibles\703_side_tombs_040_paddock.resx
+C pc-w\audio\streams\vo\collectibles\703_st_side_tombs\703_st_050_bat_cave                                 cinematics\collectibles\703_side_tombs_050_bat_cave.resx
+C pc-w\audio\streams\vo\collectibles\703_st_side_tombs\703_st_060_shock_pond                               cinematics\collectibles\703_side_tombs_060_shock_pond.resx
+
+C pc-w\audio\streams\vo\retraversal\800_rt_beach_hub\800_rt_010_lift_to_soti                               cinematics\retraversal\800_beach_hub_010_lift_to_soti.resx
+C pc-w\audio\streams\vo\retraversal\800_rt_beach_hub\800_rt_030_upper_path                                 cinematics\retraversal\800_beach_hub_030_upper_path.resx
+C pc-w\audio\streams\vo\retraversal\800_rt_beach_hub\800_rt_040_camp_site                                  cinematics\retraversal\800_beach_hub_040_camp_site.resx
+C pc-w\audio\streams\vo\retraversal\800_rt_beach_hub\800_rt_080_waterfall                                  cinematics\retraversal\800_beach_hub_080_waterfall.resx
+
+C pc-w\audio\streams\vo\retraversal\801_rt_scav_hub\801_rt_020_courtyard                                   cinematics\retraversal\801_scav_hub_020_courtyard.resx
+C pc-w\audio\streams\vo\retraversal\801_rt_scav_hub\801_rt_030_dirt_pipe                                   cinematics\retraversal\801_scav_hub_030_dirt_pipe.resx
+C pc-w\audio\streams\vo\retraversal\801_rt_scav_hub\801_rt_050_makeshift_tower                             cinematics\retraversal\801_scav_hub_050_makeshift_tower.resx
+C pc-w\audio\streams\vo\retraversal\801_rt_scav_hub\801_rt_100_dynamite_fight                              cinematics\retraversal\801_scav_hub_100_dynamite_fight.resx
+
+C pc-w\audio\streams\vo\retraversal\802_rt_vh_main\802_rt_010_day_entrance                                 cinematics\retraversal\802_vh_main_010_day_entrance.resx
+C pc-w\audio\streams\vo\retraversal\802_rt_vh_main\802_rt_020_cliffhouse                                   cinematics\retraversal\802_vh_main_020_cliffhouse.resx
+C pc-w\audio\streams\vo\retraversal\802_rt_vh_main\802_rt_040_plane_tail                                   cinematics\retraversal\802_vh_main_040_plane_tail.resx
+C pc-w\audio\streams\vo\retraversal\802_rt_vh_main\802_rt_060_lower_village                                cinematics\retraversal\802_vh_main_060_lower_village.resx
+C pc-w\audio\streams\vo\retraversal\802_rt_vh_main\802_rt_080_upper_village                                cinematics\retraversal\802_vh_main_080_upper_village.resx
+C pc-w\audio\streams\vo\retraversal\802_rt_vh_main\802_rt_100_path_to_chasm                                cinematics\retraversal\802_vh_main_100_path_to_chasm.resx

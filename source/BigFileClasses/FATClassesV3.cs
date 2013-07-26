@@ -844,8 +844,6 @@ namespace TRTR
             {
                 RawFileInfo[] fileInfo = new RawFileInfo[entryCount];
 
-                // fill hashTable & fileinfo table;
-                // **hashes[i] = BitConverter.ToUInt32(buf, i * 4);
                 TextWriter twEntriesByOrigOrder = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, filePrefix + "__fat_entries_raw.txt"));
                 twEntriesByOrigOrder.WriteLine(string.Format("{0,-8} {1,-8} {2,-8} {3,-8}", "hash", "lang", "length", "location"));
                 for (Int32 i = 0; i < entryCount; i++)
@@ -860,11 +858,7 @@ namespace TRTR
                     fileInfo[i].Location = BitConverter.ToUInt32(buf, startIndex + 0x0C);
 
                     RawFileInfo raw = fileInfo[i];
-                    //if (ofs < 0)
-                    //    raw.Location = checked((UInt32)(Location + ofs));
 
-                    //if ((fileInfo[i].Location & 0x000000FF) == 3)
-                    //    fileInfo[i].Location -= 0xDEDB003;
                     twEntriesByOrigOrder.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8}",
                         raw.Hash,
                         raw.LangCode,
@@ -905,33 +899,8 @@ namespace TRTR
                 }
                 this[entryCount - 1].VirtualSize = (uint)Boundary.Extend((int)(this[entryCount - 1].Raw.Length), 0x800);
 
-                // add stored infos
-                SortBy(FileEntryCompareField.Hash);
-                //FileStoredInfoList infoList = new FileStoredInfoList();
-                /**/
-                // determine file type
-                /*
-                 * // unnecessary
-                if ( File.Exists(".\\" + TRGameInfo.Game.Name + ".files.txt"))
-                {
-                    infoList.LoadFromFile(".\\" + TRGameInfo.Game.Name + ".files.txt");
-                    for (Int32 i = 0; i < entryCount - 1; i++)
-                        if (infoList.ContainsKey(this[i].Hash))
-                        {
-                            if (this[i].Raw.Language == FileLanguage.Unknown ||
-                                this[i].Raw.Language == FileLanguage.NoLang ||
-                                this[i].Raw.Language == FileLanguage.English)
-                            {
-                                this[i].Stored = infoList[this[i].Hash];
-                                this[i].Translatable = true;
-                            }
-                        }
-                }
-
-                 */
-
                 TextWriter twEntries = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, filePrefix + "__fat_entries.txt"));
-                twEntries.WriteLine(string.Format("{0,-8} {1,-8} {2,-8} {3,-8} | {4,-8} {5} {6} {7,-8} {8} {9} {10} {11}", "hash", "location", "length", "lang", "filetype", "language", "magic", "offset", "bfindex", "origidx", "langmask", "filename"));
+                twEntries.WriteLine(string.Format("{0,-8} {1,-8} {2,-8} {3,-8} | {4,-8} {5} {6} {7,-8} {8} {9} {10}", "hash", "location", "length", "lang", "filetype", "language", "magic", "offset", "bfindex", "origidx", "filename"));
                 SortBy(FileEntryCompareField.Location);
                 for (Int32 i = 0; i < entryCount; i++)
                 {
@@ -1043,7 +1012,7 @@ namespace TRTR
                         entry.Extra.ResXFileName = entry.Extra.HashText + ".resx";
                     #endregion
 
-                    bool dumpIt = entry.Extra.FileType == FileTypeEnum.Unknown; // && entry.Raw.Length <= 68; // fileEntry.Translatable; //false //xx
+                    bool dumpIt = entry.Extra.FileType == FileTypeEnum.BIN_MNU && entry.Extra.Language == FileLanguage.English; // fileEntry.Translatable; //false //xx
 
                     //if (fileEntry.Raw.Language == FileLanguage.NoLang || fileEntry.Raw.Language == FileLanguage.Unknown || fileEntry.Raw.Language == FileLanguage.English)
                     //{
@@ -1052,7 +1021,7 @@ namespace TRTR
                     //if (dumpIt)
                     {
 
-                        twEntries.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8} | {4,-8} {5} \"{6}\" {7:X8} {8:D3} {9:D6} {10} {11}",
+                        twEntries.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8} | {4,-8} {5} \"{6}\" {7:X8} {8:D3} {9:D6} {10}",
                             entry.Raw.Hash,
                             entry.Raw.Location,
                             entry.Raw.Length,
@@ -1063,7 +1032,6 @@ namespace TRTR
                             entry.Extra.Offset,
                             entry.Extra.BigFileIndex,
                             entry.OriginalIndex,
-                            Convert.ToString(entry.Raw.LangCode, 2),
                             entry.Extra.FileNameForced));
                     }
 

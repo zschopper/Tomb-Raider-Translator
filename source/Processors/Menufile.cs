@@ -42,10 +42,6 @@ namespace TRTR
                 //bigfilev3
                 MenuFileEntry menuEntry = new MenuFileEntry();
                 menuEntry.Index = i;
-                menuEntry.Original = string.Empty;
-                menuEntry.Current = string.Empty;
-                menuEntry.Translation = string.Empty;
-                menuEntry.EndIdx = 0;
                 menuEntry.StartIdx = BitConverter.ToUInt32(content, (Int32)((i + 7) * 4));
                 menuEntry.PlaceHolder = (menuEntry.StartIdx <= entryCount * 4);
                 MenuEntries.Add(menuEntry);
@@ -298,12 +294,12 @@ namespace TRTR
     class MenuFileEntry
     {
         //internal bool Empty { get { return StartIdx == < } }
-        internal string Current;
-        internal string Original;
-        internal string Translation;
-        internal UInt32 StartIdx;
-        internal UInt32 EndIdx;
-        internal Int32 Index;
-        internal bool PlaceHolder;
+        internal string Current = string.Empty;
+        internal string Original = string.Empty;
+        internal string Translation = string.Empty;
+        internal UInt32 StartIdx = 0;
+        internal UInt32 EndIdx = 0;
+        internal Int32 Index = 0;
+        internal bool PlaceHolder = false;
     }
 }
