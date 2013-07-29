@@ -238,33 +238,35 @@ namespace TRTR
 
         private static void getCustomGames()
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(@".\games.xml");
-            foreach (XmlNode node in doc.SelectNodes("/games/game"))
+            if (File.Exists(@".\games.xml"))
             {
-                string name = node.Attributes["name"].Value;
-                KnownGame gameFind = null;
+                XmlDocument doc = new XmlDocument();
+                doc.Load(@".\games.xml");
+                foreach (XmlNode node in doc.SelectNodes("/games/game"))
+                {
+                    string name = node.Attributes["name"].Value;
+                    KnownGame gameFind = null;
 
-                foreach (KnownGame game in KnownGames.Items)
-                {
-                    if (game.Name == name)
+                    foreach (KnownGame game in KnownGames.Items)
                     {
-                        gameFind = game;
-                        break;
+                        if (game.Name == name)
+                        {
+                            gameFind = game;
+                            break;
+                        }
                     }
-                }
-                if (gameFind != null)
-                {
-                    items.Add(new GameInstance
+                    if (gameFind != null)
                     {
-                        Name = node.Attributes["name"].Value,
-                        InstallType = InstallTypeEnum.Custom,
-                        InstallFolder = node.Attributes["folder"].Value,
-                        GameDefaults = gameFind
-                    });
+                        items.Add(new GameInstance
+                        {
+                            Name = node.Attributes["name"].Value,
+                            InstallType = InstallTypeEnum.Custom,
+                            InstallFolder = node.Attributes["folder"].Value,
+                            GameDefaults = gameFind
+                        });
+                    }
                 }
             }
         }
     }
-
 }
