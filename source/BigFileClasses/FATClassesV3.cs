@@ -1012,7 +1012,7 @@ namespace TRTR
                         entry.Extra.ResXFileName = entry.Extra.HashText + ".resx";
                     #endregion
 
-                    bool dumpIt = entry.Extra.FileType == FileTypeEnum.BIN_MNU && entry.Extra.Language == FileLanguage.English; // fileEntry.Translatable; //false //xx
+                    bool dumpIt = false; // entry.Extra.FileType == FileTypeEnum.BIN_MNU && entry.Extra.Language == FileLanguage.English; // fileEntry.Translatable; //false //xx
 
                     //if (fileEntry.Raw.Language == FileLanguage.NoLang || fileEntry.Raw.Language == FileLanguage.Unknown || fileEntry.Raw.Language == FileLanguage.English)
                     //{

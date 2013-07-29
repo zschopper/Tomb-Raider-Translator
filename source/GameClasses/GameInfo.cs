@@ -149,10 +149,12 @@ namespace TRTR
 
         private static void buildBigfileStructure()
         {
-//            List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "bigfile.*.tiger", SearchOption.AllDirectories));
-            List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "*.tiger", SearchOption.AllDirectories));
+            //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "bigfile.*.tiger", SearchOption.AllDirectories));
             //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "title_english.*.tiger", SearchOption.AllDirectories));
             //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "bigfile_english.000.tiger", SearchOption.AllDirectories));
+            //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "title.*.tiger", SearchOption.AllDirectories));
+
+            List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "*.tiger", SearchOption.AllDirectories));
             List<string> dupeFilter = new List<string>();
 
             fileList.Clear();

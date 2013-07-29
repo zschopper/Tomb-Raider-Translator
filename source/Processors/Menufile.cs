@@ -35,33 +35,45 @@ namespace TRTR
 
             byte[] content = entry.ReadContent();
 
-            entryCount = BitConverter.ToUInt32(content, 8) - 1;
+            uint entryCount1 = BitConverter.ToUInt32(content, 4) - 1;
+            uint entryCount2 = BitConverter.ToUInt32(content, 8) - 1;
+            entryCount = entryCount1 + entryCount2 + 2;
+            Log.LogDebugMsg(string.Format("Menu parsing: {0} Entry count: {1}, ", entry.Extra.FileName, entryCount));
 
-            for (Int32 i = 0; i < entryCount; i++)
+            int validEntryCount = 0;
+            for (int i = 0; i < entryCount; i++)
             {
                 //bigfilev3
                 MenuFileEntry menuEntry = new MenuFileEntry();
                 menuEntry.Index = i;
-                menuEntry.StartIdx = BitConverter.ToUInt32(content, (Int32)((i + 7) * 4));
+                menuEntry.StartIdx = BitConverter.ToUInt32(content, (Int32)((i + 3) * 4));
                 menuEntry.PlaceHolder = (menuEntry.StartIdx <= entryCount * 4);
                 MenuEntries.Add(menuEntry);
+                if (menuEntry.PlaceHolder)
+                    validEntryCount++;
+
             }
+
+            entryCount = (uint)(MenuEntries.Count);
 
             // last processed non-empty entry
             MenuFileEntry lastValidEntry = null;
             // process all except last entry
-            for (Int32 i = 0; i < entryCount; i++)
+
+            int debugPlaceHolderCount = 0;
+            int debugValidEntryCount = 0;
+            for (int i = 0; i < entryCount; i++)
             {
                 MenuFileEntry menuEntry = menuEntries[i];
                 // StartIdx isn't zero if it has content
+                if (menuEntry.PlaceHolder)
+                    debugPlaceHolderCount++;
                 if ((menuEntry.StartIdx > 0) && !menuEntry.PlaceHolder)
                 {
                     if (lastValidEntry != null)
                     {
                         UInt32 startIdx = menuEntry.StartIdx;
 
-                        //if (i == 1417)// xx whatisit??
-                        //    lastValidEntry.EndIdx = 0;
                         lastValidEntry.EndIdx = menuEntry.StartIdx;
                         Int32 textLen = (Int32)(lastValidEntry.EndIdx - lastValidEntry.StartIdx - 1);
                         if (textLen < 0)
@@ -75,6 +87,7 @@ namespace TRTR
 
                     }
                     lastValidEntry = menuEntry;
+                    debugValidEntryCount++;
                 }
             }
             Int32 lastNotNull = Array.IndexOf(content, (byte)0, (Int32)lastValidEntry.StartIdx) - 1;
@@ -88,6 +101,8 @@ namespace TRTR
                 lastValidEntry.Translation = TextParser.GetText(lastValidEntry.Current.Replace("\n", "\r\n"),
                     string.Format("BF: {0} File: {1} Line: {2}", entry.Extra.BigFileName, entry.Extra.FileNameForced, "lastentry"));
             }
+            Log.LogDebugMsg(string.Format("Valid menu entries: {0} placeholders {1}", debugValidEntryCount, debugPlaceHolderCount));
+
         }
 
         internal void Translate()
@@ -259,8 +274,8 @@ namespace TRTR
         private void ExtractResX(string destFolder, MenuFile menu, bool useDict)
         {
             // Create a resource writer.
-            string resXFileName = Path.Combine(destFolder, entry.Extra.ResXFileName); 
-            
+            string resXFileName = Path.Combine(destFolder, entry.Extra.ResXFileName);
+
             ResXHelper helper = ResXPool.GetResX(resXFileName);
             if (!helper.TryLockFor(ResXLockMode.Write))
                 throw new Exception(string.Format("Can not lock {0} for write", resXFileName));
