@@ -70,7 +70,6 @@ namespace TRTR
 
         private void processGameCustomConfig()
         {
-            //new XmlDocument().Load(@".\games.xml");
             try
             {
                 versionString = FileVersionInfo.GetVersionInfo(Path.Combine(installFolder, gameDefaults.ExeName)).FileVersion;

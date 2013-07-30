@@ -20,7 +20,7 @@ namespace TRTR
         /// </summary>
         static void Main(string[] args)
         {
-            Settings.args = args;
+            Settings.Args = args;
             Log.AddListener("debug", new DebugLogListener());
             Log.AddListener("applog", new FileLogListener(@".\trtr.log"));
             Log.Write(LogEntryType.Info, "Starting...");

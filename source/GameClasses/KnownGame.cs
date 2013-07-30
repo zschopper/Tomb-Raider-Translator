@@ -110,7 +110,7 @@ namespace TRTR
                     new KnownGame.KnownBigfileData{ name = "bigfile", pattern = "bigfile.{D3}", entryOfs = 0 }
                 },
             });
-            Items.Clear(); // teszt!
+            Items.Clear(); // Old games disabled until app isn't compatible with it
             #endregion
 
             Items.Add(new KnownGame

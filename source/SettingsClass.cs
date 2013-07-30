@@ -21,7 +21,7 @@ namespace TRTR
         static private string lastLocale = Thread.CurrentThread.CurrentCulture.Name;
         static private string lastGame = string.Empty;
         static private Dictionary<string, CultureInfo> cultures = new Dictionary<string, CultureInfo>();
-        static internal string[] args = { };
+        static private string[] args = null;
         #endregion
 
         static internal string TransRootDir { get { return transRootDir; } set { transRootDir = value; } }

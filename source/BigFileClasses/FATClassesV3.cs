@@ -924,8 +924,6 @@ namespace TRTR
                             entry.Extra.FileType = FileTypeEnum.BIN_MNU;
                             if (entry.Raw.Language == FileLanguage.English)
                                 entry.Translatable = true;
-
-                            //Log.LogMsg(LogEntryType.Debug, string.Format("ReatFat: {0} locals.bin ({1}) found ", Path.GetFileName(fileName), fileEntry.Extra.LangText));
                         }
                         else
                         {
@@ -991,9 +989,6 @@ namespace TRTR
                                 entry.Translatable = true;
                         }
 
-                    //if (entry.Extra.HashText == "3533B8DF" && entry.Extra.BigFilePrefix == "patch")
-                    //    Debug.WriteLine("stop here!");
-
                     #region Search filename or path alias
                     if (entry.Extra.NameResolved && entry.Translatable)
                     {
@@ -1012,30 +1007,28 @@ namespace TRTR
                         entry.Extra.ResXFileName = entry.Extra.HashText + ".resx";
                     #endregion
 
-                    bool dumpIt = false; // entry.Extra.FileType == FileTypeEnum.BIN_MNU && entry.Extra.Language == FileLanguage.English; // fileEntry.Translatable; //false //xx
-
+                    bool debugDumpIt = false;
+                    // debugDumpIt = entry.Extra.FileType == FileTypeEnum.BIN_MNU && entry.Extra.Language == FileLanguage.English; // fileEntry.Translatable; //false //xx
+                    
                     //if (fileEntry.Raw.Language == FileLanguage.NoLang || fileEntry.Raw.Language == FileLanguage.Unknown || fileEntry.Raw.Language == FileLanguage.English)
                     //{
-                    //    dumpIt = true; // fileEntry.Extra.FileType == FileTypeEnum.MUL_CIN;
+                    //    debugDumpIt = true; // fileEntry.Extra.FileType == FileTypeEnum.MUL_CIN;
                     //}
-                    //if (dumpIt)
-                    {
 
-                        twEntries.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8} | {4,-8} {5} \"{6}\" {7:X8} {8:D3} {9:D6} {10}",
-                            entry.Raw.Hash,
-                            entry.Raw.Location,
-                            entry.Raw.Length,
-                            entry.Raw.LangCode,
-                            entry.Extra.FileType.ToString(),
-                            entry.Raw.Language.ToString(),
-                            entry.Extra.Magic,
-                            entry.Extra.Offset,
-                            entry.Extra.BigFileIndex,
-                            entry.OriginalIndex,
-                            entry.Extra.FileNameForced));
-                    }
+                    twEntries.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8} | {4,-8} {5} \"{6}\" {7:X8} {8:D3} {9:D6} {10}",
+                        entry.Raw.Hash,
+                        entry.Raw.Location,
+                        entry.Raw.Length,
+                        entry.Raw.LangCode,
+                        entry.Extra.FileType.ToString(),
+                        entry.Raw.Language.ToString(),
+                        entry.Extra.Magic,
+                        entry.Extra.Offset,
+                        entry.Extra.BigFileIndex,
+                        entry.OriginalIndex,
+                        entry.Extra.FileNameForced));
 
-                    if (dumpIt) //(((fileEntry.Extra.FileType & (/*FileTypeEnum.RAW_FNT | FileTypeEnum.MUL_CIN |*/ FileTypeEnum.SCH)) != 0))
+                    if (debugDumpIt) 
                     {
                         byte[] content = entry.ReadContent();
                         string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "raw",
@@ -1045,12 +1038,9 @@ namespace TRTR
                         fx.Write(content, 0, content.Length);
                         fx.Close();
                     }
-
-
                 }
                 twEntries.Close();
             }
-
         }
 
         internal void CreateRestoration()
@@ -1219,7 +1209,6 @@ namespace TRTR
                             {
                                 if (entry.Raw.Language == FileLanguage.English || entry.Raw.Language == FileLanguage.NoLang)
                                 {
-                                    //break; //xxbreak
                                     CineFile.Extract(extractFolder, entry, useDict);
                                 }
                                 break;
@@ -1311,7 +1300,6 @@ namespace TRTR
             }
             worker.ReportProgress(100, StaticTexts.restorationDone);
 
-            // $setup a menünél
             filePool.CloseAll();
         }
 
