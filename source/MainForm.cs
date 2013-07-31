@@ -112,11 +112,11 @@ namespace TRTR
                     switch (game.InstallType)
                     {
                         case InstallTypeEnum.Steam:
-                            typeString = " (steam)";
+                            typeString = "steam";
                             break;
 
                         case InstallTypeEnum.Custom:
-                            typeString = " (custom)";
+                            typeString = "custom";
                             break;
 
                         default:
@@ -128,7 +128,7 @@ namespace TRTR
                         new GamesComboBoxItem()
                         {
                             Selectable = true,
-                            Text = "  " + game.Name + typeString,
+                            Text = string.Format("  {0} ({1})", game.Name, typeString),
                             Game = game
                         }
                     );
@@ -214,9 +214,21 @@ namespace TRTR
         {
             Location = Settings.FormLocation;
             // restore MRU game
-            comboGame.SelectedIndex = comboGame.Items.IndexOf(Settings.LastGame);
-            //if (comboGame.SelectedIndex >= 0)
-            //    comboGame_SelectionChangeCommitted(comboGame, null);
+            //((GamesComboBoxItem)(comboGame.Items[1])).Text
+            GamesComboBoxItem game = null;
+            int i = 0;
+            while (i < comboGame.Items.Count && game == null)
+            {
+                if (((GamesComboBoxItem)(comboGame.Items[i])).Text == Settings.LastGame)
+                    game = (GamesComboBoxItem)(comboGame.Items[i]);
+                i++;
+            }
+
+            if (game != null)
+            {
+                comboGame.SelectedIndex = comboGame.Items.IndexOf(game);
+                comboGame_SelectionChangeCommitted(comboGame, null);
+            }
         }
 
         private void ShowExtraDebugMenuItems()
@@ -290,6 +302,19 @@ namespace TRTR
         private void comboGame_SelectionChangeCommitted(object sender, EventArgs e)
         {
             GameInstance game = ((GamesComboBoxItem)(comboGame.SelectedItem)).Game;
+            if (game == null)
+            {
+                int idx = comboGame.SelectedIndex;
+                if (comboGame.Items.Count > idx)
+                {
+                    game = ((GamesComboBoxItem)(comboGame.Items[idx + 1])).Game;
+                    if (game != null)
+                    {
+                        comboGame.SelectedIndex = idx + 1;
+                    }
+                }
+            }
+            
             if (game != null)
             {
                 LockThreadControls();
