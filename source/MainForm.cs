@@ -214,7 +214,6 @@ namespace TRTR
         {
             Location = Settings.FormLocation;
             // restore MRU game
-            //((GamesComboBoxItem)(comboGame.Items[1])).Text
             GamesComboBoxItem game = null;
             int i = 0;
             while (i < comboGame.Items.Count && game == null)
@@ -582,8 +581,7 @@ namespace TRTR
 
         private void buttonTest1_Click(object sender, EventArgs e)
         {
-            TranslationHandler.Init();
-            TRGameInfo.LoadAsync(((GamesComboBoxItem)(comboGame.SelectedItem)).Game);
+            ResXDict.ReadResXFile(Path.Combine(TRGameInfo.Game.WorkFolder, "test.resx"));
         }
 
         private void groupBoxGameInfo_Enter(object sender, EventArgs e)

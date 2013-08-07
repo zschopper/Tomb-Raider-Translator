@@ -147,6 +147,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ResXDictClass.cs" />
     <Compile Include="TextData.cs" />
     <Compile Include="GameClasses\InstalledGames.cs" />
     <Compile Include="GameClasses\KnownGame.cs" />
