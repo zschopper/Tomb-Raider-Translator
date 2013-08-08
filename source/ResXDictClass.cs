@@ -10,19 +10,32 @@ namespace TRTR
 {
     class ResXDictEntry
     {
-        private List<KeyValuePair<string, string>> translations = new List<KeyValuePair<string, string>>();
-        internal uint Hash { get; set; }
+        internal int SourceHash { get; set; }
+        internal int TranslationHash { get; set; }
         internal string SourceText { get; set; }
         internal string Translation { get; set; }
-        internal List<KeyValuePair<string, string>> Translations { get { return translations; } }
-        internal bool IsUnique { get; set; }
+        internal Dictionary<string, string> Values = new Dictionary<string, string>();
 
-        internal bool AddTranslation(string fileName, string translation)
+        internal ResXDictEntry(string source, string translation, string comments)
         {
-            
-            return IsUnique;
+            this.SourceText = source;
+            this.Translation = translation;
+            string[] commentLines = comments.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string line in commentLines)
+            {
+                string[] keyValuePair = line.Split(new string[] { ": " }, 2, StringSplitOptions.RemoveEmptyEntries);
+                if (keyValuePair.Length > 1)
+                    Values.Add(keyValuePair[0], keyValuePair[1]);
+                else
+                    throw new Exception("ehh");
+            }
+
+            this.SourceHash = SourceText.GetHashCode();
+            this.TranslationHash = Translation.GetHashCode();
         }
     }
+
+    class ResXDictEntryList : List<ResXDictEntry> { }
 
     static class ResXDict
     {
@@ -30,9 +43,9 @@ namespace TRTR
         blockNo: 00001B11
         prefix: [c4]
         filename: pc-w\cinstream\worldbackhome.mul
-        hash: D5AFAF53<
+        hash: D5AFAF53
         */
-        private static Dictionary<int, ResXDictEntry> dict = new Dictionary<int, ResXDictEntry>();
+        private static Dictionary<int, ResXDictEntryList> dict = new Dictionary<int, ResXDictEntryList>();
         public static void ReadResXFile(string fileName)
         {
             System.ComponentModel.Design.ITypeResolutionService typeRes = null;
@@ -41,32 +54,28 @@ namespace TRTR
             foreach (DictionaryEntry rdrDictEntry in rdr)
             {
                 ResXDataNode node = (ResXDataNode)(rdrDictEntry.Value);
-                int hash = rdrDictEntry.Key.GetHashCode();// node.Name.GetHashCode();
-                ResXDictEntry entry;
-                    string[] comments = node.Comment.Split(new string[] { "\n" }, StringSplitOptions.None);
-                    string value = node.GetValue(typeRes).ToString();
+                string key = rdrDictEntry.Key.ToString();
+                string value = node.GetValue(typeRes).ToString();
+                string comment = node.Comment;
+                ResXDictEntry entry = new ResXDictEntry(key, value, comment);
 
-                if (dict.TryGetValue(hash, out entry))
+                ResXDictEntryList entryList;
+
+                if (dict.TryGetValue(entry.SourceHash, out entryList))
                 {
                     // modification
-                    if (entry.Translation != value)
-                        entry.IsUnique = false;
-                    foreach (string comment in comments)
-                    {
-                        string[] keyValuePair = comment.Split(new string[] { ": " }, 2, StringSplitOptions.RemoveEmptyEntries);
-
-
-                    }
+                    //if (entry.Translation != value)
+                    //    entry.IsUnique = false;
                 }
                 else
                 {
-                    entry = new ResXDictEntry()
-                    {
-                        SourceText = rdrDictEntry.Key.ToString(),
-                        IsUnique = true,
-                        Translation = value
-                    };
-                    dict.Add(hash, entry);
+                    //entry = new ResXDictEntry()
+                    //{
+                    //    SourceText = rdrDictEntry.Key.ToString(),
+                    //    IsUnique = true,
+                    //    Translation = value
+                    //};
+                    //dict.Add(hash, entry);
                 }
             }
         }
