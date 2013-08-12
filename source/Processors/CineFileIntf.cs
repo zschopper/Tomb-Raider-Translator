@@ -287,7 +287,7 @@ namespace TRTR.Processors
                 if ((file.Raw.Language == FileLanguage.English /*|| file.Raw.Language == FileLanguage.NoLang*/) && IsMyFile(file))
                 {
                     CineFile cine = new CineFile(file);
-                    cine.Translate();
+                    cine.Translate(simulated);
                 }
             }
         }

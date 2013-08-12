@@ -107,10 +107,8 @@ namespace TRTR
 
         private void workerTranslate_DoWork(object sender, DoWorkEventArgs e)
         {
-            //InitializeWorker((BackgroundWorker)sender);
-            //FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
-            //entryList.simulateWrite = (Int32)(e.Argument) != 0;
-            //entryList.Translate();
+            InitializeWorker((BackgroundWorker)sender);
+            TRGameInfo.Translate((Int32)(e.Argument) != 0);
         }
 
         private void workerCreateRestoration_DoWork(object sender, DoWorkEventArgs e)

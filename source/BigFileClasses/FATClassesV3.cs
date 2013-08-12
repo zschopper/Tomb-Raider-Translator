@@ -78,17 +78,6 @@ namespace TRTR
         }
     }
 
-    /*
-        static class RawFileInfoSize
-        {
-            internal static Int32 Size;
-
-            static RawFileInfoSize()
-            {
-                Size = Marshal.SizeOf(typeof(RawFileInfo));
-            }
-        }
-    */
     [Flags]
     enum FileTypeEnum
     {
@@ -110,16 +99,6 @@ namespace TRTR
         SCH = 16384,
         PCD9 = 32768
     }
-
-    /*enum FileLanguage
-    {
-        NoLang = 0,
-        English = 1,
-        German = 2,
-        Italian = 3,
-        Espanol = 4,
-        France = 5
-    }*/
 
     //[Flags]
     enum FileNameResolveStatus
@@ -160,38 +139,14 @@ namespace TRTR
 
     #endregion
 
-    static class FileTypeStrings
-    {
-        internal static Dictionary<FileTypeEnum, string> Value;
-        static FileTypeStrings()
-        {
-            Value = new Dictionary<FileTypeEnum, string>();
-            Value.Add(FileTypeEnum.Unknown, GeneralTexts.Unknown);
-            Value.Add(FileTypeEnum.CDRM, "CDRM");
-            Value.Add(FileTypeEnum.MUL_CIN, "CIN");
-            Value.Add(FileTypeEnum.RAW, "RAW");
-            Value.Add(FileTypeEnum.RAW_FNT, "FNT");
-            Value.Add(FileTypeEnum.BIN_MNU, "MNU");
-        }
-
-        internal static FileTypeEnum Key(string value)
-        {
-            FileTypeEnum ret = FileTypeEnum.Unknown;
-            foreach (FileTypeEnum e in Value.Keys)
-                if (Value[e] == value)
-                    ret = e;
-            return ret;
-        }
-    }
-
-    // calc
+    // calculated, converted & stored data about files in bigfiles
     class FileExtraInfo
     {
+        internal static readonly UInt32 BIGFILE_BOUNDARY = 0x7FF00000;
         //uint something_size = 0x12C00; // TRA/TRL v1.0.0.6
         //uint something_size = 0xFFE00;  // TRU/LCGOL v1.1.0.7
 
         #region private declarations
-        private FileLanguage language;
         private string langText;
         private string hashText;
         private UInt32 bigFileIndex;
@@ -209,7 +164,7 @@ namespace TRTR
 
         internal string HashText { get { return hashText; } }
         internal string LangText { get { return langText; } }
-        internal FileLanguage Language { get { return language; } }
+        internal FileLanguage Language { get { return entry.Raw.Language; } }
         internal UInt32 Offset { get { return offset; } set { offset = value; } }
         internal UInt32 AbsOffset { get { return absOffset; } set { absOffset = value; } }
         internal byte[] Data { get { return data; } set { data = value; } }
@@ -232,58 +187,17 @@ namespace TRTR
         {
             this.entry = entry;
             this.hashText = entry.Hash.ToString("X8");
-            UpdateLangText();
-            if (this.language != FileLanguage.Unknown)
-                this.langText = LangNames.Dict[language];
+            if (this.Language != FileLanguage.Unknown)
+                this.langText = Language.ToString();
             else
                 this.langText = string.Format("UNK_{0:X8}", entry.Raw.LangCode);
             this.AbsOffset = entry.Raw.Location; //xx checkthis: *0x800;
             UInt32 loc = (entry.Raw.Location / 0x800) * 0x800;
 
-            this.offset = loc % 0x7FF00000;
+            this.offset = loc % BIGFILE_BOUNDARY;
             this.bigFileIndex = entry.Raw.Location & 0x0F;
-            if (this.bigFileIndex > 0)
-                Debug.WriteLine("test");
             this.bigfileName = string.Format(entry.Parent.FilePattern, bigFileIndex);
             this.bigfilePrefix = entry.Parent.FilePrefix;
-        }
-
-        private void UpdateLangText()
-        {
-            switch (entry.Raw.LangCode & 0xFFFF)
-            {
-                case 0xDD41:
-                case 0x1101:
-                    { language = FileLanguage.English; return; }
-                case 0x1102:
-                    { language = FileLanguage.French; return; }
-                case 0x1104:
-                    { language = FileLanguage.German; return; }
-                case 0x1108:
-                    { language = FileLanguage.Italian; return; }
-                case 0x1110:
-                    { language = FileLanguage.Spanish; return; }
-                case 0x1140:
-                    { language = FileLanguage.Portuguese; return; }
-                case 0x1180:
-                    { language = FileLanguage.Polish; return; }
-                case 0x1300:
-                    { language = FileLanguage.Russian; return; }
-                case 0x1500:
-                    { language = FileLanguage.Czech; return; }
-                case 0x1900:
-                    { language = FileLanguage.Dutch; return; }
-                case 0x3100:
-                    { language = FileLanguage.Arabic; return; }
-                case 0x5100:
-                    { language = FileLanguage.Korean; return; }
-                case 0x9100:
-                    { language = FileLanguage.Chinese; return; }
-                case 0xFFFF:
-                    { language = FileLanguage.NoLang; return; }
-                default:
-                    { language = FileLanguage.Unknown; return; } // throw new Exception(Errors.InvalidLanguageCode);
-            }
         }
     }
 
@@ -309,6 +223,7 @@ namespace TRTR
 
         internal bool Translatable = false; // it contains translatable text or data?
 
+        // ctor
         internal FileEntry(UInt32 hash, RawFileInfo raw, Int32 originalIndex, FileEntryList parent, FilePool filePool)
         {
             this.hash = hash;
@@ -380,7 +295,6 @@ namespace TRTR
 
         internal byte[] ReadContent(Int32 maxLen)
         {
-
             byte[] ret;
             FileStream fs = filePool.Open(this);
             try
@@ -449,6 +363,7 @@ namespace TRTR
                 filePool.Close(this);
             }
         }
+
         internal uint CopyContentToStream(Stream str, UInt32 startPos = 0, UInt32 maxLen = 0)
         {
             uint readLength = (maxLen > 0) ? maxLen : raw.Length - startPos;
@@ -900,7 +815,8 @@ namespace TRTR
                 this[entryCount - 1].VirtualSize = (uint)Boundary.Extend((int)(this[entryCount - 1].Raw.Length), 0x800);
 
                 TextWriter twEntries = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, filePrefix + "__fat_entries.txt"));
-                twEntries.WriteLine(string.Format("{0,-8} {1,-8} {2,-8} {3,-8} | {4,-8} {5} {6} {7,-8} {8} {9} {10}", "hash", "location", "length", "lang", "filetype", "language", "magic", "offset", "bfindex", "origidx", "filename"));
+                twEntries.WriteLine(string.Format("{0,-8} {1,-8} {2,-8} {3,-8} | {4,-8} {5} {6} {7,-8} {8} {9} {10}",
+                    "hash", "location", "length", "lang", "filetype", "language", "magic", "offset", "bfindex", "origidx", "filename"));
                 SortBy(FileEntryCompareField.Location);
                 for (Int32 i = 0; i < entryCount; i++)
                 {
@@ -980,7 +896,7 @@ namespace TRTR
                                         if (m == 0xBB80 || m == 0xAC44)
                                             entry.Extra.FileType = FileTypeEnum.MUL2;
                                         else
-                                            Debug.WriteLine("what?");
+                                            Debug.WriteLine(string.Format("Unknown file type for: {0}", entry.Extra.FileNameForced));
                                     }
                                     break;
                             }
@@ -1008,12 +924,23 @@ namespace TRTR
                     #endregion
 
                     bool debugDumpIt = false;
-                    // debugDumpIt = entry.Extra.FileType == FileTypeEnum.BIN_MNU && entry.Extra.Language == FileLanguage.English; // fileEntry.Translatable; //false //xx
-                    
-                    //if (fileEntry.Raw.Language == FileLanguage.NoLang || fileEntry.Raw.Language == FileLanguage.Unknown || fileEntry.Raw.Language == FileLanguage.English)
-                    //{
-                    //    debugDumpIt = true; // fileEntry.Extra.FileType == FileTypeEnum.MUL_CIN;
-                    //}
+                    // debugDumpIt = entry.Extra.FileType == FileTypeEnum.BIN_MNU && entry.Extra.Language == FileLanguage.English;
+                    // debugDumpIt = fileEntry.Translatable;
+                    // debugDumpIt = fileEntry.Raw.Language == FileLanguage.NoLang || fileEntry.Raw.Language == FileLanguage.Unknown || fileEntry.Raw.Language == FileLanguage.English;
+                    // debugDumpIt = fileEntry.Extra.FileType == FileTypeEnum.MUL_CIN;
+
+                    debugDumpIt = entry.Extra.FileType == FileTypeEnum.BIN_MNU && entry.Extra.Language == FileLanguage.English; 
+
+                    if (debugDumpIt)
+                    {
+                        byte[] content = entry.ReadContent();
+                        string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "raw",
+                                string.Format("{0}.{1}.{2}.txt", entry.Extra.BigFilePrefix, entry.Extra.FileNameOnlyForced, entry.Extra.LangText));
+                        Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
+                        FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
+                        fx.Write(content, 0, content.Length);
+                        fx.Close();
+                    }
 
                     twEntries.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8} | {4,-8} {5} \"{6}\" {7:X8} {8:D3} {9:D6} {10}",
                         entry.Raw.Hash,
@@ -1027,17 +954,6 @@ namespace TRTR
                         entry.Extra.BigFileIndex,
                         entry.OriginalIndex,
                         entry.Extra.FileNameForced));
-
-                    if (debugDumpIt) 
-                    {
-                        byte[] content = entry.ReadContent();
-                        string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "raw",
-                                string.Format("{0}.{1}.{2}.txt", entry.Extra.BigFilePrefix, entry.Extra.FileNameOnlyForced, entry.Extra.LangText));
-                        Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
-                        FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
-                        fx.Write(content, 0, content.Length);
-                        fx.Close();
-                    }
                 }
                 twEntries.Close();
             }
@@ -1153,7 +1069,6 @@ namespace TRTR
                 compareRes = string.Compare(file1, path1.Length, file2, path2.Length, int.MaxValue);
 
             return compareRes;
-
         }
 
         internal void Extract(string destFolder, bool useDict)
@@ -1303,13 +1218,11 @@ namespace TRTR
             filePool.CloseAll();
         }
 
-        internal void Translate()
+        internal void Translate(bool simulated)
         {
             Int32 lastReported = 0;
-            worker.ReportProgress(0, StaticTexts.translating);
-            // Log.Write("reading FAT: started");
             ReadFAT();
-            // Log.Write("reading FAT: finished");
+            Log.LogProgress(StaticTexts.translating, 0);
             for (Int32 i = 0; i < this.Count; i++)
             {
                 FileEntry entry = this[i];
@@ -1317,11 +1230,11 @@ namespace TRTR
                 {
                     case FileTypeEnum.MUL_CIN:
                         {
-                            if (entry.Raw.Language == FileLanguage.English)
-                            {
-                                CineFile cine = new CineFile(entry);
-                                cine.Translate();
-                            }
+                            //if (entry.Raw.Language == FileLanguage.English || entry.Raw.Language == FileLanguage.NoLang)
+                            //{
+                            //    CineFile cine = new CineFile(entry);
+                            //    cine.Translate(simulated);
+                            //}
                             break;
                         }
                     case FileTypeEnum.BIN_MNU:
@@ -1329,14 +1242,14 @@ namespace TRTR
                             if (entry.Raw.Language == FileLanguage.English)
                             {
                                 MenuFile menu = new MenuFile(entry);
-                                menu.Translate();
+                                menu.Translate(simulated);
                             }
                             break;
                         }
                     case FileTypeEnum.RAW_FNT:
                         {
-                            FontFile font = new FontFile(entry);
-                            font.Translate();
+                            //FontFile font = new FontFile(entry);
+                            //font.Translate(simulated);
                             break;
                         }
                 } // switch
@@ -1345,11 +1258,11 @@ namespace TRTR
                 Int32 percent = i * 100 / this.Count;
                 if (percent > lastReported)
                 {
-                    worker.ReportProgress(percent, StaticTexts.translating);
+                    Log.LogProgress(StaticTexts.translating, percent);
                     lastReported = percent;
                 }
             }
-            worker.ReportProgress(100, StaticTexts.translationDone);
+            Log.LogProgress(StaticTexts.translationDone, 100);
             filePool.CloseAll();
         }
 

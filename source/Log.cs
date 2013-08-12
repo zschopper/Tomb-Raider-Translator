@@ -89,13 +89,13 @@ namespace TRTR
                 lstnr.LogMsg(logmsg);
         }
 
-        internal static void LogMsg(LogEntryType type, string msg)
+        internal static void LogMsg(LogEntryType type, string msg, int progress = 0)
         {
             LogMsg(new LogMessage
             {
                 LogType = type,
                 Message = msg,
-                Progress = 0,
+                Progress = progress,
                 Time = DateTime.Now,
             });
         }
@@ -103,6 +103,11 @@ namespace TRTR
         internal static void LogDebugMsg(string msg)
         {
             LogMsg(LogEntryType.Debug, msg);
+        }
+
+        internal static void LogProgress(string msg, int progress)
+        {
+            LogMsg(LogEntryType.Progress, msg, progress); 
         }
     }
 
@@ -132,7 +137,12 @@ namespace TRTR
 
         internal override void LogMsg(LogMessage msg)
         {
-            string msgText = string.Format("{0} {1} {2}", msg.Time.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss.ffff"), msg.LogType.ToString(), msg.Message);
+
+            string msgText;
+            if(msg.LogType != LogEntryType.Progress)
+                msgText = string.Format("{0} {1} {2}", msg.Time.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss.ffff"), msg.LogType.ToString(), msg.Message);
+            else
+                msgText = string.Format("{0} {1} {2} {3}%", msg.Time.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss.ffff"), msg.LogType.ToString(), msg.Message, msg.Progress);
             Debug.WriteLine(msgText);
             OutputDebugString(msgText);
         }
@@ -152,8 +162,11 @@ namespace TRTR
 
         internal override void LogMsg(LogMessage msg)
         {
-            byte[] data = encoding.GetBytes(string.Format("{0} {1} {2}\r\n", msg.Time.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss.ffff"), msg.LogType.ToString(), msg.Message));
-            internalStream.Write(data, 0, data.Length);
+            if (msg.LogType != LogEntryType.Progress) // suppress progress reports
+            {
+                byte[] data = encoding.GetBytes(string.Format("{0} {1} {2}\r\n", msg.Time.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss.ffff"), msg.LogType.ToString(), msg.Message));
+                internalStream.Write(data, 0, data.Length);
+            }
         }
 
         internal override void FinalizeListener()

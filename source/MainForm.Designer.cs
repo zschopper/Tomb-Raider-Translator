@@ -247,7 +247,6 @@ namespace TRTR
             this.groupBoxGameInfo.TabIndex = 26;
             this.groupBoxGameInfo.TabStop = false;
             this.groupBoxGameInfo.Text = "Game Informations";
-            this.groupBoxGameInfo.Enter += new System.EventHandler(this.groupBoxGameInfo_Enter);
             // 
             // buttonTest1
             // 
@@ -514,7 +513,6 @@ namespace TRTR
             this.Text = "TRTR";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.form_Main_FormClosing);
             this.Load += new System.EventHandler(this.form_Main_Load);
-            this.Enter += new System.EventHandler(this.form_Main_Enter);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

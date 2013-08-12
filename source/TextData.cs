@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
-
+using System.Resources;
 
 namespace TRTR
 {
@@ -118,7 +119,7 @@ namespace TRTR
                 Directory.CreateDirectory(dictFolder);
             dictMissingLogStream = new StreamWriter(
                 Path.Combine(TRGameInfo.Game.WorkFolder, "dict", "missing.txt"), false);
-            dict2.Clear();  
+            dict2.Clear();
             dictDumpStream = null;
         }
 
@@ -144,7 +145,6 @@ namespace TRTR
             if (info.Length > 0)
                 Log.LogDebugMsg(string.Format("  info: \"{0}\"", info));
 
-
             dictMissingLogStream.WriteLine("#" + hash.ToString());
             dictMissingLogStream.WriteLine("{ENG");
             dictMissingLogStream.WriteLine(key);
@@ -157,10 +157,21 @@ namespace TRTR
             return key;
         }
 
-        //internal Dictionary<string, TextData> Dict { get { return dict; } }
+        //internal Dictionary<string, TextData_> Dict { get { return dict; } }
         internal static Dictionary<uint, TextData> Dict2 { get { return dict2; } }
 
-        internal static void Load(string fileName)
+        internal static void LoadFromResX(string fileName)
+        {
+            ResXResourceReader rdr = new ResXResourceReader(fileName);
+            rdr.UseResXDataNodes = true;
+            foreach (ResXDataNode d in rdr)
+            {
+
+
+            }
+        }
+
+        internal static void LoadFromText(string fileName)
         {
             if (!File.Exists(fileName))
                 return;

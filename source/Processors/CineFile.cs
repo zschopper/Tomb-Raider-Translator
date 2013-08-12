@@ -69,7 +69,7 @@ namespace TRTR
             }
         }
 
-        internal void Translate()
+        internal void Translate(bool simulated)
         {
             try
             {
@@ -77,17 +77,14 @@ namespace TRTR
                 try
                 {
                     ms.Write(header, 0, (Int32)CineConsts.CineHeaderSize);
-                    XmlNode cineNode = TRGameInfo.Trans.TranslationDocument.SelectSingleNode(String.Format("/translation/subtitle/cine[@hash=\"{0}\"]", entry.Extra.HashText));
-                    if (cineNode != null)
+                    foreach (CineBlock block in Blocks)
                     {
-                        foreach (CineBlock block in Blocks)
-                        {
-                            XmlNode blockNode = cineNode.SelectSingleNode(String.Format("block[@no=\"{0:d5}\"]", block.BlockNo));
-                            block.Translate(blockNode);
-                            ms.Write(block.TranslatedData, 0, block.TranslatedData.Length);
-                        }
+
+                        //block.Translate(blockNode);
+                        //ms.Write(block.TranslatedData, 0, block.TranslatedData.Length);
                     }
-                    entry.WriteContent(ms.ToArray());
+                    if (!simulated)
+                        entry.WriteContent(ms.ToArray());
                 }
                 finally
                 {
@@ -151,11 +148,11 @@ namespace TRTR
                     for (UInt32 textIdx = 0; textIdx < textCount; textIdx++)
                     {
                         CineSubtitleEntry subtEntry = block.Subtitles.Entry(FileLanguage.English, textIdx);
-                        if(subtEntry.Language == FileLanguage.English)
+                        if (subtEntry.Language == FileLanguage.English)
                         {
                             if (subtEntry.NormalizedText != string.Empty)
                             {
-                                int hash = subtEntry.NormalizedText.GetHashCode() ;
+                                int hash = subtEntry.NormalizedText.GetHashCode();
                                 // in some file, there is same text more than one in one block.
                                 //if (!keys.Contains(hash) && !blockKeys.Contains(hash))
                                 if (!blockKeys.Contains(hash))
@@ -715,7 +712,7 @@ namespace TRTR
                 if (text.Length > 5)
                 {
                     //string[] elements = text.Substring(4).Split((char)0xD); // remove content-length value and split texts at delimiters
-                    elements = text.Substring(4).Split(new char[] {(char)0xD}, StringSplitOptions.RemoveEmptyEntries); // remove content-length value and split texts at delimiters
+                    elements = text.Substring(4).Split(new char[] { (char)0xD }, StringSplitOptions.RemoveEmptyEntries); // remove content-length value and split texts at delimiters
                     // add subtitles to dictionary
                     for (Int32 i = 0; i < elements.Length - 1; i += 2)
                     {
@@ -791,8 +788,7 @@ namespace TRTR
                     if (this.Language == FileLanguage.English)
                     {
                         this.NormalizedText = this.Text.Replace("\r\n", "\n").Replace(" \n", "\n").Replace("\n", "\r\n");
-                        this.Translated = TextParser.GetText(NormalizedText,
-                            string.Format("BF: {0} File: {1}", fileEntry.Extra.BigFileName, fileEntry.Extra.FileNameForced));
+                        this.Translated = TranslationDict.GetTranslation(NormalizedText, fileEntry);
                     }
                 }
             }
@@ -803,8 +799,7 @@ namespace TRTR
                 this.NormalizedText = text.Replace("\r\n", "\n").Replace(" \n", "\n").Replace("\n", "\r\n");
                 if (this.Language == FileLanguage.English)
                 {
-                    this.Translated = TextParser.GetText(NormalizedText,
-                        string.Format("BF: {0} File: {1}", fileEntry.Extra.BigFileName, fileEntry.Extra.FileNameForced));
+                    this.Translated = TranslationDict.GetTranslation(NormalizedText, fileEntry);
                 }
                 else
                 {

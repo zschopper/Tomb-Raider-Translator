@@ -24,7 +24,7 @@ namespace TRTR
             Current = entry.ReadContent();
         }
 
-        internal void Translate()
+        internal void Translate(bool simulated)
         {
             XmlNode fontNode = TRGameInfo.Trans.TranslationDocument.SelectSingleNode("/translation/font");
             if (fontNode != null)

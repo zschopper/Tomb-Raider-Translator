@@ -105,6 +105,26 @@ namespace TRTR
                 Trans.InfoDoc.Load(Trans.InfoDocFileName);
             }
 
+            #region load tanslations
+            string[] foldersByPriority = {
+                "bigfile",
+                "bigfile_ENGLISH",
+                "title",
+                "title_ENGLISH",
+                "patch",
+                "patch_ENGLISH",
+                "patch2",
+            };
+
+            List<string> files = new List<string>();
+            foreach (string folder in foldersByPriority)
+                files.AddRange(Directory.GetFiles(Path.Combine(TRGameInfo.Game.WorkFolder, "hu", folder), "*.resx", SearchOption.AllDirectories));
+
+            ResXDict dict = new ResXDict(files.ToArray());
+            TranslationDict.Provider = dict;
+            TranslationDict.LoadTranslations();
+            #endregion
+
             // load translation doc, if exists
             if (File.Exists(Trans.TranslationDocumentFileName))
             {
@@ -231,17 +251,37 @@ namespace TRTR
 
                 FileEntryList entryList = new FileEntryList(null, filePattern, filePrefix);
 
-                TextParser.Load(Path.Combine(game.WorkFolder, "dict", "movie.txt"));
-                TextParser.Load(Path.Combine(game.WorkFolder, "dict", "menu.txt"));
-                TextParser.Load(Path.Combine(game.WorkFolder, "dict", "anime.txt"));
-                TextParser.Load(Path.Combine(game.WorkFolder, "dict", "extra.txt"));
+                TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "movie.txt"));
+                TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "menu.txt"));
+                TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "anime.txt"));
+                TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "extra.txt"));
 
                 entryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "source"), false);
                 entryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "hu"), true);
             }
         }
 
-        internal static void Translate() { }
+        internal static void Translate(bool simulated) {
+            foreach (string file in fileList)
+            {
+                string filePattern = file.Replace("000", "{0:d3}");
+
+                string filePrefix = string.Format(filePattern, 0);
+                string tmpPrefix;
+                do
+                {
+                    tmpPrefix = filePrefix;
+                    filePrefix = Path.GetFileNameWithoutExtension(tmpPrefix);
+
+                } while (tmpPrefix != filePrefix);
+
+
+                FileEntryList entryList = new FileEntryList(null, filePattern, filePrefix);
+
+                entryList.Translate(simulated);
+
+            }
+        }
 
         internal static void Restore() { }
 

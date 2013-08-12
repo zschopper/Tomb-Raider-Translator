@@ -10,10 +10,14 @@ namespace TRTR
 {
     class MenuFile
     {
+        #region private declarations
         private FileEntry entry;
         private UInt32 entryCount;
+        private UInt32 entryCount1;
+        private UInt32 entryCount2;
         private List<MenuFileEntry> menuEntries;
         private static TextConv textConv = new TextConv(new char[] { }, new char[] { }, Encoding.UTF8); // null;
+        #endregion
 
         internal FileEntry Entry { get { return entry; } }
         internal List<MenuFileEntry> MenuEntries { get { return menuEntries; } }
@@ -35,9 +39,9 @@ namespace TRTR
 
             byte[] content = entry.ReadContent();
 
-            uint entryCount1 = BitConverter.ToUInt32(content, 4) - 1;
-            uint entryCount2 = BitConverter.ToUInt32(content, 8) - 1;
-            entryCount = entryCount1 + entryCount2 + 2;
+            entryCount1 = BitConverter.ToUInt32(content, 4);
+            entryCount2 = BitConverter.ToUInt32(content, 8);
+            entryCount = entryCount1 + entryCount2;
             Log.LogDebugMsg(string.Format("Menu parsing: {0} Entry count: {1}, ", entry.Extra.FileName, entryCount));
 
             int validEntryCount = 0;
@@ -51,10 +55,9 @@ namespace TRTR
                 MenuEntries.Add(menuEntry);
                 if (menuEntry.PlaceHolder)
                     validEntryCount++;
-
             }
 
-            entryCount = (uint)(MenuEntries.Count);
+            entryCount = (UInt32)(MenuEntries.Count);
 
             // last processed non-empty entry
             MenuFileEntry lastValidEntry = null;
@@ -82,9 +85,7 @@ namespace TRTR
                         Array.Copy(content, lastValidEntry.StartIdx, textBuf, 0, textLen);
 
                         lastValidEntry.Current = textConv.Enc.GetString(textBuf);
-                        lastValidEntry.Translation = TextParser.GetText(lastValidEntry.Current.Replace("\n", "\r\n"),
-                            string.Format("BF: {0} File: {1} Line: {2}", entry.Extra.BigFileName, entry.Extra.FileNameForced, i));
-
+                        lastValidEntry.Translation = TranslationDict.GetTranslation(lastValidEntry.Current.Replace("\n", "\r\n"),this.Entry);
                     }
                     lastValidEntry = menuEntry;
                     debugValidEntryCount++;
@@ -98,14 +99,84 @@ namespace TRTR
                 Array.Copy(content, lastValidEntry.StartIdx, lastTextBuf, 0, lastTextLen);
                 lastValidEntry.EndIdx = (UInt32)lastNotNull;
                 lastValidEntry.Current = textConv.Enc.GetString(lastTextBuf);
-                lastValidEntry.Translation = TextParser.GetText(lastValidEntry.Current.Replace("\n", "\r\n"),
-                    string.Format("BF: {0} File: {1} Line: {2}", entry.Extra.BigFileName, entry.Extra.FileNameForced, "lastentry"));
+                lastValidEntry.Translation = TranslationDict.GetTranslation(lastValidEntry.Current.Replace("\n", "\r\n"), this.Entry);
             }
             Log.LogDebugMsg(string.Format("Valid menu entries: {0} placeholders {1}", debugValidEntryCount, debugPlaceHolderCount));
 
         }
 
-        internal void Translate()
+        internal void Translate(bool simulated)
+        {
+            MemoryStream msIndex = new MemoryStream();
+            MemoryStream msEntries = new MemoryStream();
+            try
+            {
+                msIndex.Write(BitConverter.GetBytes((Int32)FileLanguage.English), 0, 4);
+                msIndex.Write(BitConverter.GetBytes(entryCount1), 0, 4);
+                msIndex.Write(BitConverter.GetBytes(entryCount2), 0, 4);
+
+                Int32 indexSize = (menuEntries.Count + 3) * 4;
+                for (Int32 i = 0; i < menuEntries.Count; i++)
+                {
+                    Int32 indexOffset = 0;
+                    MenuFileEntry menuEntry = menuEntries[i];
+                    if (!menuEntry.PlaceHolder)
+                    {
+                        {
+                            string translation = string.Empty;
+                            {
+                                try
+                                {
+                                    translation = TranslationDict.GetTranslation(menuEntry.Current.Replace("\n", "\r\n"), this.Entry);
+                                    if (translation.Length > 0)
+                                    {
+                                        //XmlAttribute setupAttr = node.Attributes["setup"];
+                                        //bool replaceChars = true;
+                                        //if (setupAttr != null)
+                                        //    replaceChars = setupAttr.Value != "true";
+                                        //if (replaceChars)
+                                        //    translation = MenuFile.textConv.ToGameFormat(attr.Value.Replace("\r\n", "\n")) + (char)(0);
+                                        //else
+                                        //    translation = attr.Value.Replace("\r\n", "\n") + (char)(0);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new Exception(Errors.CorruptedTranslation, ex);
+                                }
+
+                                byte[] textBuf = MenuFile.textConv.Enc.GetBytes(translation.Replace("\r\n", "\n") + (char)(0));
+                                indexOffset = (Int32)msEntries.Length + indexSize;
+                                msEntries.Write(textBuf, 0, textBuf.Length);
+                            }
+                        }
+                        msIndex.Write(BitConverter.GetBytes(indexOffset), 0, 4);
+                    }
+                    else
+                        msIndex.Write(BitConverter.GetBytes(menuEntry.StartIdx), 0, 4);
+
+                }
+                msIndex.Position = msIndex.Length;
+                msIndex.Write(msEntries.ToArray(), 0, (Int32)msEntries.Length);
+                //if(!simulated)
+                //    entry.WriteContent(msIndex.ToArray());
+
+                byte[] content = msIndex.ToArray();
+                string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "simulate",
+                        string.Format("{0}.{1}.{2}.txt", entry.Extra.BigFilePrefix, entry.Extra.FileNameOnlyForced, entry.Extra.LangText));
+                Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
+                FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
+                fx.Write(content, 0, content.Length);
+                fx.Close();
+            }
+            finally
+            {
+                msEntries.Close();
+                msIndex.Close();
+            }
+        }
+
+        internal void Translate_old()
         {
             MemoryStream msIndex = new MemoryStream();
             MemoryStream msEntries = new MemoryStream();
@@ -294,7 +365,7 @@ namespace TRTR
                         ResXDataNode resNode = new ResXDataNode(
                             CineFile.textConv.ToOriginalFormat(menuEntry.Current).Replace("\n", "\r\n"),
                             useDict
-                                ? CineFile.textConv.ToOriginalFormat(TextParser.GetText(menuEntry.Current.Replace("\n", "\r\n"), "??"))
+                                ? CineFile.textConv.ToOriginalFormat(TranslationDict.GetTranslation(menuEntry.Current.Replace("\n", "\r\n"), this.Entry))
                                 : CineFile.textConv.ToOriginalFormat(menuEntry.Current.Replace("\n", "\r\n"))
                             );
                         resNode.Comment = "";

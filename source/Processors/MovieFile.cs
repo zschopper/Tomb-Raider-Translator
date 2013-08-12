@@ -136,7 +136,7 @@ namespace TRTR
             //OriginalFileContent = content;
         }
 
-        internal void Translate()
+        internal void Translate(bool simulated)
         {
             XmlNode subtNode = TRGameInfo.Trans.TranslationDocument.SelectSingleNode("/translation/subtitle");
             if (subtNode != null)

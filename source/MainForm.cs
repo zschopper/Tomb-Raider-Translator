@@ -504,11 +504,6 @@ namespace TRTR
                 t.SetToolTip((Label)sender, ((Label)sender).Text);
         }
 
-        private void form_Main_Enter(object sender, EventArgs e)
-        {
-
-        }
-
         // it need to be called from main thread.
         // called after game selection change and application language change
         private void refreshGameInfoLabels(bool cancelled)
@@ -581,17 +576,6 @@ namespace TRTR
 
         private void buttonTest1_Click(object sender, EventArgs e)
         {
-            List<string> files = new List<string>(Directory.GetFiles(Path.Combine(TRGameInfo.Game.WorkFolder, "hu"), "*.resx", SearchOption.AllDirectories));
-            foreach(string file in files)
-                ResXDict.ReadResXFile(file);
-            ResXDict.Report(Path.Combine(TRGameInfo.Game.WorkFolder, "report.txt"));
-            Debug.WriteLine("reporting finished");
-
-        }
-
-        private void groupBoxGameInfo_Enter(object sender, EventArgs e)
-        {
-
         }
     }
 }
