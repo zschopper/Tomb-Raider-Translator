@@ -148,7 +148,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ResXDictClass.cs" />
-    <Compile Include="TextData.cs" />
     <Compile Include="GameClasses\InstalledGames.cs" />
     <Compile Include="GameClasses\KnownGame.cs" />
     <Compile Include="Processors\MovieFile.cs" />
@@ -300,7 +299,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\x86\Release\" />
-    <Folder Include="old_translations\" />
+    <Folder Include="obsoleted\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

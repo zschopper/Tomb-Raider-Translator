@@ -145,12 +145,7 @@ namespace TRTR
                 Trans.RestorationDocument = new XmlDocument();
                 Trans.RestorationDocument.Load(Trans.RestorationDocumentFileName);
             }
-            //StreamWriter fs = new StreamWriter(Path.Combine(game.WorkFolder, "texts.txt"), false);
-            //foreach (KeyValuePair<string, TextData> x in texts.Dict)
-            //{
-            //    fs.WriteLine("#" + x.Key);
-            //    fs.WriteLine(x.Value.Full + "\r\n");
-            //}
+
             OnChange();
         }
 
