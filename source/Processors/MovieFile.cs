@@ -121,8 +121,7 @@ namespace TRTR
                         {
                             // Log.LogDebugMsg(string.Format("{0} {1}", m2.Groups.Count, s));
 
-                            fileEntry.Translated = TextParser.GetText(fileEntry.Original,
-                                string.Format("BF: {0} File: {1} Line: {2}", entry.Extra.BigFileName, entry.Extra.FileNameForced, i));
+                            fileEntry.Translated = TranslationDict.GetTranslation(fileEntry.Original, Entry);
                         }
                         else
                             fileEntry.Translated = fileEntry.Original;

@@ -62,7 +62,7 @@ namespace TRTR
             {
                 throw new Exception(e.Message);
             }
-            TextParser.Update();
+            //TextParser.Update();
 
             Trans.InfoDoc = null;
             Trans.TranslationDocument = null;
@@ -251,10 +251,10 @@ namespace TRTR
 
                 FileEntryList entryList = new FileEntryList(null, filePattern, filePrefix);
 
-                TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "movie.txt"));
-                TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "menu.txt"));
-                TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "anime.txt"));
-                TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "extra.txt"));
+                //TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "movie.txt"));
+                //TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "menu.txt"));
+                //TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "anime.txt"));
+                //TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "extra.txt"));
 
                 entryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "source"), false);
                 entryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "hu"), true);
