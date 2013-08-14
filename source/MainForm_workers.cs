@@ -98,7 +98,8 @@ namespace TRTR
         private void workerExtract_DoWork(object sender, DoWorkEventArgs e)
         {
             TRGameInfo.Extract();
-            //InitializeWorker((BackgroundWorker)sender);
+            InitializeWorker((BackgroundWorker)sender);
+            
             //FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
             //entryList.Extract(TRGameInfo.Game.WorkFolder);
             //MovieSubtitles sub = new MovieSubtitles();
@@ -135,9 +136,9 @@ namespace TRTR
 
         private void workerCompileTexts_DoWork(object sender, DoWorkEventArgs e)
         {
-            InitializeWorker((BackgroundWorker)sender);
-            TranslationParser parser = new TranslationParser((string)e.Argument,
-                (BackgroundWorker)sender);
+            //InitializeWorker((BackgroundWorker)sender);
+            //TranslationParser parser = new TranslationParser((string)e.Argument,
+            //    (BackgroundWorker)sender);
         }
     }
 }

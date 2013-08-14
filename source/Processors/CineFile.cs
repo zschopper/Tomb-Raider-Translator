@@ -781,7 +781,8 @@ namespace TRTR
                     this.NormalizedText = string.Empty;
                     this.Translated = string.Empty;
 
-                    Log.LogDebugMsg(string.Format("Empty CineFile text: \"{0}\" Lang: {1}", text, Language.ToString())); //trans
+                    if (Language == FileLanguage.English)
+                        Log.LogDebugMsg(string.Format("Empty CineFile text: \"{0}\" Lang: {1}", text, Language.ToString())); //trans
                 }
                 else
                 {

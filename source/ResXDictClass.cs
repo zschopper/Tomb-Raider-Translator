@@ -63,7 +63,7 @@ namespace TRTR
             foreach (string file in files)
                 ReadResXFile(file);
             Report(Path.Combine(TRGameInfo.Game.WorkFolder, "translation report.txt"));
-            Debug.WriteLine("translations loaded");
+            Log.LogDebugMsg(string.Format("{0} translation entries added", dict.Count));
         }
 
         internal override void Clear()
@@ -73,13 +73,16 @@ namespace TRTR
 
         internal override string GetTranslation(string text, FileEntry entry, string[] context)
         {
+            if (text.Trim().Length == 0)
+                return text;
+
             ResXDictEntryList entryList = null;
             int sourceHash = text.GetHashCode();
 
             if (!dict.TryGetValue(sourceHash, out entryList))
             {
                 //throw new Exception(string.Format("No translation for \"{0}\"", text));
-                Debug.WriteLine(string.Format("No translation for \"{0}\"", text));
+                Log.LogDebugMsg(string.Format("No translation for \"{0}\"", text));
                 return text;
             }
 

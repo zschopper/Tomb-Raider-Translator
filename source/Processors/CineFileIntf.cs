@@ -10,7 +10,7 @@ namespace TRTR.Processors
 
     class CineFileIntf : ITransProc
     {
-        CineTransFileList cineTransFiles = new CineTransFileList();
+        //CineTransFileList cineTransFiles = new CineTransFileList();
         string ITransProc.Name { get { return "CINE"; } }
         void ITransProc.Initialize()
         {
@@ -158,110 +158,110 @@ namespace TRTR.Processors
         void ITransProc.CreateTranslation(FileEntryList entryList, XmlNode node, string dir)
         {
 
-            string fileName = Path.Combine(TRGameInfo.Trans.TranslationSourceDirectory, "Subtitle.txt");
-            string textContent = File.ReadAllText(fileName, CineFile.textConv.Enc);
+            //string fileName = Path.Combine(TRGameInfo.Trans.TranslationSourceDirectory, "Subtitle.txt");
+            //string textContent = File.ReadAllText(fileName, CineFile.textConv.Enc);
 
-            List<string> entryTexts = new List<string>(Regex.Split(textContent, "^HASH: ", RegexOptions.Multiline));
+            //List<string> entryTexts = new List<string>(Regex.Split(textContent, "^HASH: ", RegexOptions.Multiline));
 
-            if (!Regex.Match(entryTexts[0], @"^([0-9A-F]{7,8});[^\n]*(dir|sub)\r\n", RegexOptions.Multiline).Success)
-                entryTexts.RemoveAt(0);
+            //if (!Regex.Match(entryTexts[0], @"^([0-9A-F]{7,8});[^\n]*(dir|sub)\r\n", RegexOptions.Multiline).Success)
+            //    entryTexts.RemoveAt(0);
 
-            Regex rxHash = new Regex(@"^([0-9A-F]{7,8});[^\n]*(dir|sub)\r\n", RegexOptions.Multiline);
-            Regex rxOriginal = new Regex(@"^#[^\r\n]*\r\n", RegexOptions.Multiline);
-            Regex rxDirective = new Regex(@"^\$[^\r\n]*\r\n", RegexOptions.Multiline);
-            Regex rxComment = new Regex(@"^;[^\r\n]*\r\n", RegexOptions.Multiline);
-            Regex rxIsNewText = new Regex(@"^([0-9]{5});([^\r\n]*)$");
-            Regex rxTrans = new Regex(@"^(.*)\r\n", RegexOptions.Multiline);
+            //Regex rxHash = new Regex(@"^([0-9A-F]{7,8});[^\n]*(dir|sub)\r\n", RegexOptions.Multiline);
+            //Regex rxOriginal = new Regex(@"^#[^\r\n]*\r\n", RegexOptions.Multiline);
+            //Regex rxDirective = new Regex(@"^\$[^\r\n]*\r\n", RegexOptions.Multiline);
+            //Regex rxComment = new Regex(@"^;[^\r\n]*\r\n", RegexOptions.Multiline);
+            //Regex rxIsNewText = new Regex(@"^([0-9]{5});([^\r\n]*)$");
+            //Regex rxTrans = new Regex(@"^(.*)\r\n", RegexOptions.Multiline);
 
-            for (Int32 i = 0; i < entryTexts.Count; i++)
-            {
-                string txt = entryTexts[i];
+            //for (Int32 i = 0; i < entryTexts.Count; i++)
+            //{
+            //    string txt = entryTexts[i];
 
-                //                string[] entryLines = txt.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-                TranslationFileEntry transEntry = new TranslationFileEntry();
-                Match mtch = null;
-                MatchCollection mtchs = null;
+            //    //                string[] entryLines = txt.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+            //    TranslationFileEntry transEntry = new TranslationFileEntry();
+            //    Match mtch = null;
+            //    MatchCollection mtchs = null;
 
-                // parse hash & language;
-                mtch = rxHash.Match(txt);
-                UInt32 hash = 0;
+            //    // parse hash & language;
+            //    mtch = rxHash.Match(txt);
+            //    UInt32 hash = 0;
 
-                if (!mtch.Success)
-                    throw new Exception("Internal error: Subtitle identifier (hash) not found.");
+            //    if (!mtch.Success)
+            //        throw new Exception("Internal error: Subtitle identifier (hash) not found.");
 
-                hash = UInt32.Parse(mtch.Result("$1"), System.Globalization.NumberStyles.HexNumber);
-                bool isSub = mtch.Result("$2") == "sub";
-                txt = rxHash.Replace(txt, string.Empty, 1);
+            //    hash = UInt32.Parse(mtch.Result("$1"), System.Globalization.NumberStyles.HexNumber);
+            //    bool isSub = mtch.Result("$2") == "sub";
+            //    txt = rxHash.Replace(txt, string.Empty, 1);
 
-                // parse original
-                txt = rxOriginal.Replace(txt, string.Empty);
-                // parse comments
-                txt = rxComment.Replace(txt, string.Empty);
+            //    // parse original
+            //    txt = rxOriginal.Replace(txt, string.Empty);
+            //    // parse comments
+            //    txt = rxComment.Replace(txt, string.Empty);
 
-                CineTransBlockList transBlocks = new CineTransBlockList();
-                cineTransFiles.Add(hash, transBlocks);
+            //    CineTransBlockList transBlocks = new CineTransBlockList();
+            //    cineTransFiles.Add(hash, transBlocks);
 
-                CineBlockTranslationTextList blockTexts = null;
+            //    CineBlockTranslationTextList blockTexts = null;
 
-                // process directives
-                mtchs = rxDirective.Matches(txt);
-                foreach (Match m in mtchs)
-                    if (transEntry.Directives.Length == 0)
-                        transEntry.Directives = m.Result("$1").Replace("\r\n$", "\r\n");
-                    else
-                        transEntry.Directives += "\r\n" + m.Result("$1").Replace("\r\n$", "\r\n");
-                txt = rxDirective.Replace(txt, string.Empty);
+            //    // process directives
+            //    mtchs = rxDirective.Matches(txt);
+            //    foreach (Match m in mtchs)
+            //        if (transEntry.Directives.Length == 0)
+            //            transEntry.Directives = m.Result("$1").Replace("\r\n$", "\r\n");
+            //        else
+            //            transEntry.Directives += "\r\n" + m.Result("$1").Replace("\r\n$", "\r\n");
+            //    txt = rxDirective.Replace(txt, string.Empty);
 
-                // process translations
-                mtchs = rxTrans.Matches(txt);
-                string translation = string.Empty;
-                for (Int32 k = 0; k < mtchs.Count - 1; k++)
-                {
-                    Match m = mtchs[k];
-                    if (translation.Length == 0)
-                        translation = m.Result("$1");
-                    else
-                        translation += "\r\n" + m.Result("$1");
-                }
-                translation = translation.Replace("!TESZT! ", string.Empty);
+            //    // process translations
+            //    mtchs = rxTrans.Matches(txt);
+            //    string translation = string.Empty;
+            //    for (Int32 k = 0; k < mtchs.Count - 1; k++)
+            //    {
+            //        Match m = mtchs[k];
+            //        if (translation.Length == 0)
+            //            translation = m.Result("$1");
+            //        else
+            //            translation += "\r\n" + m.Result("$1");
+            //    }
+            //    translation = translation.Replace("!TESZT! ", string.Empty);
 
-                #region Apply directives
-                //// $del
-                //if (transEntry.Directives.Contains("DEL"))
-                //    transEntry.Translation = "?";
-                //// $setup
-                //transEntry.KeepAccentedChars = transEntry.Directives.Contains("SETUP");
-                //menuTransEntries.Add(Convert.ToInt32(transEntry.Hash), transEntry);
+            //    #region Apply directives
+            //    //// $del
+            //    //if (transEntry.Directives.Contains("DEL"))
+            //    //    transEntry.Translation = "?";
+            //    //// $setup
+            //    //transEntry.KeepAccentedChars = transEntry.Directives.Contains("SETUP");
+            //    //menuTransEntries.Add(Convert.ToInt32(transEntry.Hash), transEntry);
 
-                #endregion
+            //    #endregion
 
-                List<string> transLines = new List<string>(Regex.Split(translation, @"\r\n"));
-                for (Int32 j = 0; j < transLines.Count - 0; j++)
-                {
-                    mtch = rxIsNewText.Match(transLines[j]);
-                    string blockText = string.Empty;
-                    if (mtch.Success)
-                    {
-                        UInt32 blockNo = UInt32.Parse(mtch.Result("$1"));
-                        blockText = mtch.Result("$2");
+            //    List<string> transLines = new List<string>(Regex.Split(translation, @"\r\n"));
+            //    for (Int32 j = 0; j < transLines.Count - 0; j++)
+            //    {
+            //        mtch = rxIsNewText.Match(transLines[j]);
+            //        string blockText = string.Empty;
+            //        if (mtch.Success)
+            //        {
+            //            UInt32 blockNo = UInt32.Parse(mtch.Result("$1"));
+            //            blockText = mtch.Result("$2");
 
-                        if (!transBlocks.ContainsKey(blockNo))
-                        {
-                            blockTexts = new CineBlockTranslationTextList();
-                            transBlocks.Add(blockNo, blockTexts);
-                        }
-                        else // duplicate key
-                            blockTexts = transBlocks[blockNo];
-                        blockTexts.Add(blockText);
-                    }
-                    else
-                    {
-                        // add value to end of last entry.
-                        Int32 index = blockTexts.Count - 1;
-                        blockTexts[index] += "\r\n" + transLines[j];
-                    }
-                }
-            }
+            //            if (!transBlocks.ContainsKey(blockNo))
+            //            {
+            //                blockTexts = new CineBlockTranslationTextList();
+            //                transBlocks.Add(blockNo, blockTexts);
+            //            }
+            //            else // duplicate key
+            //                blockTexts = transBlocks[blockNo];
+            //            blockTexts.Add(blockText);
+            //        }
+            //        else
+            //        {
+            //            // add value to end of last entry.
+            //            Int32 index = blockTexts.Count - 1;
+            //            blockTexts[index] += "\r\n" + transLines[j];
+            //        }
+            //    }
+            //}
         }
 
         // creates restoration xml
