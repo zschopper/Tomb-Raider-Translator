@@ -1508,12 +1508,13 @@ namespace TRTR
                 // debugDumpIt = (entry.Extra.FileType == FileTypeEnum.BIN_MNU && entry.Extra.Language == FileLanguage.English) || entry.Extra.FileType == FileTypeEnum.Unknown; 
                 // debugDumpIt = entry.Translatable;
                 // debugDumpIt = entry.Extra.FileType == FileTypeEnum.DRM && entry.Raw.Length < 1024;
+                debugDumpIt = !entry.Extra.NameResolved || entry.Extra.FileType == FileTypeEnum.Special;
 
                 if (debugDumpIt)
                 {
                     byte[] content = entry.ReadContent();
                     string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "raw",
-                            string.Format("{0}.{1}.{2}.txt", entry.Extra.BigFilePrefix, entry.Extra.FileNameOnlyForced, entry.Extra.LangText));
+                            string.Format("{0}.{1}.{2}.{3}.txt", entry.BigFile.Name, entry.Extra.FileNameOnlyForced, entry.Extra.FileType, entry.Extra.LangText));
                     Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
                     FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
                     fx.Write(content, 0, content.Length);
@@ -1592,6 +1593,10 @@ namespace TRTR
             List<string> files = new List<string>(Directory.GetFiles(folder, "*.000.tiger", SearchOption.AllDirectories));
             List<string> dupeFilter = new List<string>();
 
+            // loading filelist for hash - filename resolution
+            LoadFileNamesFile(Path.Combine(TRGameInfo.Game.WorkFolder, "filelist.txt"), out fileNameHashDict);
+            LoadPathAliasesFile(Path.Combine(TRGameInfo.Game.WorkFolder, "path_aliases.txt"), out folderAliasDict, out fileNameAliasDict);
+
             Log.LogMsg(LogEntryType.Debug, string.Format("Building file structure: {0}", folder));
             foreach (string file in files)
             {
@@ -1610,10 +1615,6 @@ namespace TRTR
 
             foreach (BigFile bf in this)
                 Log.LogMsg(LogEntryType.Debug, string.Format("{0,-20}  entries: {1,5:d}  files: {2}  priority: {3}", bf.Name, bf.EntryCount, bf.FileCount, bf.Priority));
-
-            // loading filelist for hash - filename resolution
-            LoadFileNamesFile(Path.Combine(TRGameInfo.Game.WorkFolder, "filelist.txt"), out fileNameHashDict);
-            LoadPathAliasesFile(Path.Combine(TRGameInfo.Game.WorkFolder, "path_aliases.txt"), out folderAliasDict, out fileNameAliasDict);
         }
 
         private void LoadFileNamesFile(string fileName, out Dictionary<uint, string> dict)
