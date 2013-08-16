@@ -51,7 +51,7 @@ namespace TRTR
             cineTransFiles = new CineTransFileList();
             menuTransEntries = new Dictionary<Int32, TranslationFileEntry>();
             moviesTransEntries = new Dictionary<string, List<TranslationFileEntry>>();
-            entries = new FileEntryList(worker, "", "");
+            entries = new FileEntryList(TRGameInfo.Worker, "", "");
             entries.ReadFAT();
 
             // parse

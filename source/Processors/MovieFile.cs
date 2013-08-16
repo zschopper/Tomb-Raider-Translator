@@ -189,7 +189,7 @@ namespace TRTR
 
         private void ExtractResX(string destFolder, MovieFile.MovieLanguage lang, bool useDict)
         {
-            if (entry.Extra.HashText == "3533B8DF" && entry.Extra.BigFilePrefix == "patch")
+            if (entry.Extra.HashText == "3533B8DF" && entry.Parent.ParentBigFile.Name == "patch")
                 Debug.WriteLine("ez");
 
             string resXFileName = Path.Combine(destFolder, entry.Extra.ResXFileName);
@@ -236,14 +236,14 @@ namespace TRTR
                 nodeRoot.AppendChild(elemEntry);
                 doc.Save(fileName);
             }
-            doc.Save(Path.Combine(destFolder, entry.Extra.BigFilePrefix + "_" + entry.Extra.FileNameOnlyForced) + ".xml");
+            doc.Save(Path.Combine(destFolder, entry.Parent.ParentBigFile.Name + "_" + entry.Extra.FileNameOnlyForced) + ".xml");
 
         }
 
         private void ExtractText(string destFolder, MovieFile.MovieLanguage lang)
         {
             TextWriter subtitleWriter = new StreamWriter(
-                Path.Combine(destFolder, entry.Extra.BigFilePrefix + "_" + entry.Extra.FileNameOnlyForced) + ".txt", false, Encoding.UTF8);
+                Path.Combine(destFolder, entry.Parent.ParentBigFile.Name + "_" + entry.Extra.FileNameOnlyForced) + ".txt", false, Encoding.UTF8);
             try
             {
                 // write english subtitles of cinematics to text

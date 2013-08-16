@@ -22,7 +22,7 @@ namespace TRTR
         internal static void ShowError(Exception e)
         {
             Assembly thisExe = Assembly.GetExecutingAssembly();
-            Stream page =  thisExe.GetManifestResourceStream(thisExe.GetName().Name + ".Resources.ErrorPage.html");
+            Stream page = thisExe.GetManifestResourceStream(thisExe.GetName().Name + ".Resources.ErrorPage.html");
             ErrorDetailsDialog inst = new ErrorDetailsDialog();
             inst.error = e;
             page.Position = 0;
@@ -42,7 +42,7 @@ namespace TRTR
 
         string Write(Exception ex)
         {
-            StringBuilder ret = new StringBuilder();            
+            StringBuilder ret = new StringBuilder();
             ret.AppendFormat("<ul><li/>Message: {0}\r\n", ex.Message);
             ret.AppendFormat("<li/>Source: {0}\r\n", ex.Source);
             if (ex.Data.Count == 0)
@@ -94,7 +94,7 @@ namespace TRTR
                 {
                     const uint HKEY_LOCAL_MACHINE = unchecked((uint)0x80000002);
                     string keyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
-                    
+
                     options = new ConnectionOptions();
                     options.Impersonation = ImpersonationLevel.Impersonate;
                     options.EnablePrivileges = true;
@@ -117,7 +117,7 @@ namespace TRTR
                     if ((Int32)outParams["returnValue"] == 0)
                     {
                         string[] subKeys = null; // methodArgs[2] as String[];
-                        if (subKeys == null) 
+                        if (subKeys == null)
                             return;
                         string keyName = string.Empty;
 
@@ -132,8 +132,8 @@ namespace TRTR
                             wmiRegistry.InvokeMethod("GetStringValue", inParams, null);
 
                             //if ((uint)outParam["ReturnValue"] == 0)
-                                //Console.WriteLine(outParam["sValue"]);
-                                ;
+                            //Console.WriteLine(outParam["sValue"]);
+                            ;
                         }
                     }
                 }
@@ -168,7 +168,7 @@ namespace TRTR
                 if (ValueNameExists(subKey2.GetValueNames(), "DisplayName") &&
                     ValueNameExists(subKey2.GetValueNames(), "DisplayVersion"))
                 {
-                    if(subKey2.GetValue("DisplayName").ToString().IndexOf(".NET Framework") >= 0 ||
+                    if (subKey2.GetValue("DisplayName").ToString().IndexOf(".NET Framework") >= 0 ||
                         subKey2.GetValue("DisplayName").ToString().IndexOf("MSXML") >= 0)
                         ret += subKey2.GetValue("DisplayName").ToString() + " (" + subKey2.GetValue("DisplayVersion").ToString() + ")\r\n";
                 }
@@ -182,16 +182,16 @@ namespace TRTR
         private bool ValueNameExists(string[] valueNames, string valueName)
         {
             foreach (string s in valueNames)
-                if (s.ToLower() == valueName.ToLower()) 
+                if (s.ToLower() == valueName.ToLower())
                     return true;
             return false;
         }
 
-/*
- * System.Diagnostics.FileVersionInfo fileVersionInfo =
-System.Diagnostics.FileVersionInfo.GetVersionInfo( fileName);
-string fileDescription = fileVersionInfo.FileDescription;
-*/
+        /*
+         * System.Diagnostics.FileVersionInfo fileVersionInfo =
+        System.Diagnostics.FileVersionInfo.GetVersionInfo( fileName);
+        string fileDescription = fileVersionInfo.FileDescription;
+        */
 
         private string getSysInfo()
         {

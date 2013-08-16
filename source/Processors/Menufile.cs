@@ -42,7 +42,7 @@ namespace TRTR
             entryCount1 = BitConverter.ToUInt32(content, 4);
             entryCount2 = BitConverter.ToUInt32(content, 8);
             entryCount = entryCount1 + entryCount2;
-            Log.LogDebugMsg(string.Format("Menu parsing: {0} Entry count: {1}, ", entry.Extra.FileName, entryCount));
+            Log.LogDebugMsg(string.Format("Menu parsing: {0} Entry count: {1} ({2}+{3}), ", entry.Extra.FileName, entryCount, entryCount1, entryCount2));
 
             int validEntryCount = 0;
             for (int i = 0; i < entryCount; i++)
@@ -163,7 +163,7 @@ namespace TRTR
 
                 byte[] content = msIndex.ToArray();
                 string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "simulate",
-                        string.Format("{0}.{1}.{2}.txt", entry.Extra.BigFilePrefix, entry.Extra.FileNameOnlyForced, entry.Extra.LangText));
+                        string.Format("{0}.{1}.{2}.txt", entry.Parent.ParentBigFile.Name, entry.Extra.FileNameOnlyForced, entry.Extra.LangText));
                 Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
                 FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
                 fx.Write(content, 0, content.Length);

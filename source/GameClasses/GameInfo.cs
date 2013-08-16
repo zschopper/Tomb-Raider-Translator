@@ -23,8 +23,9 @@ namespace TRTR
         private static TRGameStatus gameStatus = TRGameStatus.None;
         private static List<string> processors = new List<string>();
         //private static XmlDocument gameDataDocument;
-        private static GameInstance game;
-        private static List<string> fileList = new List<string>();
+        private static GameInstance game = null;
+        private static BigFilePool filePool = null;
+        private static BigFileList bigFiles = null;
         #endregion
 
         internal static FileLanguage OverwriteLang = FileLanguage.English;
@@ -32,7 +33,9 @@ namespace TRTR
         internal static TRGameStatus GameStatus { get { return gameStatus; } }
         internal static List<string> Processors { get { return processors; } }
         internal static GameInstance Game { get { return game; } set { game = value; } }
-        internal static List<string> FileList { get { return fileList; } }
+
+        internal static BigFilePool FilePool { get { return filePool; } }
+        internal static BigFileList BigFiles { get { return bigFiles; } }
 
         /*
                 internal static event GameChangeHandler Change2
@@ -55,48 +58,14 @@ namespace TRTR
             {
                 // load install type-dependent data
                 game.Load();
-
-                buildBigfileStructure();
+                bigFiles = new BigFileList(game.InstallFolder);
+                
+                //buildBigfileStructure();
             }
             catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
-            //TextParser.Update();
-
-            Trans.InfoDoc = null;
-            Trans.TranslationDocument = null;
-            Trans.RestorationDocument = null;
-            //            gameDataDocument = null;
-
-            string canonizedGameName = TextConv.CanonizeFileName(game.Name);
-            Trans.InfoDocFileName = Path.GetFullPath(@".\" + canonizedGameName + ".xml");
-            Trans.RestorationDocumentFileName = Path.GetFullPath(@".\" + canonizedGameName + ".res.xml");
-            Trans.TranslationDocumentFileName = Path.GetFullPath(@".\" + canonizedGameName + ".tra.xml");
-            //            string gameDataDocumentFileName = Path.GetFullPath(@".\" + canonizedGameName + ".xml");
-
-            //            buildBigfileStructure();
-
-            #region deleted LoadGameData
-            //if (File.Exists(gameDataDocumentFileName))
-            //{
-            //    //    throw new Exception(string.Format("Game information file ({0}) isn't exist", gameDataDocumentFileName));
-
-            //    gameDataDocument = new XmlDocument();
-            //    gameDataDocument.Load(gameDataDocumentFileName);
-            //    XmlNode rootNode = gameDataDocument.SelectSingleNode("/gamedata");
-
-            //    // extract interfaces
-            //    XmlNode interfacesNode = rootNode.SelectSingleNode("interfaces");
-            //    if (interfacesNode == null)
-            //        throw new Exception("");
-            //    processors.Clear();
-            //    if (interfacesNode.SelectSingleNode(@"interface[@type=""MNU""]") != null)
-            //        processors.Add("MNU");
-            //    if (interfacesNode.SelectSingleNode(@"interface[@type=""CINE""]") != null)
-            //        processors.Add("CINE");
-            //}
-            #endregion
 
             // load info doc, if exists
             if (File.Exists(Trans.InfoDocFileName))
@@ -120,7 +89,8 @@ namespace TRTR
             foreach (string folder in foldersByPriority)
                 files.AddRange(Directory.GetFiles(Path.Combine(TRGameInfo.Game.WorkFolder, "hu", folder), "*.resx", SearchOption.AllDirectories));
 
-            ResXDict dict = new ResXDict(files.ToArray());
+            //ResXDict dict = new ResXDict(files.ToArray());
+            TMXProvider dict = new TMXProvider();
             TranslationDict.Provider = dict;
             TranslationDict.LoadTranslations();
             #endregion
@@ -162,36 +132,38 @@ namespace TRTR
             bw.RunWorkerAsync(game);
         }
 
-        private static void buildBigfileStructure()
-        {
-            //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "bigfile.*.tiger", SearchOption.AllDirectories));
-            //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "title_english.*.tiger", SearchOption.AllDirectories));
-            //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "bigfile_english.000.tiger", SearchOption.AllDirectories));
-            //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "title.*.tiger", SearchOption.AllDirectories));
+        //private static void buildBigfileStructure()
+        //{
+        //    return;
+        //    //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "bigfile.*.tiger", SearchOption.AllDirectories));
+        //    //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "title_english.*.tiger", SearchOption.AllDirectories));
+        //    //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "bigfile_english.000.tiger", SearchOption.AllDirectories));
+        //    //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "title.*.tiger", SearchOption.AllDirectories));
 
-            List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "*.tiger", SearchOption.AllDirectories));
-            List<string> dupeFilter = new List<string>();
+        //    List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "*.tiger", SearchOption.AllDirectories));
+        //    List<string> dupeFilter = new List<string>();
 
-            fileList.Clear();
-            Log.LogMsg(LogEntryType.Debug, string.Format("Building file structure: {0}", game.InstallFolder));
-            foreach (string file in files)
-            {
-                string fileNameOnly = Path.GetFileName(file);
-                if (!dupeFilter.Contains(fileNameOnly))
-                {
-                    FileStream fs = new FileStream(file, FileMode.Open);
-                    BinaryReader rdr = new BinaryReader(fs, Encoding.ASCII);
-                    byte[] bufMagic = rdr.ReadBytes(4);
-                    if (Encoding.ASCII.GetString(bufMagic) == "TAFS")
-                    {
-                        dupeFilter.Add(fileNameOnly);
-                        fileList.Add(file);
-                        Log.LogMsg(LogEntryType.Debug, string.Format("File: {0} added to list", file));
-                    }
-                    fs.Close();
-                }
-            }
-        }
+        //    List<string> fileList = new List<string>();
+        //    fileList.Clear();
+        //    Log.LogMsg(LogEntryType.Debug, string.Format("Building file structure: {0}", game.InstallFolder));
+        //    foreach (string file in files)
+        //    {
+        //        string fileNameOnly = Path.GetFileName(file);
+        //        if (!dupeFilter.Contains(fileNameOnly))
+        //        {
+        //            FileStream fs = new FileStream(file, FileMode.Open);
+        //            BinaryReader rdr = new BinaryReader(fs, Encoding.ASCII);
+        //            byte[] bufMagic = rdr.ReadBytes(4);
+        //            if (Encoding.ASCII.GetString(bufMagic) == "TAFS")
+        //            {
+        //                dupeFilter.Add(fileNameOnly);
+        //                fileList.Add(file);
+        //                Log.LogMsg(LogEntryType.Debug, string.Format("File: {0} added to list", file));
+        //            }
+        //            fs.Close();
+        //        }
+        //    }
+        //}
 
         private static void workerLoad_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -230,51 +202,20 @@ namespace TRTR
 
         internal static void Extract()
         {
-            foreach (string file in fileList)
+            foreach (BigFile bigFile in bigFiles)
             {
-                string filePattern = file.Replace("000", "{0:d3}");
-
-                string filePrefix = string.Format(filePattern, 0);
-                string tmpPrefix;
-                do
-                {
-                    tmpPrefix = filePrefix;
-                    filePrefix = Path.GetFileNameWithoutExtension(tmpPrefix);
-
-                } while (tmpPrefix != filePrefix);
-
-
-                FileEntryList entryList = new FileEntryList(null, filePattern, filePrefix);
-
-                //TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "movie.txt"));
-                //TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "menu.txt"));
-                //TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "anime.txt"));
-                //TextParser.LoadFromText(Path.Combine(game.WorkFolder, "dict", "extra.txt"));
-
-                entryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "source"), false);
-                entryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "hu"), true);
+                bigFile.UpdateEntryList();
+                bigFile.EntryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "source"), false);
+                bigFile.EntryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "hu"), true);
             }
         }
 
-        internal static void Translate(bool simulated) {
-            foreach (string file in fileList)
+        internal static void Translate(bool simulated)
+        {
+            foreach (BigFile bigFile in bigFiles)
             {
-                string filePattern = file.Replace("000", "{0:d3}");
-
-                string filePrefix = string.Format(filePattern, 0);
-                string tmpPrefix;
-                do
-                {
-                    tmpPrefix = filePrefix;
-                    filePrefix = Path.GetFileNameWithoutExtension(tmpPrefix);
-
-                } while (tmpPrefix != filePrefix);
-
-
-                FileEntryList entryList = new FileEntryList(null, filePattern, filePrefix);
-
-                entryList.Translate(simulated);
-
+                bigFile.UpdateEntryList();
+                bigFile.EntryList.Translate(simulated);
             }
         }
 
