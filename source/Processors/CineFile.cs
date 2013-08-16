@@ -157,9 +157,6 @@ namespace TRTR
                                 //if (!keys.Contains(hash) && !blockKeys.Contains(hash))
                                 if (!blockKeys.Contains(hash))
                                 {
-                                    //if (entry.Extra.BigFilePrefix == "title_ENGLISH" && entry.Extra.HashText == "3E2465EC")
-                                    //    Log.LogDebugMsg(string.Format("3E2465EC TEXTS: hash: {0:X8} blockNo: {1} idx: {2} text: {3}", hash, blockNo, textIdx, subtEntry.Text));
-
                                     //keys.Add(hash);
                                     blockKeys.Add(hash);
                                     ResXDataNode resNode = new ResXDataNode(subtEntry.NormalizedText,
@@ -186,12 +183,12 @@ namespace TRTR
         private static void ExtractText(string destFolder, FileEntry entry)
         {
             string valueSep = ";";
-            string fileName = Path.Combine(destFolder, entry.Parent.FilePrefix + "_" + entry.Extra.FileNameOnlyForced + "_subtitles.txt");
+            string fileName = Path.Combine(destFolder, entry.Parent.ParentBigFile.Name + "_" + entry.Extra.FileNameOnlyForced + "_subtitles.txt");
 
             TextWriter cineWriter = new StreamWriter(fileName, false, Encoding.UTF8);
             cineWriter.WriteLine(";extracted from datafiles");
 
-            Log.LogDebugMsg(string.Format("Extracting: {0}  {1} {2}", entry.Extra.BigFileName, entry.Extra.HashText, entry.Extra.FileName));
+            Log.LogDebugMsg(string.Format("Extracting: {0}  {1} {2}", entry.Parent.ParentBigFile.Name, entry.Extra.HashText, entry.Extra.FileName));
 
             CineFile cine = new CineFile(entry);
             #region old method

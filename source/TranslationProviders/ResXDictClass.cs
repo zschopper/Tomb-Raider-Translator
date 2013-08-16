@@ -6,6 +6,8 @@ using System.Resources;
 using System.Collections;
 using System.IO;
 using System.Diagnostics;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace TRTR
 {
@@ -64,6 +66,10 @@ namespace TRTR
                 ReadResXFile(file);
             Report(Path.Combine(TRGameInfo.Game.WorkFolder, "translation report.txt"));
             Log.LogDebugMsg(string.Format("{0} translation entries added", dict.Count));
+
+            string zippedFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "hu.zip");
+            if(File.Exists(zippedFileName))
+                ReadCompressedResX(zippedFileName);
         }
 
         internal override void Clear()
@@ -76,31 +82,70 @@ namespace TRTR
             if (text.Trim().Length == 0)
                 return text;
 
-            ResXDictEntryList entryList = null;
+            ResXDictEntryList dictEntries = null;
             int sourceHash = text.GetHashCode();
 
-            if (!dict.TryGetValue(sourceHash, out entryList))
+            string[] innerContext = new string[] {
+                            string.Format("FileType: {0}", entry.Extra.FileType),
+                            string.Format("BigFile: {0}", entry.BigFile),
+                            string.Format("FileName: {0}", entry.Extra.FileNameForced),
+                        };
+            if (!dict.TryGetValue(sourceHash, out dictEntries))
             {
                 //throw new Exception(string.Format("No translation for \"{0}\"", text));
                 Log.LogDebugMsg(string.Format("No translation for \"{0}\"", text));
+                Log.LogDebugMsg(string.Format("  Context: \"{0}\"", string.Join("; ", innerContext)));
                 return text;
             }
 
-            if (!entryList.IsUnique)
+            if (!dictEntries.IsUnique)
             {
-                foreach (ResXDictEntry dictEntry in entryList)
+                foreach (ResXDictEntry dictEntry in dictEntries)
                 {
                     if (dictEntry.SourceHash != dictEntry.TranslationHash) // text is localized
                         return dictEntry.Translation;
                 }
             }
-            return entryList[0].Translation;
+
+            if (dictEntries[0].SourceHash == dictEntries[0].TranslationHash)
+            {
+                Log.LogDebugMsg(string.Format("Text not translated: \"{0}\"", text));
+                Log.LogDebugMsg(string.Format("  Context: \"{0}\"", string.Join("; ", innerContext)));
+            }
+            return dictEntries[0].Translation;
+        }
+
+        public void ReadCompressedResX(string fileName)
+        {
+            //ZipFile file = new ZipFile(fileName);
+            //List<string> files = new List<string>();
+            //foreach(ZipEntry entry in file)
+            //{
+            //    if (entry.IsFile)
+            //    {
+            //        files.Add(entry.Name);
+            //        Log.LogDebugMsg("zip:" + entry.Name);
+            //    }
+            //}
         }
 
         public void ReadResXFile(string fileName)
         {
+            FileStream fs = new FileStream(fileName, FileMode.Open);
+            try
+            {
+                ReadResXFile(fs, fileName);
+            }
+            finally
+            {
+                fs.Close();
+            }
+        }
+
+        public void ReadResXFile(Stream stream, string fileName = "")
+        {
             System.ComponentModel.Design.ITypeResolutionService typeRes = null;
-            ResXResourceReader rdr = new ResXResourceReader(fileName);
+            ResXResourceReader rdr = new ResXResourceReader(stream);
             rdr.UseResXDataNodes = true;
             foreach (DictionaryEntry rdrDictEntry in rdr)
             {
@@ -142,8 +187,7 @@ namespace TRTR
                     
                     bool translationsIsUnique = true;
                     Nullable<int> firstTranslated = null;
-                    if (entryList[0].SourceText == "Excellent.")
-                        Noop.DoIt();
+
                     foreach (ResXDictEntry entry in entryList)
                     {
                         if (entry.SourceHash != entry.TranslationHash) // text is localized

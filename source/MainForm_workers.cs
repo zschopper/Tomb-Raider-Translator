@@ -97,8 +97,8 @@ namespace TRTR
 
         private void workerExtract_DoWork(object sender, DoWorkEventArgs e)
         {
-            TRGameInfo.Extract();
             InitializeWorker((BackgroundWorker)sender);
+            TRGameInfo.Extract();
             
             //FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
             //entryList.Extract(TRGameInfo.Game.WorkFolder);
