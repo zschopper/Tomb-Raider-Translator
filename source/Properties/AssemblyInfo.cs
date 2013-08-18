@@ -7,7 +7,7 @@ using System.Resources;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Tomb Raider Translator")]
-[assembly: AssemblyDescription("Translator for Tomb Raider Legend, Anniversary and Lara Croft and the Guardian of Light")]
+[assembly: AssemblyDescription("Translator for Tomb Raider Legend, Anniversary, Tomb Raider 2013 and Lara Croft and the Guardian of Light")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TombRaider.hu")]
 [assembly: AssemblyProduct("TRTR")]
