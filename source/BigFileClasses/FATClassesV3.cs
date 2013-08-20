@@ -24,6 +24,8 @@ namespace TRTR
         internal UInt32 Location;
         internal FileLanguage Language { get { return getLanguage(); } }
 
+        internal static int InfoSize = 0x10;
+
         private FileLanguage getLanguage()
         {
             if (LangCode == 0xFFFFFFFF)
@@ -208,7 +210,7 @@ namespace TRTR
         #endregion
 
         internal UInt32 Hash { get { return hash; } }
-        internal RawFileInfo Raw { get { return raw; } }
+        internal RawFileInfo Raw { get { return raw; } set { raw = value; } }
         internal FileExtraInfo Extra { get { return extra; } }
 
         internal FileEntryList Parent { get { return parent; } }
@@ -1253,7 +1255,7 @@ namespace TRTR
 
         internal byte[] Magic { get { return magic; } }
         internal UInt32 Version { get { return version; } }
-        internal UInt32 FileCount { get { return fileCount; } }
+        internal UInt32 FileCount { get { return fileCount; } set { fileCount = value; } }
         internal Int32 EntryCount { get { return entryCount; } }
         internal UInt32 Priority { get { return priority; } }
         internal byte[] PathPrefix { get { return pathPrefix; } }
@@ -1640,46 +1642,98 @@ namespace TRTR
 
         internal RawFileInfo? WriteToEnd(BigFile bigFile, UInt32 hash, UInt32 langCode, byte[] content)
         {
-            // Get last bigfile file
             uint bigFileCount = bigFile.FileCount;
-            FileStream fs = bigFile.Parent.filePool.Open(bigFile.Name, (int)bigFileCount - 1);
-            
+            FileStream FATStream = bigFile.Parent.filePool.Open(bigFile.Name, 0);
+            BinaryWriter FATWriter = new BinaryWriter(FATStream);
+
+            // Get last bigfile file
+            FileStream ContentStream = bigFile.Parent.filePool.Open(bigFile.Name, (int)bigFileCount - 1);
             try
             {
                 // Get its size
-                Int64 size = fs.Length;
+                Int64 size = ContentStream.Length;
                 // Determine start offset of the new file
                 Int64 newSize = size.ExtendToBoundary(0x800);
+
                 // Check whether new content can be fit in file
                 if (newSize + content.Length > BigFile.Boundary)
                 {
                     // if can't fit, increment file count in header
-                    bigFileCount++;
-                    // if can't fit, create a new file
-                    fs = new FileStream(string.Format(bigFile.FilePatternFull, bigFileCount - 1), FileMode.CreateNew);
+                    FATWriter.BaseStream.Position = 8; // value after magic (TAFS) + version
+                    FATWriter.Write(bigFile.FileCount);
+                    bigFile.FileCount++;
 
+                    // if can't fit, create a new file & discard it
+                    new FileStream(string.Format(bigFile.FilePatternFull, bigFileCount - 1), FileMode.CreateNew).Close();
+                    // and open it via file pool
+                    bigFile.Parent.filePool.Close(bigFile.Name, (int)bigFileCount - 1);
+                    ContentStream = bigFile.Parent.filePool.Open(bigFile.Name, (int)bigFile.FileCount - 1);
                 }
                 else
                 {
                     // if fits, extend bigfile it to its' boundary
+                    byte[] buf = new byte[2000];
+                    Array.Clear(buf, 0, buf.Length);
+                    ContentStream.Seek(0, SeekOrigin.End);
+                    while (ContentStream.Length < newSize)
+                    {
+                        int writeLen = (int)(newSize - ContentStream.Length > buf.Length? buf.Length: newSize - ContentStream.Length);
+                        ContentStream.Write(buf, 0, writeLen);
+                    }
                 }
                 // write content
-                fs.Write(content, 0, content.Length);
-                // if hash+langcode exists before, update entry
+                ContentStream.Write(content, 0, content.Length);
+                
+                // search hash+langcode pair in fileentry list
                 int i = 0;
                 FileEntry entry = null;
                 while (i < bigFile.EntryCount && entry == null)
                 {
-                    RawFileInfo raw = bigFile.EntryList[i].Raw;
-                    if (raw.Hash == hash && raw.LangCode == langCode)
+                    RawFileInfo entryRaw = bigFile.EntryList[i].Raw;
+                    if (entryRaw.Hash == hash && entryRaw.LangCode == langCode)
                         entry = bigFile.EntryList[i];
                     i++;
                 }
+                // if hash+langcode exists before, update entry
+                
+                RawFileInfo raw = new RawFileInfo();
+
+                if (entry != null)
+                {
+                    FATWriter.BaseStream.Position = bigFile.HeaderSize + entry.OriginalIndex * RawFileInfo.InfoSize;
+
+                    raw.Hash = entry.Raw.Hash;
+                    raw.LangCode = entry.Raw.LangCode;
+                    raw.Length = (UInt32)content.Length;
+                    raw.Location = (UInt32)(newSize) + bigFile.Priority * 0x10 + bigFile.FileCount - 1;
+                    entry.Raw = raw;
+
+                }
                 // if hash+langcode isn't exist before, add entry and increment entry count
+                else
+                {
+                    FATWriter.BaseStream.Position = bigFile.HeaderSize + bigFile.EntryCount * RawFileInfo.InfoSize;
+
+                    raw.Hash = entry.Raw.Hash;
+                    raw.LangCode = entry.Raw.LangCode;
+                    raw.Length = (UInt32)content.Length;
+                    raw.Location = (UInt32)(newSize) + bigFile.Priority * 0x10 + bigFile.FileCount;
+                }
+
+                FATWriter.Write(raw.Hash);
+                FATWriter.Write(raw.LangCode);
+                FATWriter.Write(raw.Length);
+                FATWriter.Write(raw.Location);
+
+                // if bigfile's bigfile count incremented (new bigfile added to end), write new value
+
+
+
             }
             finally
             {
                 bigFile.Parent.filePool.Close(bigFile.Name, (int)bigFile.FileCount - 1);
+                bigFile.Parent.filePool.Close(bigFile.Name, 0);
             }
             return null;
         }

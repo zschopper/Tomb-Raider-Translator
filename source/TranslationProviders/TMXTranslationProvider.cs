@@ -12,11 +12,13 @@ namespace TRTR
         Dictionary<int, string> dict = new Dictionary<int, string>();
         internal override void LoadTranslations()
         {
-            Dictionary<int, string> dict = new Dictionary<int, string>();
+            dict.Clear();
             string fileName = Path.Combine(TRGameInfo.Game.WorkFolder, "hu.tmx");
+            if (!File.Exists(fileName))
+                fileName = Path.Combine(".\\hu.tmx");
+
             if (File.Exists(fileName))
             {
-
                 XmlDocument doc = new XmlDocument();
                 XmlNamespaceManager mgr = new XmlNamespaceManager(doc.NameTable);
                 mgr.AddNamespace("xml", "http://www.w3.org/XML/1998/namespace");
@@ -48,6 +50,14 @@ namespace TRTR
                         dict.Add(key, value);
                 }
             }
+            if (dict.Count == 0)
+                Log.LogDebugMsg(string.Format("no loaded from \"{1}\"", fileName));
+            else
+                if (dict.Count == 1)
+                    Log.LogDebugMsg(string.Format("{0} translation loaded from \"{1}\"", dict.Count, fileName));
+                else
+                    if (dict.Count > 1)
+                        Log.LogDebugMsg(string.Format("{0} translations loaded from \"{1}\"", dict.Count, fileName));
         }
 
         internal override void Clear()
@@ -68,7 +78,7 @@ namespace TRTR
                 }
             }
             return ret;
-            
+
         }
     }
 }

@@ -128,17 +128,6 @@ namespace TRTR
                                 try
                                 {
                                     translation = TranslationDict.GetTranslation(menuEntry.Current.Replace("\n", "\r\n"), this.Entry);
-                                    if (translation.Length > 0)
-                                    {
-                                        //XmlAttribute setupAttr = node.Attributes["setup"];
-                                        //bool replaceChars = true;
-                                        //if (setupAttr != null)
-                                        //    replaceChars = setupAttr.Value != "true";
-                                        //if (replaceChars)
-                                        //    translation = MenuFile.textConv.ToGameFormat(attr.Value.Replace("\r\n", "\n")) + (char)(0);
-                                        //else
-                                        //    translation = attr.Value.Replace("\r\n", "\n") + (char)(0);
-                                    }
                                 }
                                 catch (Exception ex)
                                 {
@@ -168,6 +157,9 @@ namespace TRTR
                 FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
                 fx.Write(content, 0, content.Length);
                 fx.Close();
+
+                if (this.entry.BigFile.Name.ToLower() == "patch2" && entry.Extra.Language == FileLanguage.English)
+                    this.entry.BigFile.Parent.WriteToEnd(this.entry.BigFile,this.entry.Hash, this.entry.Raw.LangCode, content);
             }
             finally
             {
