@@ -10,6 +10,7 @@ namespace TRTR
     class TMXProvider : TranslationProvider
     {
         Dictionary<int, string> dict = new Dictionary<int, string>();
+
         internal override void LoadTranslations()
         {
             dict.Clear();
@@ -22,7 +23,7 @@ namespace TRTR
                 XmlDocument doc = new XmlDocument();
                 XmlNamespaceManager mgr = new XmlNamespaceManager(doc.NameTable);
                 mgr.AddNamespace("xml", "http://www.w3.org/XML/1998/namespace");
-                doc.Load(Path.Combine(TRGameInfo.Game.WorkFolder, "hu.tmx"));
+                doc.Load(fileName);
                 foreach (XmlNode node in doc.SelectNodes("/tmx/body/tu"))
                 {
                     string source = node.SelectSingleNode("tuv[@xml:lang='en']/seg", mgr).InnerText;
@@ -35,8 +36,6 @@ namespace TRTR
                     source = replaced;// source.Replace("&#13;", "\\r").Replace("\n", "\\n");
                     value = value.Replace("&#13;", "\\r");//.Replace("\n", "\\n");
 
-                    if (source.StartsWith("After a fortnight"))
-                        Noop.DoIt();
                     int key = source.GetHashCode();
                     string value1;
                     if (dict.TryGetValue(key, out value1))
@@ -44,14 +43,14 @@ namespace TRTR
                         Log.LogDebugMsg("Key exists.");
                         Log.LogDebugMsg(string.Format("  Key: \"{0}\"", source));
                         Log.LogDebugMsg(string.Format("  Value1: \"{0}\"", value1));
-                        Log.LogDebugMsg(string.Format("  Value1: \"{0}\"", value));
+                        Log.LogDebugMsg(string.Format("  Value2: \"{0}\"", value));
                     }
                     else
                         dict.Add(key, value);
                 }
             }
             if (dict.Count == 0)
-                Log.LogDebugMsg(string.Format("no loaded from \"{1}\"", fileName));
+                Log.LogDebugMsg(string.Format("no loaded from \"{0}\"", fileName));
             else
                 if (dict.Count == 1)
                     Log.LogDebugMsg(string.Format("{0} translation loaded from \"{1}\"", dict.Count, fileName));

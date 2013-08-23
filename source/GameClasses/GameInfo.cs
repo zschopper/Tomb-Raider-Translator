@@ -59,8 +59,6 @@ namespace TRTR
                 // load install type-dependent data
                 game.Load();
                 bigFiles = new BigFileList(game.InstallFolder);
-                
-                //buildBigfileStructure();
             }
             catch (Exception e)
             {
@@ -68,53 +66,35 @@ namespace TRTR
             }
 
             // load info doc, if exists
-            if (File.Exists(Trans.InfoDocFileName))
+            //if (File.Exists(Trans.InfoDocFileName))
+            //{
+            //    Trans.InfoDoc = new XmlDocument();
+            //    Trans.InfoDoc.Load(Trans.InfoDocFileName);
+            //}
+
+            #region load translations
+            if (Directory.Exists(TRGameInfo.Game.WorkFolder))
             {
-                Trans.InfoDoc = new XmlDocument();
-                Trans.InfoDoc.Load(Trans.InfoDocFileName);
+                //string[] foldersByPriority = {
+                //    "bigfile",
+                //    "bigfile_ENGLISH",
+                //    "title",
+                //    "title_ENGLISH",
+                //    "patch",
+                //    "patch_ENGLISH",
+                //    "patch2",
+                //};
+
+                //List<string> files = new List<string>();
+                //foreach (string folder in foldersByPriority)
+                //    files.AddRange(Directory.GetFiles(Path.Combine(TRGameInfo.Game.WorkFolder, "hu", folder), "*.resx", SearchOption.AllDirectories));
+
+                //ResXDict dict = new ResXDict(files.ToArray());
             }
-
-            #region load tanslations
-            string[] foldersByPriority = {
-                "bigfile",
-                "bigfile_ENGLISH",
-                "title",
-                "title_ENGLISH",
-                "patch",
-                "patch_ENGLISH",
-                "patch2",
-            };
-
-            List<string> files = new List<string>();
-            foreach (string folder in foldersByPriority)
-                files.AddRange(Directory.GetFiles(Path.Combine(TRGameInfo.Game.WorkFolder, "hu", folder), "*.resx", SearchOption.AllDirectories));
-
-            //ResXDict dict = new ResXDict(files.ToArray());
             TMXProvider dict = new TMXProvider();
             TranslationDict.Provider = dict;
             TranslationDict.LoadTranslations();
             #endregion
-
-            // load translation doc, if exists
-            if (File.Exists(Trans.TranslationDocumentFileName))
-            {
-                Trans.TranslationDocument = new XmlDocument();
-                Trans.TranslationDocument.Load(Trans.TranslationDocumentFileName);
-                XmlNode node = Trans.TranslationDocument.SelectSingleNode("/translation");
-                if (node != null)
-                {
-                    XmlAttribute attr = node.Attributes["version"];
-                    if (attr != null)
-                        Trans.TransVersion = attr.Value;
-                }
-            }
-
-            // load restoration doc, if exists
-            if (File.Exists(Trans.RestorationDocumentFileName))
-            {
-                Trans.RestorationDocument = new XmlDocument();
-                Trans.RestorationDocument.Load(Trans.RestorationDocumentFileName);
-            }
 
             OnChange();
         }
@@ -132,65 +112,32 @@ namespace TRTR
             bw.RunWorkerAsync(game);
         }
 
-        //private static void buildBigfileStructure()
-        //{
-        //    return;
-        //    //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "bigfile.*.tiger", SearchOption.AllDirectories));
-        //    //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "title_english.*.tiger", SearchOption.AllDirectories));
-        //    //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "bigfile_english.000.tiger", SearchOption.AllDirectories));
-        //    //List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "title.*.tiger", SearchOption.AllDirectories));
-
-        //    List<string> files = new List<string>(Directory.GetFiles(game.InstallFolder, "*.tiger", SearchOption.AllDirectories));
-        //    List<string> dupeFilter = new List<string>();
-
-        //    List<string> fileList = new List<string>();
-        //    fileList.Clear();
-        //    Log.LogMsg(LogEntryType.Debug, string.Format("Building file structure: {0}", game.InstallFolder));
-        //    foreach (string file in files)
-        //    {
-        //        string fileNameOnly = Path.GetFileName(file);
-        //        if (!dupeFilter.Contains(fileNameOnly))
-        //        {
-        //            FileStream fs = new FileStream(file, FileMode.Open);
-        //            BinaryReader rdr = new BinaryReader(fs, Encoding.ASCII);
-        //            byte[] bufMagic = rdr.ReadBytes(4);
-        //            if (Encoding.ASCII.GetString(bufMagic) == "TAFS")
-        //            {
-        //                dupeFilter.Add(fileNameOnly);
-        //                fileList.Add(file);
-        //                Log.LogMsg(LogEntryType.Debug, string.Format("File: {0} added to list", file));
-        //            }
-        //            fs.Close();
-        //        }
-        //    }
-        //}
-
         private static void workerLoad_DoWork(object sender, DoWorkEventArgs e)
         {
             Load((GameInstance)e.Argument);
         }
 
-        internal static class Trans
-        {
-            private static XmlDocument infoDoc = null;
-            private static string infoDocFileName;
-            private static XmlDocument resDoc = null;
-            private static string resDocFileName;
-            private static XmlDocument traDoc = null;
-            private static string traDocFileName;
-            internal static string TransVersion { get; set; }
+        //internal static class Trans
+        //{
+        //    private static XmlDocument infoDoc = null;
+        //    private static string infoDocFileName;
+        //    private static XmlDocument resDoc = null;
+        //    private static string resDocFileName;
+        //    private static XmlDocument traDoc = null;
+        //    private static string traDocFileName;
+        //    internal static string TransVersion { get; set; }
 
-            internal static XmlDocument InfoDoc { get { return infoDoc; } set { infoDoc = value; } }
+        //    internal static XmlDocument InfoDoc { get { return infoDoc; } set { infoDoc = value; } }
 
-            internal static string InfoDocFileName { get { return infoDocFileName; } set { infoDocFileName = value; } }
-            internal static XmlDocument RestorationDocument { get { return resDoc; } set { resDoc = value; } }
-            internal static string RestorationDocumentFileName { get { return resDocFileName; } set { resDocFileName = value; } }
+        //    internal static string InfoDocFileName { get { return infoDocFileName; } set { infoDocFileName = value; } }
+        //    internal static XmlDocument RestorationDocument { get { return resDoc; } set { resDoc = value; } }
+        //    internal static string RestorationDocumentFileName { get { return resDocFileName; } set { resDocFileName = value; } }
 
-            internal static XmlDocument TranslationDocument { get { return traDoc; } set { traDoc = value; } }
-            internal static string TranslationDocumentFileName { get { return traDocFileName; } set { traDocFileName = value; } }
-            internal static string TranslationResourceDirectory { get { return string.Empty; } }
-            internal static string TranslationSourceDirectory { get { return Path.Combine(Directory.GetCurrentDirectory(), "trans"); } }
-        }
+        //    internal static XmlDocument TranslationDocument { get { return traDoc; } set { traDoc = value; } }
+        //    internal static string TranslationDocumentFileName { get { return traDocFileName; } set { traDocFileName = value; } }
+        //    internal static string TranslationResourceDirectory { get { return string.Empty; } }
+        //    internal static string TranslationSourceDirectory { get { return Path.Combine(Directory.GetCurrentDirectory(), "trans"); } }
+        //}
 
         internal static class Worker
         {
@@ -207,15 +154,6 @@ namespace TRTR
                 bigFile.UpdateEntryList();
                 bigFile.EntryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "source"), false);
                 bigFile.EntryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "hu"), true);
-            }
-        }
-
-        internal static void Translate(bool simulated)
-        {
-            foreach (BigFile bigFile in bigFiles)
-            {
-                bigFile.UpdateEntryList();
-                bigFile.EntryList.Translate(simulated);
             }
         }
 
@@ -308,7 +246,7 @@ namespace TRTR
         private char[] originalChars;
         private char[] replacedChars;
         private bool needToReplaceChars;
-        private string folder;
+        //private string folder;
         #endregion
 
         internal string Version { get { return version; } set { version = value; } }
@@ -329,7 +267,7 @@ namespace TRTR
         public TRGameTransInfo(string fileName)
         {
             XmlDocument doc = new XmlDocument();
-            folder = FileNameUtils.IncludeTrailingBackSlash(FileNameUtils.FilePath(fileName));
+            //folder = Path.GetDirectoryName(fileName);
             doc.Load(fileName);
             Parse(doc);
         }

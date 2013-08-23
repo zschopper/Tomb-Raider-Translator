@@ -523,8 +523,8 @@ namespace TRTR
 
                 if ((gameStatus & TRGameStatus.TranslationDataFileNotFound) != TRGameStatus.None)
                     labelAvailableTranslationVersion.Text = Errors.TranslationDataFileNotFound;
-                else
-                    labelAvailableTranslationVersion.Text = TRGameInfo.Trans.TransVersion;
+                //else
+                //    labelAvailableTranslationVersion.Text = TRGameInfo.Trans.TransVersion;
 
                 if ((gameStatus & TRGameStatus.InstallDirectoryNotExist) != TRGameStatus.None)
                     labelInstallPath.Text = Errors.InstallDirectoryNotExist;

@@ -85,7 +85,7 @@ namespace TRTR
                         Array.Copy(content, lastValidEntry.StartIdx, textBuf, 0, textLen);
 
                         lastValidEntry.Current = textConv.Enc.GetString(textBuf);
-                        lastValidEntry.Translation = TranslationDict.GetTranslation(lastValidEntry.Current.Replace("\n", "\r\n"),this.Entry);
+                        lastValidEntry.Translation = TranslationDict.GetTranslation(lastValidEntry.Current.Replace("\n", "\r\n"), this.Entry);
                     }
                     lastValidEntry = menuEntry;
                     debugValidEntryCount++;
@@ -151,15 +151,15 @@ namespace TRTR
                 //    entry.WriteContent(msIndex.ToArray());
 
                 byte[] content = msIndex.ToArray();
-                string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "simulate",
-                        string.Format("{0}.{1}.{2}.txt", entry.Parent.ParentBigFile.Name, entry.Extra.FileNameOnlyForced, entry.Extra.LangText));
-                Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
-                FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
-                fx.Write(content, 0, content.Length);
-                fx.Close();
+                //string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "simulate",
+                //        string.Format("{0}.{1}.{2}.txt", entry.Parent.ParentBigFile.Name, entry.Extra.FileNameOnlyForced, entry.Extra.LangText));
+                //Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
+                //FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
+                //fx.Write(content, 0, content.Length);
+                //fx.Close();
 
-                if (this.entry.BigFile.Name.ToLower() == "patch2" && entry.Extra.Language == FileLanguage.English)
-                    this.entry.BigFile.Parent.WriteToEnd(this.entry.BigFile,this.entry.Hash, this.entry.Raw.LangCode, content);
+//                if (this.entry.BigFile.Name.ToLower() == "patch2" && entry.Language == FileLanguage.English)
+                    this.entry.BigFile.Parent.WriteFile(this.entry.BigFile, this.entry, content);
             }
             finally
             {
@@ -170,102 +170,102 @@ namespace TRTR
 
         internal void Translate_old()
         {
-            MemoryStream msIndex = new MemoryStream();
-            MemoryStream msEntries = new MemoryStream();
-            try
-            {
-                msIndex.Write(BitConverter.GetBytes((Int32)FileLanguage.English), 0, 4);
-                msIndex.Write(BitConverter.GetBytes(menuEntries.Count + 1), 0, 4);
-                msIndex.Write(BitConverter.GetBytes(0), 0, 4);
+            //MemoryStream msIndex = new MemoryStream();
+            //MemoryStream msEntries = new MemoryStream();
+            //try
+            //{
+            //    msIndex.Write(BitConverter.GetBytes((Int32)FileLanguage.English), 0, 4);
+            //    msIndex.Write(BitConverter.GetBytes(menuEntries.Count + 1), 0, 4);
+            //    msIndex.Write(BitConverter.GetBytes(0), 0, 4);
 
-                XmlNode menuNode = TRGameInfo.Trans.TranslationDocument.SelectSingleNode("/translation/menu");
-                Int32 indexSize = (menuEntries.Count + 3) * 4;
-                for (Int32 i = 0; i < menuEntries.Count; i++)
-                {
-                    Int32 indexOffset = 0;
-                    MenuFileEntry menuEntry = menuEntries[i];
-                    if (!menuEntry.PlaceHolder)
-                    {
-                        XmlNode node = menuNode.SelectSingleNode("entry[@no=\"" + i.ToString("d4") + "\"]");
-                        if (node != null)
-                        {
-                            XmlAttribute attr = node.Attributes["translation"];
-                            string translation = string.Empty;
-                            if (attr != null)
-                            {
-                                try
-                                {
-                                    translation = attr.Value;
-                                    if (translation.Length > 0)
-                                    {
-                                        XmlAttribute setupAttr = node.Attributes["setup"];
-                                        bool replaceChars = true;
-                                        if (setupAttr != null)
-                                            replaceChars = setupAttr.Value != "true";
-                                        if (replaceChars)
-                                            translation = MenuFile.textConv.ToGameFormat(attr.Value.Replace("\r\n", "\n")) + (char)(0);
-                                        else
-                                            translation = attr.Value.Replace("\r\n", "\n") + (char)(0);
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    throw new Exception(Errors.CorruptedTranslation, ex);
-                                }
+            //    XmlNode menuNode = TRGameInfo.Trans.TranslationDocument.SelectSingleNode("/translation/menu");
+            //    Int32 indexSize = (menuEntries.Count + 3) * 4;
+            //    for (Int32 i = 0; i < menuEntries.Count; i++)
+            //    {
+            //        Int32 indexOffset = 0;
+            //        MenuFileEntry menuEntry = menuEntries[i];
+            //        if (!menuEntry.PlaceHolder)
+            //        {
+            //            XmlNode node = menuNode.SelectSingleNode("entry[@no=\"" + i.ToString("d4") + "\"]");
+            //            if (node != null)
+            //            {
+            //                XmlAttribute attr = node.Attributes["translation"];
+            //                string translation = string.Empty;
+            //                if (attr != null)
+            //                {
+            //                    try
+            //                    {
+            //                        translation = attr.Value;
+            //                        if (translation.Length > 0)
+            //                        {
+            //                            XmlAttribute setupAttr = node.Attributes["setup"];
+            //                            bool replaceChars = true;
+            //                            if (setupAttr != null)
+            //                                replaceChars = setupAttr.Value != "true";
+            //                            if (replaceChars)
+            //                                translation = MenuFile.textConv.ToGameFormat(attr.Value.Replace("\r\n", "\n")) + (char)(0);
+            //                            else
+            //                                translation = attr.Value.Replace("\r\n", "\n") + (char)(0);
+            //                        }
+            //                    }
+            //                    catch (Exception ex)
+            //                    {
+            //                        throw new Exception(Errors.CorruptedTranslation, ex);
+            //                    }
 
-                                byte[] textBuf = MenuFile.textConv.Enc.GetBytes(translation);
-                                indexOffset = (Int32)msEntries.Length + indexSize;
-                                msEntries.Write(textBuf, 0, textBuf.Length);
-                            }
-                        }
-                    }
-                    msIndex.Write(BitConverter.GetBytes(indexOffset), 0, 4);
-                }
-                msIndex.Position = msIndex.Length;
-                msIndex.Write(msEntries.ToArray(), 0, (Int32)msEntries.Length);
-                entry.WriteContent(msIndex.ToArray());
-            }
-            finally
-            {
-                msEntries.Close();
-                msIndex.Close();
-            }
+            //                    byte[] textBuf = MenuFile.textConv.Enc.GetBytes(translation);
+            //                    indexOffset = (Int32)msEntries.Length + indexSize;
+            //                    msEntries.Write(textBuf, 0, textBuf.Length);
+            //                }
+            //            }
+            //        }
+            //        msIndex.Write(BitConverter.GetBytes(indexOffset), 0, 4);
+            //    }
+            //    msIndex.Position = msIndex.Length;
+            //    msIndex.Write(msEntries.ToArray(), 0, (Int32)msEntries.Length);
+            //    entry.WriteContent(msIndex.ToArray());
+            //}
+            //finally
+            //{
+            //    msEntries.Close();
+            //    msIndex.Close();
+            //}
         }
 
         internal void Restore()
         {
-            MemoryStream msIndex = new MemoryStream();
-            MemoryStream msEntries = new MemoryStream();
-            try
-            {
-                msIndex.Write(BitConverter.GetBytes((Int32)FileLanguage.English), 0, 4);
-                msIndex.Write(BitConverter.GetBytes(menuEntries.Count + 1), 0, 4);
-                msIndex.Write(BitConverter.GetBytes(0), 0, 4);
+            //MemoryStream msIndex = new MemoryStream();
+            //MemoryStream msEntries = new MemoryStream();
+            //try
+            //{
+            //    msIndex.Write(BitConverter.GetBytes((Int32)FileLanguage.English), 0, 4);
+            //    msIndex.Write(BitConverter.GetBytes(menuEntries.Count + 1), 0, 4);
+            //    msIndex.Write(BitConverter.GetBytes(0), 0, 4);
 
-                XmlNode menuNode = TRGameInfo.Trans.RestorationDocument.SelectSingleNode("/restoration/menu");
-                Int32 entryCount = Convert.ToInt32(menuNode.Attributes["count"].Value);
-                Int32 indexSize = (entryCount + 3) * 4;
-                for (Int32 i = 0; i < entryCount; i++)
-                {
-                    Int32 indexOffset = 0;
-                    XmlNode node = menuNode.SelectSingleNode("entry[@no=\"" + i.ToString("d4") + "\"]");
-                    if (node != null)
-                    {
-                        byte[] textBuf = MenuFile.textConv.Enc.GetBytes(MenuFile.textConv.ToGameFormat(node.Attributes["original"].Value) + (char)(0));
-                        indexOffset = (Int32)msEntries.Length + indexSize;
-                        msEntries.Write(textBuf, 0, textBuf.Length);
-                    }
-                    msIndex.Write(BitConverter.GetBytes(indexOffset), 0, 4);
-                }
-                msIndex.Position = msIndex.Length;
-                msIndex.Write(msEntries.ToArray(), 0, (Int32)msEntries.Length);
-                entry.WriteContent(msIndex.ToArray());
-            }
-            finally
-            {
-                msEntries.Close();
-                msIndex.Close();
-            }
+            //    XmlNode menuNode = TRGameInfo.Trans.RestorationDocument.SelectSingleNode("/restoration/menu");
+            //    Int32 entryCount = Convert.ToInt32(menuNode.Attributes["count"].Value);
+            //    Int32 indexSize = (entryCount + 3) * 4;
+            //    for (Int32 i = 0; i < entryCount; i++)
+            //    {
+            //        Int32 indexOffset = 0;
+            //        XmlNode node = menuNode.SelectSingleNode("entry[@no=\"" + i.ToString("d4") + "\"]");
+            //        if (node != null)
+            //        {
+            //            byte[] textBuf = MenuFile.textConv.Enc.GetBytes(MenuFile.textConv.ToGameFormat(node.Attributes["original"].Value) + (char)(0));
+            //            indexOffset = (Int32)msEntries.Length + indexSize;
+            //            msEntries.Write(textBuf, 0, textBuf.Length);
+            //        }
+            //        msIndex.Write(BitConverter.GetBytes(indexOffset), 0, 4);
+            //    }
+            //    msIndex.Position = msIndex.Length;
+            //    msIndex.Write(msEntries.ToArray(), 0, (Int32)msEntries.Length);
+            //    entry.WriteContent(msIndex.ToArray());
+            //}
+            //finally
+            //{
+            //    msEntries.Close();
+            //    msIndex.Close();
+            //}
         }
 
         internal void CreateRestoration(XmlElement menuElement, XmlNode menuNode)

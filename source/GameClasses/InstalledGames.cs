@@ -121,8 +121,22 @@ namespace TRTR
 
         private void processSteamGameData()
         {
+            string steamInstallFolder = string.Empty;
+            RegistryKey reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Valve\Steam");
+            if (reg == null)
+                reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Valve\Steam");
 
-            SteamVDFDoc configVDF = new SteamVDFDoc(@"c:\Program Files (x86)\Steam\config\config.vdf");
+            if (reg == null)
+                throw new Exception("Steam registry settings not found."); // xx translate/localize
+
+            steamInstallFolder = (string)reg.GetValue("InstallPath");
+            reg.Close();
+
+            if (!Directory.Exists(steamInstallFolder))
+                throw new Exception("Steam install folder is not exist."); // xx translate/localize
+
+            //\\\Registry\HKEY_LOCAL_MACHINE\SOFTWARE\Valve\Steam\InstallPath 
+            SteamVDFDoc configVDF = new SteamVDFDoc(Path.Combine(steamInstallFolder, "config", "config.vdf"));
             VDFNode gameNode = configVDF.ItemByPath(@"InstallConfigStore\Software\Valve\Steam\apps\" + gameDefaults.AppId);
 
             installFolder = gameNode.ChildItemByName("installdir").Value;
@@ -166,7 +180,8 @@ namespace TRTR
                     throw new Exception(Errors.UnknownInstallType);
             }
             Log.RemoveListener("gamelog");
-            Log.AddListener("gamelog", new FileLogListener(Path.Combine(workFolder, "trtr.log")));
+            if (Directory.Exists(workFolder))
+                Log.AddListener("gamelog", new FileLogListener(Path.Combine(workFolder, "trtr.log")));
         }
 
     }
@@ -194,13 +209,13 @@ namespace TRTR
             RegistryKey reg;
             reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Crystal Dynamics");
             if (reg == null)
-                reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\wow6432node\Crystal Dynamics");
+                reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Crystal Dynamics");
 
             if (reg != null)
             {
                 foreach (KnownGame knownGame in KnownGames.Items)
                 {
-                    reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\wow6432node\Crystal Dynamics\" + knownGame.Name);
+                    reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Crystal Dynamics\" + knownGame.Name);
                     if (reg != null)
                     {
                         items.Add(new GameInstance
@@ -221,7 +236,7 @@ namespace TRTR
             {
                 RegistryKey reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App " + knownGame.AppId);
                 if (reg == null)
-                    reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App " + knownGame.AppId);
+                    reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App " + knownGame.AppId);
                 if (reg != null)
                 {
                     items.Add(new GameInstance

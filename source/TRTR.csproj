@@ -151,6 +151,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BigFileClasses\FATv3.cs" />
     <Compile Include="ClassExtensions\BoundaryExtensionMethods.cs" />
     <Compile Include="ClassExtensions\XmlExt.cs" />
     <Compile Include="TranslationProviders\ResXDictClass.cs" />

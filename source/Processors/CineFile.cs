@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Diagnostics;
 using System.Resources;
 using System.Text.RegularExpressions;
+using ExtensionMethods;
 
 namespace TRTR
 {
@@ -79,12 +80,11 @@ namespace TRTR
                     ms.Write(header, 0, (Int32)CineConsts.CineHeaderSize);
                     foreach (CineBlock block in Blocks)
                     {
-
-                        //block.Translate(blockNode);
-                        //ms.Write(block.TranslatedData, 0, block.TranslatedData.Length);
+                        block.Translate();
+                        ms.Write(block.TranslatedData, 0, block.TranslatedData.Length);
                     }
                     if (!simulated)
-                        entry.WriteContent(ms.ToArray());
+                        entry.BigFile.Parent.WriteFile(entry.BigFile, entry, ms.ToArray());
                 }
                 finally
                 {
@@ -99,23 +99,23 @@ namespace TRTR
 
         internal void Restore()
         {
-            MemoryStream ms = new MemoryStream();
-            try
-            {
-                ms.Write(header, 0, (Int32)CineConsts.CineHeaderSize);
-                XmlNode cineNode = TRGameInfo.Trans.RestorationDocument.SelectSingleNode(String.Format("/restoration/subtitle/cine[@hash=\"{0}\"]", entry.Extra.HashText));
-                foreach (CineBlock block in Blocks)
-                {
-                    XmlNode blockNode = cineNode.SelectSingleNode(String.Format("block[@no=\"{0:d5}\"]", block.BlockNo));
-                    block.Restore(blockNode);
-                    ms.Write(block.TranslatedData, 0, block.TranslatedData.Length);
-                }
-                entry.WriteContent(ms.ToArray());
-            }
-            finally
-            {
-                ms.Close();
-            }
+            //MemoryStream ms = new MemoryStream();
+            //try
+            //{
+            //    ms.Write(header, 0, (Int32)CineConsts.CineHeaderSize);
+            //    XmlNode cineNode = TRGameInfo.Trans.RestorationDocument.SelectSingleNode(String.Format("/restoration/subtitle/cine[@hash=\"{0}\"]", entry.HashText));
+            //    foreach (CineBlock block in Blocks)
+            //    {
+            //        XmlNode blockNode = cineNode.SelectSingleNode(String.Format("block[@no=\"{0:d5}\"]", block.BlockNo));
+            //        block.Restore(blockNode);
+            //        ms.Write(block.TranslatedData, 0, block.TranslatedData.Length);
+            //    }
+            //    entry.WriteContent(ms.ToArray());
+            //}
+            //finally
+            //{
+            //    ms.Close();
+            //}
         }
 
         internal static void Extract(string destFolder, FileEntry entry, bool useDict)
@@ -164,7 +164,7 @@ namespace TRTR
                                         ? subtEntry.Translated
                                         : subtEntry.NormalizedText
                                         );
-                                    resNode.Comment = string.Format("blockNo: {0:X8}\r\nprefix: {1}\r\nfilename: {2}\r\nhash: {3}", blockNo, block.Subtitles.Entry(FileLanguage.English, textIdx).Prefix, block.Subtitles.ParentCineBlock.CineFile.Entry.Extra.FileNameForced, block.Subtitles.ParentCineBlock.CineFile.Entry.Extra.HashText);
+                                    resNode.Comment = string.Format("blockNo: {0:X8}\r\nprefix: {1}\r\nfilename: {2}\r\nhash: {3}", blockNo, block.Subtitles.Entry(FileLanguage.English, textIdx).Prefix, block.Subtitles.ParentCineBlock.CineFile.Entry.Extra.FileNameForced, block.Subtitles.ParentCineBlock.CineFile.Entry.HashText);
                                     if (helper == null)
                                     {
                                         helper = ResXPool.GetResX(resXFileName);
@@ -188,13 +188,13 @@ namespace TRTR
             TextWriter cineWriter = new StreamWriter(fileName, false, Encoding.UTF8);
             cineWriter.WriteLine(";extracted from datafiles");
 
-            Log.LogDebugMsg(string.Format("Extracting: {0}  {1} {2}", entry.Parent.ParentBigFile.Name, entry.Extra.HashText, entry.Extra.FileName));
+            Log.LogDebugMsg(string.Format("Extracting: {0}  {1} {2}", entry.Parent.ParentBigFile.Name, entry.HashText, entry.Extra.FileName));
 
             CineFile cine = new CineFile(entry);
             #region old method
 
             /*
-                                    string header = "HASH: " + entry.Extra.HashText + 
+                                    string header = "HASH: " + entry.HashText + 
                                         (entry.Extra.FileName.Length > 0 ? valueSep + "FILENAME: " + entry.Extra.FileName : string.Empty)
                                         //                            + " BLOCKS: "
                                         ;
@@ -264,7 +264,7 @@ namespace TRTR
                                 } 
                                      */
             #endregion
-            string header = "HASH: " + entry.Extra.HashText +
+            string header = "HASH: " + entry.HashText +
                 (entry.Extra.FileName.Length > 0 ? valueSep + "FILENAME: " + entry.Extra.FileName : string.Empty);
             if (entry.Raw.Language == FileLanguage.English)
                 header += ";sub";
@@ -304,7 +304,7 @@ namespace TRTR
         {
             XmlDocument resDoc = subtitleNode.OwnerDocument;
             XmlElement cineElement = resDoc.CreateElement("cine");
-            cineElement.SetAttribute("hash", entry.Extra.HashText);
+            cineElement.SetAttribute("hash", entry.HashText);
             if (entry.Extra.FileName.Length > 0)
                 cineElement.SetAttribute("filename", entry.Extra.FileName);
             XmlNode cineNode = subtitleNode.AppendChild(cineElement);
@@ -370,7 +370,7 @@ namespace TRTR
         private void ParseBlock(byte[] block)
         {
             // process header
-            //File.WriteAllBytes(string.Format(@"c:\tmp\{0}_{1}", cineFile.Entry.Extra.HashText, blockNo), block);
+            //File.WriteAllBytes(string.Format(@"c:\tmp\{0}_{1}", cineFile.Entry.HashText, blockNo), block);
             blockTypeNo = BitConverter.ToUInt32(block, 0x00);
             if (blockTypeNo != 0 && blockTypeNo != 1 && blockTypeNo != 3)
                 throw new Exception(Errors.ParseErrorBlockTypeError);
@@ -478,7 +478,7 @@ namespace TRTR
                             if (size == textBlockLen - 4)
                             {
                                 Log.Write(string.Format("Hash: {0:s14}, textOffset: {2:d4}, textBlockLen: {3:d4}, size: {4:d4}, contentOffset: {5:d4} FileName: {6}",
-                                    cineFile.Entry.Extra.HashText + "," + blockNo.ToString(), blockNo, textOffset, textBlockLen, size, contentOffset, cineFile.Entry.Extra.FileName));
+                                    cineFile.Entry.HashText + "," + blockNo.ToString(), blockNo, textOffset, textBlockLen, size, contentOffset, cineFile.Entry.Extra.FileName));
                                 subtitleText = cineFile.Entry.Parent.GameInfo.TextConv.Enc.GetString(block, (Int32)(textOffset + contentOffset), (Int32)textBlockLen);
                             }
                         }
@@ -499,9 +499,9 @@ namespace TRTR
             }
         }  // v1.0.0.6
 
-        internal void Translate(XmlNode blockNode)
+        internal void Translate()
         {
-            Write(Subtitles.GetTranslatedSubtitleBlock(blockNode, 0)); //checkthis
+            Write(Subtitles.GetTranslatedSubtitleBlock()); //checkthis
         }
 
         internal void Restore(XmlNode blockNode)
@@ -555,7 +555,7 @@ namespace TRTR
                 }
 
                 // fill remaining "virtual" space
-                Int32 virtSizeDiff = Boundary.Up((Int32)ms.Length, 0x10);
+                Int32 virtSizeDiff = (Int32)ms.Length.ExtendToBoundary(0x10);
                 Int32 virtSize = (Int32)ms.Length + virtSizeDiff;
                 if (virtSizeDiff > 0)
                 {
@@ -637,46 +637,35 @@ namespace TRTR
             return false;
         }
 
-        internal byte[] GetTranslatedSubtitleBlock(XmlNode blockNode, UInt32 index)
+        internal byte[] GetTranslatedSubtitleBlock()
         {
-            // load translation, otherwise use english text to translation
-            string translation = string.Empty;
-            //Int32 checksum = 0;
-            if (blockNode != null)
-            {
-                XmlAttribute attr = blockNode.Attributes["translation"];
-                if (attr != null)
-                {
-                    translation = attr.Value;
-                }
-            }
-            //if (translation.Length == 0)
-            //    if (ContainsKey(FileLanguage.English))
-            //        translation = this[FileLanguage.English];
-
-            StringBuilder sb = new StringBuilder();
-            if (translation.Length > 0)
-            {
-                sb.Append((Int32)FileLanguage.English);
-                sb.Append((char)0x0D);
-                sb.Append(CineFile.textConv.ToGameFormat(translation).Trim().Replace("\r\n", "\n"));
-                sb.Append((char)0x0D);
-            }
+            StringBuilder sbOther = new StringBuilder();
+            StringBuilder sbEnglish = new StringBuilder();
             for (Int32 key = 0; key < Count; key++)
             {
                 FileLanguage lang = this[key].Language;
                 if (lang != FileLanguage.English && !CineConsts.StrippedLangs.Contains(lang))
                 {
-                    sb.Append((Int32)lang);
-                    sb.Append((char)0x0D);
-                    if (lang == FileLanguage.English)
-                        sb.Append(CineFile.textConv.ToGameFormat(translation).Trim().Replace("\r\n", "\n"));
+                    StringBuilder sbCurrent;
+                    string translation = string.Empty;
+                    CineSubtitleEntry subEntry = this[key];
+                    if (subEntry.Language == FileLanguage.English && subEntry.Translated.Trim().Length > 0)
+                    {
+                        sbCurrent = sbEnglish;
+                        translation = CineFile.textConv.ToGameFormat(translation).Trim().Replace("\r\n", "\n");
+                    }
                     else
-                        sb.Append(this[key].Text);
-                    sb.Append((char)0x0D);
+                    {
+                        sbCurrent = sbOther;
+                        translation = subEntry.Text;
+                    }
+                    sbCurrent.Append((Int32)lang);
+                    sbCurrent.Append((char)0x0D);
+                    sbCurrent.Append(this[key].Text);
+                    sbCurrent.Append((char)0x0D);
                 }
             }
-            return CineFile.textConv.Enc.GetBytes(sb.ToString());
+            return CineFile.textConv.Enc.GetBytes(sbEnglish.ToString() + sbOther.ToString());
         }
 
         internal byte[] GetRestoredSubtitleBlock(XmlNode blockNode)
@@ -729,14 +718,14 @@ namespace TRTR
             catch (Exception ex)
             {
                 Exception newEx = new Exception("ParseBlockText(): Wrong textblock", ex);//xxtrans
-                newEx.Data.Add("hash", this.parentCineBlock.CineFile.Entry.Extra.HashText);
+                newEx.Data.Add("hash", this.parentCineBlock.CineFile.Entry.HashText);
                 newEx.Data.Add("blockNo", this.parentCineBlock.BlockNo);
                 newEx.Data.Add("content", this.text);
-                newEx.Data.Add("TranslationDocumentFileName", TRGameInfo.Trans.TranslationDocumentFileName);
-                if (TRGameInfo.Trans.TranslationDocument != null)
-                    newEx.Data.Add("traDocURI", TRGameInfo.Trans.TranslationDocument.BaseURI);
-                else
-                    newEx.Data.Add("traDoc", "[null]");
+                //newEx.Data.Add("TranslationDocumentFileName", TRGameInfo.Trans.TranslationDocumentFileName);
+                //if (TRGameInfo.Trans.TranslationDocument != null)
+                //    newEx.Data.Add("traDocURI", TRGameInfo.Trans.TranslationDocument.BaseURI);
+                //else
+                //    newEx.Data.Add("traDoc", "[null]");
                 throw newEx;
             }
 

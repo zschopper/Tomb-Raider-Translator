@@ -41,7 +41,7 @@ namespace TRTR.Processors
                     #region regi
 
                     /*
-                                    string header = "HASH: " + entry.Extra.HashText + 
+                                    string header = "HASH: " + entry.HashText + 
                                         (entry.Extra.FileName.Length > 0 ? valueSep + "FILENAME: " + entry.Extra.FileName : string.Empty)
                                         //                            + " BLOCKS: "
                                         ;
@@ -116,7 +116,7 @@ namespace TRTR.Processors
                                      */
 
                     #endregion
-                    string header = "HASH: " + file.Extra.HashText +
+                    string header = "HASH: " + file.HashText +
                         (file.Extra.FileName.Length > 0 ? valueSep + "FILENAME: " + file.Extra.FileName : string.Empty);
                     if (file.Raw.Language == FileLanguage.English)
                         header += ";sub";

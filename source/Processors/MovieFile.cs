@@ -137,30 +137,30 @@ namespace TRTR
 
         internal void Translate(bool simulated)
         {
-            XmlNode subtNode = TRGameInfo.Trans.TranslationDocument.SelectSingleNode("/translation/subtitle");
-            if (subtNode != null)
-            {
-                XmlAttribute attr = subtNode.Attributes["translation"];
-                if (attr != null)
-                {
-                    // Translation = HexEncode.Decode(attr.Value);
-                    // entry.WriteContent(Translation);
-                }
-            }
+            //XmlNode subtNode = TRGameInfo.Trans.TranslationDocument.SelectSingleNode("/translation/subtitle");
+            //if (subtNode != null)
+            //{
+            //    XmlAttribute attr = subtNode.Attributes["translation"];
+            //    if (attr != null)
+            //    {
+            //        // Translation = HexEncode.Decode(attr.Value);
+            //        // entry.WriteContent(Translation);
+            //    }
+            //}
         }
 
         internal void Restore()
         {
-            XmlNode fontNode = TRGameInfo.Trans.RestorationDocument.SelectSingleNode("/restoration/font");
-            if (fontNode != null)
-            {
-                XmlAttribute attr = fontNode.Attributes["original"];
-                if (attr != null)
-                {
-                    //Original = HexEncode.Decode(attr.Value);
-                    //entry.WriteContent(Original);
-                }
-            }
+            //XmlNode fontNode = TRGameInfo.Trans.RestorationDocument.SelectSingleNode("/restoration/font");
+            //if (fontNode != null)
+            //{
+            //    XmlAttribute attr = fontNode.Attributes["original"];
+            //    if (attr != null)
+            //    {
+            //        //Original = HexEncode.Decode(attr.Value);
+            //        //entry.WriteContent(Original);
+            //    }
+            //}
         }
 
         internal void CreateRestoration(XmlElement fontElement, XmlNode fontNode)
@@ -170,7 +170,7 @@ namespace TRTR
 
         internal void CreateTranslation()
         {
-            //XmlNode subtNode = TRGameInfo.Trans.TranslationDocument.SelectSingleNode(String.Format("/translation/movie/cine[@hash=\"{0}\"]", entry.Extra.HashText));
+            //XmlNode subtNode = TRGameInfo.Trans.TranslationDocument.SelectSingleNode(String.Format("/translation/movie/cine[@hash=\"{0}\"]", entry.HashText));
         }
 
         internal void Extract(string destFolder, bool useDict)
@@ -189,7 +189,7 @@ namespace TRTR
 
         private void ExtractResX(string destFolder, MovieFile.MovieLanguage lang, bool useDict)
         {
-            if (entry.Extra.HashText == "3533B8DF" && entry.Parent.ParentBigFile.Name == "patch")
+            if (entry.HashText == "3533B8DF" && entry.Parent.ParentBigFile.Name == "patch")
                 Debug.WriteLine("ez");
 
             string resXFileName = Path.Combine(destFolder, entry.Extra.ResXFileName);

@@ -48,9 +48,9 @@ HKEY_LOCAL_MACHINE\SOFTWARE\Valve\Steam\InstallPath
 
 CineFile
   List<CineBlock> Blocks
-	CineSubtitles Subtitles (CineSubtitles : List<CineSubtitleEntry>)
-	
-	
+  CineSubtitles Subtitles (CineSubtitles : List<CineSubtitleEntry>)
+  
+  
  10466CE1.unknown 
  
 4 Bytes - Language ID (0xFFFFE0 -> %0.2x) - (0x05 - DUTCH) , (0x08 - PORTUGUESE)
@@ -67,9 +67,9 @@ for (uint i = 0; i < count; i++)
   }
 
   
-xenon-w\objectlist.txt
-xenon-w\objlist.dat
-xenon-w\unitlist.txt
+pc-w\objectlist.txt
+pc-w\objlist.dat
+pc-w\unitlist.txt
 \tras\game\xenon\tras.arg
 \tras\xenon-w\objectlist.txt
 \tras\xenon-w\objlist.dat
@@ -88,3 +88,38 @@ xenon-w\unitlist.txt
 Open MUL, go to offset 0x2050 and you can see real name
 
 In this folder pc-w\audio\streams\vo\act_03\305_mb_monastery_b\305_mb_040_ready_room\ only 3 files:
+
+
+Fájl lista
+- mindegyikből (hash+langcode) csak a legmagasabb prioritásút
+
+Fájl írás:
+- bigfile tartalmazza-e a fájlt
+  - ha igen
+    - elfér a régi helyén?
+      - ha igen
+        - FAT fájlhosszt módosítjuk
+        - mentjük
+      - ha nem
+        - elfér az utolsó bigfile végén?
+        - ha igen
+          - FAT fájlhosszt módosítjuk
+          - FAT kezdőcímet módosítjuk
+          - mentjük
+        - ha nem
+          - új fájlt nyitunk
+          - a headerben növeljük a fájlok számát
+          - a FAT kezdőcímet módosítjuk
+          - mentjük
+  - ha nem
+    - elfér az utolsó bigfile végén?
+      - ha igen
+        - FAT fájlhosszt hozzáadjuk
+        - FAT kezdőcímet hozzáadjuk
+        - mentjük
+      - ha nem
+        - új fájlt nyitunk
+        - a headerben növeljük a fájlok számát
+        - FAT fájlhosszt hozzáadjuk
+        - a FAT kezdőcímet hozzáadjuk
+        - mentjük

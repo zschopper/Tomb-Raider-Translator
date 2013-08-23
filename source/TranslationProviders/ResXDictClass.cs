@@ -86,7 +86,7 @@ namespace TRTR
             int sourceHash = text.GetHashCode();
 
             string[] innerContext = new string[] {
-                            string.Format("FileType: {0}", entry.Extra.FileType),
+                            string.Format("FileType: {0}", entry.FileType),
                             string.Format("BigFile: {0}", entry.BigFile),
                             string.Format("FileName: {0}", entry.Extra.FileNameForced),
                         };
