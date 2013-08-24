@@ -9,10 +9,10 @@ using System.Resources;
 [assembly: AssemblyTitle("Tomb Raider Translator")]
 [assembly: AssemblyDescription("Translator for Tomb Raider Legend, Anniversary, Tomb Raider 2013 and Lara Croft and the Guardian of Light")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("TombRaider.hu")]
+[assembly: AssemblyCompany("TombRaiders.hu")]
 [assembly: AssemblyProduct("TRTR")]
-[assembly: AssemblyCopyright("Copyright © TombRaider.hu 2007-2013")]
-[assembly: AssemblyTrademark("TombRaider.hu")]
+[assembly: AssemblyCopyright("Copyright © TombRaider.hu 2007-2013, TombRaiders.hu 2013")]
+[assembly: AssemblyTrademark("TombRaider.hu, TombRaiders.hu")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

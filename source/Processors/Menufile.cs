@@ -127,7 +127,7 @@ namespace TRTR
                             {
                                 try
                                 {
-                                    translation = TranslationDict.GetTranslation(menuEntry.Current.Replace("\n", "\r\n"), this.Entry);
+                                    translation = TRGameInfo.textConv.ToGameFormat(TranslationDict.GetTranslation(menuEntry.Current.Replace("\n", "\r\n"), this.Entry));
                                 }
                                 catch (Exception ex)
                                 {
@@ -147,8 +147,6 @@ namespace TRTR
                 }
                 msIndex.Position = msIndex.Length;
                 msIndex.Write(msEntries.ToArray(), 0, (Int32)msEntries.Length);
-                //if(!simulated)
-                //    entry.WriteContent(msIndex.ToArray());
 
                 byte[] content = msIndex.ToArray();
                 //string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "simulate",
@@ -158,7 +156,7 @@ namespace TRTR
                 //fx.Write(content, 0, content.Length);
                 //fx.Close();
 
-//                if (this.entry.BigFile.Name.ToLower() == "patch2" && entry.Language == FileLanguage.English)
+                if (!simulated)
                     this.entry.BigFile.Parent.WriteFile(this.entry.BigFile, this.entry, content);
             }
             finally

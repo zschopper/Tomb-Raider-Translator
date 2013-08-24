@@ -4,19 +4,35 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.IO;
-
+using System.Globalization;
 namespace TRTR
 {
     class TMXProvider : TranslationProvider
     {
         Dictionary<int, string> dict = new Dictionary<int, string>();
+        string langCode = string.Empty;
 
         internal override void LoadTranslations()
         {
+            CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.InstalledWin32Cultures);
+            langCode = string.Empty;
+            int i = 0;
+            string fileName = string.Empty;
+            while (langCode == string.Empty && i < cultures.Length)
+            {
+                string checkFileName = string.Format(".\\{0}.tmx", cultures[i].TwoLetterISOLanguageName);
+                if (!File.Exists(fileName))
+                    checkFileName = Path.Combine(TRGameInfo.Game.WorkFolder, cultures[i].TwoLetterISOLanguageName + ".tmx");
+                
+                if (File.Exists(checkFileName))
+                {
+                    langCode = cultures[i].TwoLetterISOLanguageName.ToLower();
+                    fileName = checkFileName;
+                }
+                i++;
+            }
+
             dict.Clear();
-            string fileName = Path.Combine(TRGameInfo.Game.WorkFolder, "hu.tmx");
-            if (!File.Exists(fileName))
-                fileName = Path.Combine(".\\hu.tmx");
 
             if (File.Exists(fileName))
             {
@@ -27,7 +43,7 @@ namespace TRTR
                 foreach (XmlNode node in doc.SelectNodes("/tmx/body/tu"))
                 {
                     string source = node.SelectSingleNode("tuv[@xml:lang='en']/seg", mgr).InnerText;
-                    string value = node.SelectSingleNode("tuv[@xml:lang='hu']/seg", mgr).InnerText;
+                    string value = node.SelectSingleNode("tuv[@xml:lang='"+ langCode + "']/seg", mgr).InnerText;
 
                     string replaced = source.Replace("&#13;", "\\r");//.Replace("\n", "\\n");
                     if (replaced != source)

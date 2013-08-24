@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using ExtensionMethods;
 
 namespace TRTR
 {
@@ -30,7 +31,7 @@ namespace TRTR
 
         internal FileLanguage Language { get { return getLanguage(LangCode); } }
         internal UInt32 BigFileIndex { get { return Location & 0x0F; } }
-        internal UInt32 Address { get { return Location / 0x800 * 0x800; } }
+        internal UInt32 Address { get { return Location.ShrinkToBoundary(0x800); } }
         internal BigFile BigFile { get; set; }
         // internal UInt32 Priority { get { return Location % 0x800 } }
 

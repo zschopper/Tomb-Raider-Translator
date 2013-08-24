@@ -83,13 +83,13 @@ namespace TRTR
 
             #region File Header processing
             if (lines.Length < 4)
-                throw new Exception(string.Format("Hibás sch fájl: \"{0}\" nincs adat.", fileName));
+                throw new Exception(string.Format("Hibás sch fájl: \"{0}\" nincs adat.", fileName)); // trans
             if (lines[0] != "Version 1")
-                throw new Exception(string.Format("Hibás sch fájl: \"{0}\" ismeretlen verzió.", fileName));
+                throw new Exception(string.Format("Hibás sch fájl: \"{0}\" ismeretlen verzió.", fileName));// trans
             if (lines[1] != "TextEntry")
-                throw new Exception(string.Format("Hibás sch fájl: \"{0}\" hibás fájlformátum. Sor: 2", fileName));
+                throw new Exception(string.Format("Hibás sch fájl: \"{0}\" hibás fájlformátum. Sor: 2", fileName));// trans
             if (lines[2] != "line0")
-                throw new Exception(string.Format("Hibás sch fájl: \"{0}\" hibás fájlformátum. Sor: 3", fileName));
+                throw new Exception(string.Format("Hibás sch fájl: \"{0}\" hibás fájlformátum. Sor: 3", fileName));// trans
             #endregion
 
             for (int i = 3; i < lines.Length; i++)
@@ -102,6 +102,7 @@ namespace TRTR
                     throw new Exception("*sch file hiba: nyelv nem olvasható"); //xxtrans
                 MovieLanguage lng = new MovieLanguage();
                 lng.language = m.Groups[1].Value;
+                lng.time = m.Groups[2].Value;
                 string[] sentences = Regex.Split(m.Groups[3].Value, @"\\");
 
                 foreach (string s in sentences)
@@ -121,7 +122,7 @@ namespace TRTR
                         {
                             // Log.LogDebugMsg(string.Format("{0} {1}", m2.Groups.Count, s));
 
-                            fileEntry.Translated = TranslationDict.GetTranslation(fileEntry.Original, Entry);
+                            fileEntry.Translated = TRGameInfo.textConv.ToGameFormat(TranslationDict.GetTranslation(fileEntry.Original, Entry));
                         }
                         else
                             fileEntry.Translated = fileEntry.Original;
@@ -137,16 +138,28 @@ namespace TRTR
 
         internal void Translate(bool simulated)
         {
-            //XmlNode subtNode = TRGameInfo.Trans.TranslationDocument.SelectSingleNode("/translation/subtitle");
-            //if (subtNode != null)
-            //{
-            //    XmlAttribute attr = subtNode.Attributes["translation"];
-            //    if (attr != null)
-            //    {
-            //        // Translation = HexEncode.Decode(attr.Value);
-            //        // entry.WriteContent(Translation);
-            //    }
-            //}
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Version 1");
+            sb.AppendLine("TextEntry");
+            sb.AppendLine("line0");
+            foreach (MovieLanguage lang in langs)
+            {
+                List<string> langSubtitles = new List<string>();
+                foreach (MovieLanguage.MovieFileEntry mfEntry in lang.Entries)
+                    langSubtitles.Add(mfEntry.TimeStr + mfEntry.Prefix + (lang.language == "english" ? mfEntry.Translated : mfEntry.Original));
+                sb.AppendLine(string.Format("lang_{0} {1} \"{2}\"", lang.Language, lang.Time, string.Join("\\", langSubtitles)));
+            }
+            byte[] content = Encoding.UTF8.GetBytes(sb.ToString());
+
+            //string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "simulate",
+            //    string.Format("{0}.{1}.{2}.{3}.txt", entry.Parent.ParentBigFile.Name, entry.Extra.FileNameOnlyForced, entry.FileType, entry.Extra.LangText));
+
+            //Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
+            //FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
+            //fx.Write(content, 0, content.Length);
+            //fx.Close();
+            if (!simulated)
+                entry.BigFile.Parent.WriteFile(entry.BigFile, entry, content);
         }
 
         internal void Restore()
@@ -189,14 +202,11 @@ namespace TRTR
 
         private void ExtractResX(string destFolder, MovieFile.MovieLanguage lang, bool useDict)
         {
-            if (entry.HashText == "3533B8DF" && entry.Parent.ParentBigFile.Name == "patch")
-                Debug.WriteLine("ez");
-
             string resXFileName = Path.Combine(destFolder, entry.Extra.ResXFileName);
 
             ResXHelper helper = ResXPool.GetResX(resXFileName);
             if (!helper.TryLockFor(ResXLockMode.Write))
-                throw new Exception(string.Format("Can not lock {0} for write", resXFileName));
+                throw new Exception(string.Format("Can not lock {0} for write", resXFileName)); // trans
 
             // Add resources to the file.
             List<int> keys = new List<int>();
@@ -220,7 +230,7 @@ namespace TRTR
         private void ExtractXML(string destFolder, MovieFile.MovieLanguage lang)
         {
             XmlDocument doc = new XmlDocument();
-            
+
             XmlElement elemRoot = doc.CreateElement("movies");
             XmlNode nodeRoot = doc.AppendChild(elemRoot);
 

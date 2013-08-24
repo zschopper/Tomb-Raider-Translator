@@ -29,7 +29,8 @@ namespace TRTR
         #endregion
 
         internal static FileLanguage OverwriteLang = FileLanguage.English;
-        internal static TextConv textConv = new TextConv(new char[0], new char[0], Encoding.UTF8);
+        internal static TextConv textConv = new TextConv(new char[] { (char)0x0150, (char)0x0151, (char)0x0170, (char)0x0171 }, new char[] { (char)0x00D4, (char)0x00F4, (char)0x00DB, (char)0x00FB }, Encoding.UTF8);
+
         internal static TRGameStatus GameStatus { get { return gameStatus; } }
         internal static List<string> Processors { get { return processors; } }
         internal static GameInstance Game { get { return game; } set { game = value; } }

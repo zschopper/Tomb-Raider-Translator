@@ -25,6 +25,26 @@ namespace ExtensionMethods
         {
             return me + (boundary - 1) - (me - 1) % boundary;
         }
+
+        public static Int32 ShrinkToBoundary(this Int32 me, Int32 boundary)
+        {
+            return me - (me % boundary);
+        }
+
+        public static UInt32 ShrinkToBoundary(this UInt32 me, UInt32 boundary)
+        {
+            return me - (me % boundary);
+        }
+
+        public static Int64 ShrinkToBoundary(this Int64 me, Int64 boundary)
+        {
+            return me - (me % boundary);
+        }
+
+        public static UInt64 ShrinkToBoundary(this UInt64 me, UInt64 boundary)
+        {
+            return me - (me % boundary);
+        }
     }
 }
 

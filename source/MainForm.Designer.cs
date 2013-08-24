@@ -154,7 +154,7 @@ namespace TRTR
             this.linkTombRaiderHU.Size = new System.Drawing.Size(129, 13);
             this.linkTombRaiderHU.TabIndex = 36;
             this.linkTombRaiderHU.TabStop = true;
-            this.linkTombRaiderHU.Text = "http://www.tombraider.hu";
+            this.linkTombRaiderHU.Text = "http://www.tombraiders.hu";
             this.linkTombRaiderHU.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkTombRaiderHU_LinkClicked);
             // 
             // labelLang

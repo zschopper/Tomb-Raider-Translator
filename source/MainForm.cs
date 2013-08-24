@@ -483,7 +483,7 @@ namespace TRTR
         private void linkTombRaiderHU_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process pr = new Process();
-            pr.StartInfo.FileName = "http://tombraider.hu";
+            pr.StartInfo.FileName = "http://tombraiders.hu";
             pr.Start();
         }
 

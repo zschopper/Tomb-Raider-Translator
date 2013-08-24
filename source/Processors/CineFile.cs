@@ -26,9 +26,10 @@ namespace TRTR
 
         static CineConsts()
         {
-
             //StrippedLangs.Add(FileLanguage.Russian);
-            StrippedLangs.Add(FileLanguage.French);
+            //StrippedLangs.Add(FileLanguage.French);
+            //StrippedLangs.Add(FileLanguage.Chinese);
+            //StrippedLangs.Add(FileLanguage.Arabic);
         }
     }
 
@@ -58,14 +59,14 @@ namespace TRTR
             UInt32 blockNo = 0;
             while (offset < content.Length)
             {
+
                 UInt32 blockSize = BitConverter.ToUInt32(content, (Int32)(offset + 4)) + CineConsts.CineBlockHeaderSize;
 
-                UInt32 blockSize2 = blockSize + 0x0F - (blockSize - 1) % 0x10;
                 byte[] blockData = new byte[blockSize];
                 Array.Copy(content, offset, blockData, 0, blockSize);
                 CineBlock block = new CineBlock(this, blockNo, blockData);
                 Blocks.Add(block);
-                offset += blockSize2;
+                offset += blockSize.ExtendToBoundary(0x10);
                 blockNo++;
             }
         }
@@ -82,9 +83,19 @@ namespace TRTR
                     {
                         block.Translate();
                         ms.Write(block.TranslatedData, 0, block.TranslatedData.Length);
+                        //break;
                     }
+                    byte[] content = ms.ToArray();
+
+                    //string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "simulate",
+                    //        string.Format("{0}.{1}.{2}.{3}.txt", entry.Parent.ParentBigFile.Name, entry.Extra.FileNameOnlyForced, entry.FileType, entry.Extra.LangText));
+                    //Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
+                    //FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
+                    //fx.Write(content, 0, content.Length);
+                    //fx.Close();
+
                     if (!simulated)
-                        entry.BigFile.Parent.WriteFile(entry.BigFile, entry, ms.ToArray());
+                        entry.BigFile.Parent.WriteFile(entry.BigFile, entry, content);
                 }
                 finally
                 {
@@ -555,7 +566,7 @@ namespace TRTR
                 }
 
                 // fill remaining "virtual" space
-                Int32 virtSizeDiff = (Int32)ms.Length.ExtendToBoundary(0x10);
+                Int32 virtSizeDiff = (Int32)(ms.Length.ExtendToBoundary(0x10) - ms.Length);
                 Int32 virtSize = (Int32)ms.Length + virtSizeDiff;
                 if (virtSizeDiff > 0)
                 {
@@ -569,11 +580,16 @@ namespace TRTR
 
                 ms.Position = 0;
                 ms.Write(BitConverter.GetBytes(BlockTypeNo), 0, 4); // typeno
-                ms.Write(BitConverter.GetBytes(virtSize - 0x10), 0, 4); // virtual size
+
+                if (blockTypeNo == 1)
+                    ms.Write(BitConverter.GetBytes(virtSize - 0x10), 0, 4); // virtual size
+                if (blockTypeNo == 0)
+                    ms.Write(BitConverter.GetBytes(data.Length), 0, 4); // virtual size
+
                 if (blockTypeNo == 1 && !isEnic)
                 {
                     ms.Position = 0x10;
-                    ms.Write(BitConverter.GetBytes(virtSize - 0x14), 0, 4); // size
+                    ms.Write(BitConverter.GetBytes(virtSize - 0x14), 0, 4); // size xxx
                 }
 
                 // update translatedData
@@ -643,29 +659,29 @@ namespace TRTR
             StringBuilder sbEnglish = new StringBuilder();
             for (Int32 key = 0; key < Count; key++)
             {
-                FileLanguage lang = this[key].Language;
-                if (lang != FileLanguage.English && !CineConsts.StrippedLangs.Contains(lang))
+                CineSubtitleEntry subtEntry = this[key];
+                FileLanguage lang = subtEntry.Language;
+                if (!CineConsts.StrippedLangs.Contains(lang))
                 {
                     StringBuilder sbCurrent;
                     string translation = string.Empty;
-                    CineSubtitleEntry subEntry = this[key];
-                    if (subEntry.Language == FileLanguage.English && subEntry.Translated.Trim().Length > 0)
+                    if (subtEntry.Language == FileLanguage.English) // && subtEntry.Translated.Trim().Length > 0)
                     {
-                        sbCurrent = sbEnglish;
-                        translation = CineFile.textConv.ToGameFormat(translation).Trim().Replace("\r\n", "\n");
+                        sbCurrent = sbOther;
+                        translation = CineFile.textConv.ToGameFormat(subtEntry.Translated).Trim().Replace("\r\n", "\n");
                     }
                     else
                     {
                         sbCurrent = sbOther;
-                        translation = subEntry.Text;
+                        translation = subtEntry.Text;
                     }
-                    sbCurrent.Append((Int32)lang);
+                    sbCurrent.Append((Int32)subtEntry.Language);
                     sbCurrent.Append((char)0x0D);
-                    sbCurrent.Append(this[key].Text);
+                    sbCurrent.Append(subtEntry.Prefix + translation);
                     sbCurrent.Append((char)0x0D);
                 }
             }
-            return CineFile.textConv.Enc.GetBytes(sbEnglish.ToString() + sbOther.ToString());
+            return CineFile.textConv.Enc.GetBytes(/*sbEnglish.ToString() +*/ sbOther.ToString());
         }
 
         internal byte[] GetRestoredSubtitleBlock(XmlNode blockNode)
@@ -754,6 +770,9 @@ namespace TRTR
 
         private void Parse(string text)
         {
+            if (text.Length > 2)
+                if (text[0] == '[' && text[text.Length - 1] == ']')
+                    Noop.DoIt();
             FileEntry fileEntry = parentSubTitles.ParentCineBlock.CineFile.Entry;
             Match m = rx.Match(text);
             if (m.Success)
@@ -762,8 +781,8 @@ namespace TRTR
                 this.Text = m.Groups[2].Value;
                 if (this.Text == string.Empty)
                 {
-                    this.Prefix = string.Empty;
-                    this.Text = string.Empty;
+                    //this.Prefix = string.Empty;
+                    //this.Text = string.Empty;
                     this.NormalizedText = string.Empty;
                     this.Translated = string.Empty;
 
@@ -775,7 +794,7 @@ namespace TRTR
                     if (this.Language == FileLanguage.English)
                     {
                         this.NormalizedText = this.Text.Replace("\r\n", "\n").Replace(" \n", "\n").Replace("\n", "\r\n");
-                        this.Translated = TranslationDict.GetTranslation(NormalizedText, fileEntry);
+                        this.Translated = TRGameInfo.textConv.ToGameFormat(TranslationDict.GetTranslation(NormalizedText, fileEntry));
                     }
                 }
             }
@@ -786,7 +805,7 @@ namespace TRTR
                 this.NormalizedText = text.Replace("\r\n", "\n").Replace(" \n", "\n").Replace("\n", "\r\n");
                 if (this.Language == FileLanguage.English)
                 {
-                    this.Translated = TranslationDict.GetTranslation(NormalizedText, fileEntry);
+                    this.Translated = TRGameInfo.textConv.ToGameFormat(TranslationDict.GetTranslation(NormalizedText, fileEntry));
                 }
                 else
                 {
