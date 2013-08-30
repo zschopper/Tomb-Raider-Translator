@@ -59,7 +59,6 @@ namespace TRTR
             UInt32 blockNo = 0;
             while (offset < content.Length)
             {
-
                 UInt32 blockSize = BitConverter.ToUInt32(content, (Int32)(offset + 4)) + CineConsts.CineBlockHeaderSize;
 
                 byte[] blockData = new byte[blockSize];
@@ -73,38 +72,30 @@ namespace TRTR
 
         internal void Translate(bool simulated)
         {
+            MemoryStream ms = new MemoryStream();
             try
             {
-                MemoryStream ms = new MemoryStream();
-                try
+                ms.Write(header, 0, (Int32)CineConsts.CineHeaderSize);
+                foreach (CineBlock block in Blocks)
                 {
-                    ms.Write(header, 0, (Int32)CineConsts.CineHeaderSize);
-                    foreach (CineBlock block in Blocks)
-                    {
-                        block.Translate();
-                        ms.Write(block.TranslatedData, 0, block.TranslatedData.Length);
-                        //break;
-                    }
-                    byte[] content = ms.ToArray();
-
-                    //string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "simulate",
-                    //        string.Format("{0}.{1}.{2}.{3}.txt", entry.Parent.ParentBigFile.Name, entry.Extra.FileNameOnlyForced, entry.FileType, entry.Extra.LangText));
-                    //Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
-                    //FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
-                    //fx.Write(content, 0, content.Length);
-                    //fx.Close();
-
-                    if (!simulated)
-                        entry.BigFile.Parent.WriteFile(entry.BigFile, entry, content);
+                    block.Translate();
+                    ms.Write(block.TranslatedData, 0, block.TranslatedData.Length);
+                    //break;
                 }
-                finally
-                {
-                    ms.Close();
-                }
+                byte[] content = ms.ToArray();
+
+                //string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "simulate",
+                //        string.Format("{0}.{1}.{2}.{3}.txt", entry.Parent.ParentBigFile.Name, entry.Extra.FileNameOnlyForced, entry.FileType, entry.Extra.LangText));
+                //Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
+                //FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
+                //fx.Write(content, 0, content.Length);
+                //fx.Close();
+
+                entry.BigFile.Parent.WriteFile(entry.BigFile, entry, content, simulated);
             }
-            catch (Exception ex)
+            finally
             {
-                throw new Exception("CineFile.Translate", ex);
+                ms.Close();
             }
         }
 
@@ -380,27 +371,29 @@ namespace TRTR
 
         private void ParseBlock(byte[] block)
         {
+            // BigFileList.DumpToFile(Path.Combine( new string[]{TRGameInfo.Game.WorkFolder, "extract", "cine", cineFile.Entry.HashText, blockNo.ToString("X6")}), block);
             // process header
-            //File.WriteAllBytes(string.Format(@"c:\tmp\{0}_{1}", cineFile.Entry.HashText, blockNo), block);
+
             blockTypeNo = BitConverter.ToUInt32(block, 0x00);
             if (blockTypeNo != 0 && blockTypeNo != 1 && blockTypeNo != 3)
                 throw new Exception(Errors.ParseErrorBlockTypeError);
 
-            //else //{  // v1.0.0.6
             if (blockTypeNo == 0 || blockTypeNo == 1 || blockTypeNo == 3)
             {  // v1.0.0.6
-                UInt32 virtualBlockSize = BitConverter.ToUInt32(block, 0x04); // virtual size (rounded up to 0x10 boundary)
+                UInt32 virtualBlockSize = BitConverter.ToUInt32(block, 0x04); // block content size (block size - header size (0x16)
+
                 // !checkthis!
                 UInt32 blockSize;
-                if (block.Length > 0x14)
+                if (block.Length >= 0x14)
+                { 
                     blockSize = BitConverter.ToUInt32(block, 0x10); // exact size (when blocktypeno == 1 and it is non-enic)
+                    isEnic = BitConverter.ToUInt32(block, 0x10) == CineConsts.CineCineBlockMagicBytes;
+                } 
                 else
                     blockSize = (UInt32)Math.Max(block.Length - 0x10, 0);
-
-                isEnic = blockSize == CineConsts.CineCineBlockMagicBytes;
-
+               
                 UInt32 contentOffset;
-
+                
                 if (isEnic || blockTypeNo == 0)
                 {
                     blockSize = virtualBlockSize;
@@ -409,11 +402,8 @@ namespace TRTR
                 else
                     contentOffset = 0x14;
 
-                if (blockSize > virtualBlockSize)
-                    throw new Exception(Errors.ParseErrorSizeMismatch);
                 if (blockSize > CineConsts.MaxBlockSize)
                     throw new Exception(Errors.ParseErrorTooBig);
-
 
                 // search for text block
                 // sets textOffset & hasSubtitles
@@ -424,7 +414,6 @@ namespace TRTR
                 // !!! search offset start at every 4 byte boundary.
 
                 #region search subtitles
-
 
                 if (hasSubtitles)
                 {
@@ -457,7 +446,7 @@ namespace TRTR
                 #endregion
 
 
-                #region search subtitles (4 byte version)
+                #region search subtitles (4 byte version) - commented out
                 /*
             
             if (hasSubtitles)
@@ -512,7 +501,7 @@ namespace TRTR
 
         internal void Translate()
         {
-            Write(Subtitles.GetTranslatedSubtitleBlock()); //checkthis
+                Write(Subtitles.GetTranslatedSubtitleBlock()); //checkthis
         }
 
         internal void Restore(XmlNode blockNode)
@@ -583,8 +572,9 @@ namespace TRTR
 
                 if (blockTypeNo == 1)
                     ms.Write(BitConverter.GetBytes(virtSize - 0x10), 0, 4); // virtual size
-                if (blockTypeNo == 0)
-                    ms.Write(BitConverter.GetBytes(data.Length), 0, 4); // virtual size
+                else
+                    if (blockTypeNo == 0)
+                        ms.Write(BitConverter.GetBytes(data.Length), 0, 4); // virtual size
 
                 if (blockTypeNo == 1 && !isEnic)
                 {
@@ -655,33 +645,28 @@ namespace TRTR
 
         internal byte[] GetTranslatedSubtitleBlock()
         {
-            StringBuilder sbOther = new StringBuilder();
-            StringBuilder sbEnglish = new StringBuilder();
-            for (Int32 key = 0; key < Count; key++)
+            StringBuilder entryTextBlock = new StringBuilder();
+
+            bool blockContainsSourceLang = false;
+            foreach (CineSubtitleEntry subtEntry in this)
+                if (subtEntry.Language == FileLanguage.English)
+                    blockContainsSourceLang = true;
+
+            foreach (CineSubtitleEntry subtEntry in this)
             {
-                CineSubtitleEntry subtEntry = this[key];
                 FileLanguage lang = subtEntry.Language;
-                if (!CineConsts.StrippedLangs.Contains(lang))
+                if (!CineConsts.StrippedLangs.Contains(lang) || !blockContainsSourceLang)
                 {
-                    StringBuilder sbCurrent;
-                    string translation = string.Empty;
-                    if (subtEntry.Language == FileLanguage.English) // && subtEntry.Translated.Trim().Length > 0)
-                    {
-                        sbCurrent = sbOther;
-                        translation = CineFile.textConv.ToGameFormat(subtEntry.Translated).Trim().Replace("\r\n", "\n");
-                    }
-                    else
-                    {
-                        sbCurrent = sbOther;
-                        translation = subtEntry.Text;
-                    }
-                    sbCurrent.Append((Int32)subtEntry.Language);
-                    sbCurrent.Append((char)0x0D);
-                    sbCurrent.Append(subtEntry.Prefix + translation);
-                    sbCurrent.Append((char)0x0D);
+                    entryTextBlock.Append((Int32)subtEntry.Language);
+                    entryTextBlock.Append((char)0x0D);
+                    //if (subtEntry.Language == FileLanguage.English)
+                    //    entryTextBlock.Append(subtEntry.Prefix + CineFile.textConv.ToGameFormat(subtEntry.Translated).Replace("\r\n", "\n"));
+                    //else
+                    entryTextBlock.Append(subtEntry.Prefix + subtEntry.Text);
+                    entryTextBlock.Append((char)0x0D);
                 }
             }
-            return CineFile.textConv.Enc.GetBytes(/*sbEnglish.ToString() +*/ sbOther.ToString());
+            return CineFile.textConv.Enc.GetBytes(entryTextBlock.ToString());
         }
 
         internal byte[] GetRestoredSubtitleBlock(XmlNode blockNode)
@@ -708,43 +693,26 @@ namespace TRTR
         private void ParseBlockText()
         {
             string[] elements; // for debug
-            try
+            Clear();
+            if (text.Length > 5)
             {
-                Clear();
-                if (text.Length > 5)
+                //elements = text.Substring(4).Split(new char[] { (char)0xD }, StringSplitOptions.RemoveEmptyEntries); // remove content-length value and split texts at delimiters
+                elements = text.Substring(4).Split((char)0xD); // remove content-length value and split texts at delimiters
+                // add subtitles to dictionary
+                for (Int32 i = 0; i < elements.Length - 1; i += 2)
                 {
-                    //string[] elements = text.Substring(4).Split((char)0xD); // remove content-length value and split texts at delimiters
-                    elements = text.Substring(4).Split(new char[] { (char)0xD }, StringSplitOptions.RemoveEmptyEntries); // remove content-length value and split texts at delimiters
-                    // add subtitles to dictionary
-                    for (Int32 i = 0; i < elements.Length - 1; i += 2)
+                    FileLanguage lang;
+                    Int32 value;
+                    if (!Int32.TryParse(elements[i], out value))
                     {
-                        FileLanguage lang;
-                        Int32 value;
-                        if (!Int32.TryParse(elements[i], out value))
-                        {
-                            Exception newEx = new Exception(Errors.ParseError);
-                            newEx.Data.Add("language code", elements[i]);
-                            throw newEx;
-                        }
-                        lang = (FileLanguage)value;
-                        Add(new CineSubtitleEntry(this, lang, elements[i + 1]));
+                        Exception newEx = new Exception(Errors.ParseError);
+                        newEx.Data.Add("language code", elements[i]);
+                        throw newEx;
                     }
+                    lang = (FileLanguage)value;
+                    Add(new CineSubtitleEntry(this, lang, elements[i + 1]));
                 }
             }
-            catch (Exception ex)
-            {
-                Exception newEx = new Exception("ParseBlockText(): Wrong textblock", ex);//xxtrans
-                newEx.Data.Add("hash", this.parentCineBlock.CineFile.Entry.HashText);
-                newEx.Data.Add("blockNo", this.parentCineBlock.BlockNo);
-                newEx.Data.Add("content", this.text);
-                //newEx.Data.Add("TranslationDocumentFileName", TRGameInfo.Trans.TranslationDocumentFileName);
-                //if (TRGameInfo.Trans.TranslationDocument != null)
-                //    newEx.Data.Add("traDocURI", TRGameInfo.Trans.TranslationDocument.BaseURI);
-                //else
-                //    newEx.Data.Add("traDoc", "[null]");
-                throw newEx;
-            }
-
         }
     }
 

@@ -15,6 +15,7 @@ namespace TRTR
         internal override void LoadTranslations()
         {
             CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.InstalledWin32Cultures);
+            dict.Clear();
             langCode = string.Empty;
             int i = 0;
             string fileName = string.Empty;
@@ -32,8 +33,6 @@ namespace TRTR
                 i++;
             }
 
-            dict.Clear();
-
             if (File.Exists(fileName))
             {
                 XmlDocument doc = new XmlDocument();
@@ -43,7 +42,7 @@ namespace TRTR
                 foreach (XmlNode node in doc.SelectNodes("/tmx/body/tu"))
                 {
                     string source = node.SelectSingleNode("tuv[@xml:lang='en']/seg", mgr).InnerText;
-                    string value = node.SelectSingleNode("tuv[@xml:lang='"+ langCode + "']/seg", mgr).InnerText;
+                    string value = node.SelectSingleNode("tuv[@xml:lang='" + langCode + "']/seg", mgr).InnerText;
 
                     string replaced = source.Replace("&#13;", "\\r");//.Replace("\n", "\\n");
                     if (replaced != source)
@@ -64,15 +63,22 @@ namespace TRTR
                     else
                         dict.Add(key, value);
                 }
-            }
-            if (dict.Count == 0)
-                Log.LogDebugMsg(string.Format("no loaded from \"{0}\"", fileName));
-            else
-                if (dict.Count == 1)
-                    Log.LogDebugMsg(string.Format("{0} translation loaded from \"{1}\"", dict.Count, fileName));
+                if (dict.Count == 0)
+                    Log.LogDebugMsg(string.Format("no loaded from \"{0}\"", fileName));
                 else
-                    if (dict.Count > 1)
-                        Log.LogDebugMsg(string.Format("{0} translations loaded from \"{1}\"", dict.Count, fileName));
+                    if (dict.Count == 1)
+                        Log.LogDebugMsg(string.Format("{0} translation loaded from \"{1}\"", dict.Count, fileName));
+                    else
+                        if (dict.Count > 1)
+                            Log.LogDebugMsg(string.Format("{0} translations loaded from \"{1}\"", dict.Count, fileName));
+            }
+            else
+            {
+                Log.LogDebugMsg("No translation files found.");
+                //throw new Exception("No translation files found.");
+            }
+
+
         }
 
         internal override void Clear()
@@ -88,7 +94,7 @@ namespace TRTR
             {
                 if (!dict.TryGetValue(replaced.Trim().GetHashCode(), out ret))
                 {
-                    Log.LogDebugMsg(string.Format("No translation for \"{0}\"", text));
+//                    Log.LogDebugMsg(string.Format("No translation for \"{0}\"", text));
                     return text;
                 }
             }

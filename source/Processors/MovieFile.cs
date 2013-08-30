@@ -158,8 +158,8 @@ namespace TRTR
             //FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
             //fx.Write(content, 0, content.Length);
             //fx.Close();
-            if (!simulated)
-                entry.BigFile.Parent.WriteFile(entry.BigFile, entry, content);
+
+            entry.BigFile.Parent.WriteFile(entry.BigFile, entry, content, simulated);
         }
 
         internal void Restore()

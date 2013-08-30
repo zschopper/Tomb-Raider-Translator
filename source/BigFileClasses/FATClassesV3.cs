@@ -105,6 +105,30 @@ namespace TRTR
                 this.langText = entry.Language.ToString();
             else
                 this.langText = string.Format("UNK_{0:X8}", entry.Raw.LangCode);
+
+            // try assign file name from hash code
+            string matchedFileName;
+
+            this.ResXFileName = string.Empty;
+
+            this.FileNameResolved = entry.BigFile.Parent.FileNameHashDict.TryGetValue(entry.Hash, out matchedFileName);
+            if (this.FileNameResolved)
+            {
+                this.FileName = matchedFileName;
+                string path = Path.GetDirectoryName(this.FileName);
+                int pathHash = path.GetHashCode();
+                string alias;
+
+                if (entry.BigFile.Parent.FileNameAliasDict.TryGetValue(pathHash, out alias))
+                    this.ResXFileName = alias;
+                else
+                    if (entry.BigFile.Parent.FolderAliasDict.TryGetValue(pathHash, out alias))
+                        this.ResXFileName = Path.ChangeExtension(this.FileName.Replace(path, alias), ".resx");
+            }
+
+            if (this.ResXFileName == string.Empty)
+                this.ResXFileName = entry.HashText + ".resx";
+
         }
     }
 
@@ -830,32 +854,6 @@ namespace TRTR
             {
                 FileEntry entry = new FileEntry(itemsByIndex[i], this.EntryList, this);
                 EntryList.Add(entry);
-
-                if (entry.Status == TranslationStatus.Translatable)
-                {
-                    // try assign file name from hash code
-                    string matchedFileName;
-
-                    entry.Extra.ResXFileName = string.Empty;
-
-                    entry.Extra.FileNameResolved = parent.FileNameHashDict.TryGetValue(entry.Hash, out matchedFileName);
-                    if (entry.Extra.FileNameResolved)
-                    {
-                        entry.Extra.FileName = matchedFileName;
-                        string path = Path.GetDirectoryName(entry.Extra.FileName);
-                        int pathHash = path.GetHashCode();
-                        string alias;
-
-                        if (parent.FileNameAliasDict.TryGetValue(pathHash, out alias))
-                            entry.Extra.ResXFileName = alias;
-                        else
-                            if (parent.FolderAliasDict.TryGetValue(pathHash, out alias))
-                                entry.Extra.ResXFileName = Path.ChangeExtension(entry.Extra.FileName.Replace(path, alias), ".resx");
-                    }
-
-                    if (entry.Extra.ResXFileName == string.Empty)
-                        entry.Extra.ResXFileName = entry.HashText + ".resx";
-                }
             }
 
             // raw dump of fat entries
@@ -869,12 +867,30 @@ namespace TRTR
             EntryList.SortBy(FileEntryCompareField.Location);
             for (Int32 i = 0; i <= entryCount - 2; i++)
             {
-                EntryList[i].VirtualSize = (EntryList[i + 1].Raw.Location - EntryList[i].Raw.Location) * 0x800;
-                if (EntryList[i].VirtualSize == 0)
-                    if (entryList.Count > i + 2)
-                        EntryList[i].VirtualSize = (EntryList[i + 2].Raw.Location - EntryList[i].Raw.Location) * 0x800;
-                    else
-                        EntryList[i].VirtualSize = (BigFile.Boundary - EntryList[i].Raw.Location) * 0x800;
+                FileEntry thisEntry = EntryList[i];
+                FileEntry nextEntry = EntryList[i + 1];
+
+                if (thisEntry.Raw.Address == nextEntry.Raw.Address)
+                    Log.LogDebugMsg("??");
+                if (thisEntry.Raw.Length == 0 || nextEntry.Raw.Length == 0)
+                    Log.LogDebugMsg("??");
+                if (thisEntry.Raw.Address >= nextEntry.Raw.Address)
+                    Log.LogDebugMsg("??");
+
+                if (thisEntry.Raw.BigFileIndex == nextEntry.Raw.BigFileIndex)
+                {
+                    thisEntry.VirtualSize = (nextEntry.Raw.Address - thisEntry.Raw.Address);
+                }
+                else
+                {
+                    thisEntry.VirtualSize = (BigFile.Boundary - thisEntry.Raw.Address);
+                }
+
+                //if (thisEntry.VirtualSize == 0)
+                //    if (entryList.Count > i + 2)
+                //        thisEntry.VirtualSize = (EntryList[i + 2].Raw.Location - thisEntry.Raw.Location) * 0x800;
+                //    else
+                //        thisEntry.VirtualSize = (BigFile.Boundary - thisEntry.Raw.Location) * 0x800;
             }
             // ... for last item, too
             if (entryCount > 0)
@@ -1077,6 +1093,7 @@ namespace TRTR
             Log.LogMsg(LogEntryType.Debug, string.Format("Building file structure: {0}", folder));
 
             List<string> dupeFilter = new List<string>();
+
             //dupeFilter.Add("bigfile.000.tiger");
             //dupeFilter.Add("bigfile_english.000.tiger");
             //dupeFilter.Add("patch.000.tiger");
@@ -1085,7 +1102,12 @@ namespace TRTR
             //dupeFilter.Add("patch2_english.000.tiger");
             //dupeFilter.Add("title.000.tiger");
             //dupeFilter.Add("title_english.000.tiger");
+            //dupeFilter.Add("pack4.000.tiger");
             //dupeFilter.Add("pack5.000.tiger");
+            //dupeFilter.Add("pack6.000.tiger");
+            //dupeFilter.Add("pack7.000.tiger");
+            //dupeFilter.Add("pack8.000.tiger");
+
             foreach (string file in files)
             {
                 string fileNameOnly = Path.GetFileName(file).ToLower();
@@ -1142,6 +1164,7 @@ namespace TRTR
             #endregion
 
         }
+
         private void LoadFileNamesFile(string fileName, out Dictionary<uint, string> dict)
         {
             dict = new Dictionary<uint, string>();
@@ -1184,6 +1207,27 @@ namespace TRTR
             }
         }
 
+        internal bool AddTransEntry(FileEntry entry)
+        {
+            FatEntryKey key = new FatEntryKey(entry.Raw.Hash, entry.Raw.Language);
+            FileEntry foundEntry = null;
+            if (transEntries.TryGetValue(key, out foundEntry))
+            {
+                if (foundEntry.BigFile.Priority < entry.BigFile.Priority)
+                {
+                    transEntries[key] = entry;
+                    foundEntry.Status = TranslationStatus.SkippedDueUpdated;
+                    Log.LogDebugMsg(string.Format("ATE: {0}.{1}.{2} discarded with file from {3}", foundEntry.BigFile.Name, entry.Extra.FileNameForced, foundEntry.Language, entry.BigFile.Name));
+                    return true;
+                }
+                Log.LogDebugMsg(string.Format("ATE: {0}.{1}.{2} kept - other {3}", foundEntry.BigFile.Name, foundEntry.Extra.FileNameForced, foundEntry.Language, entry.BigFile.Name));
+                return false;
+            }
+
+            transEntries.Add(key, entry);
+            return true;
+        }
+
         private static int compareByPathLength(string file1, string file2)
         {
             string path1 = Path.GetDirectoryName(file1);
@@ -1199,6 +1243,7 @@ namespace TRTR
 
         internal void Extract(string destFolder, bool useDict)
         {
+            UpdateBigFiles();
             foreach (BigFile bigFile in this)
             {
                 string extractFolder = Path.Combine(destFolder, bigFile.Name);
@@ -1304,7 +1349,10 @@ namespace TRTR
             int i = 0;
             UpdateBigFiles();
 
-            foreach (FileEntry entry in TransEntries.Values)
+            List<FileEntry> transEntryList = new List<FileEntry>(TransEntries.Values.ToArray<FileEntry>());
+            transEntryList.Sort((e1, e2) => e1.Raw.Address.CompareTo(e2.Raw.Address));
+
+            foreach (FileEntry entry in transEntryList)
             {
                 if (entry.Status == TranslationStatus.Translatable)
                 {
@@ -1314,7 +1362,7 @@ namespace TRTR
                             {
                                 if (entry.Raw.Language == FileLanguage.English || entry.Raw.Language == FileLanguage.NoLang)
                                 {
-                                    //if (entry.Hash == 0xEF4C7C2Cu)
+                                    //if (entry.Hash == 0xD79F6A34u)
                                     {
                                         CineFile cine = new CineFile(entry);
                                         cine.Translate(simulated);
@@ -1363,28 +1411,51 @@ namespace TRTR
             filePool.CloseAll();
         }
 
-        internal void WriteFile(BigFile bigFile, FileEntry entry, byte[] content)
+        static Int64 ofs = 0;
+
+        internal static void DumpToFile(string fileName, byte[] content)
         {
-            //FileStream FATStream = bigFile.Parent.filePool.Open(bigFile.Name, 0);
-            //BinaryWriter FATWriter = new BinaryWriter(FATStream);
-            FileStream ContentStream = null;// bigFile.Parent.filePool.Open(bigFile.Name, bigFileCount - 1);
+            Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            try
+            {
+                fs.Write(content, 0, content.Length);
+            }
+            finally
+            {
+                fs.Close();
+            }
+
+
+        }
+        internal void WriteFile(BigFile bigFile, FileEntry entry, byte[] content, bool simulate)
+        {
+            if (simulate)
+                return;
+            FileStream ContentStream = null;
             FATEntry raw;
 
+            #region prepare file write
             // try to find entry
             FileEntry foundEntry = bigFile.EntryList.Find(
                 bk => bk.Hash == entry.Hash &&
                     bk.Language == entry.Language);
+
+            Log.LogDebugMsg(string.Format("WriteFile: {0:X8} old len: {1:X8} old vlen: {2:X8} clen: {3:X8} vclen {4:X8}",
+                entry.Hash, entry.Raw.Length, entry.Raw.Length.ExtendToBoundary(0x800), content.Length, content.Length.ExtendToBoundary(0x800)));
 
             // Determine whether bigfile contains entry
             if (foundEntry != null)
             {
                 // update fat (length)
                 raw = foundEntry.Raw;
-                raw.Length = (UInt32)content.Length;
 
                 // determine whether file fits its place
-                if (false && (foundEntry.Raw.Length.ExtendToBoundary(0x800) >= content.Length)) // fits
+                if (true && (raw.Length.ExtendToBoundary(0x800) >= content.Length)) // fits
                 {
+                    Log.LogDebugMsg(string.Format("  existing, fits"));
+                    // update fat (length)
+                    raw.Length = (UInt32)content.Length;
                     // prepare entry to write
                     foundEntry.Raw = raw;
                     bigFile.HeaderChanged = true;
@@ -1399,21 +1470,10 @@ namespace TRTR
                         contentFits = ContentStream.Length.ExtendToBoundary(0x800) + content.Length <= BigFile.Boundary;
                         if (contentFits) // fits in the end of last bigfile
                         {
-                            // fill file to its next boundary
-                            UInt32 newLocation = (UInt32)ContentStream.Length.ExtendToBoundary(0x800);
-                            byte[] PaddingBuffer = new byte[2000];
-                            Array.Clear(PaddingBuffer, 0, PaddingBuffer.Length);
-                            ContentStream.Seek(0, SeekOrigin.End);
-
-                            while (ContentStream.Length < newLocation)
-                            {
-                                int writeLen = (int)(newLocation - ContentStream.Length > PaddingBuffer.Length
-                                    ? PaddingBuffer.Length
-                                    : newLocation - ContentStream.Length);
-                                ContentStream.Write(PaddingBuffer, 0, writeLen);
-                            }
+                            Log.LogDebugMsg(string.Format("  existing, not fit"));
                             // update fat (location & length)
-                            raw.Location = (UInt32)(newLocation) + bigFile.Priority * 0x10 + bigFile.FileCount - 1;
+                            raw.Location = (UInt32)ContentStream.Length.ExtendToBoundary(0x800) + bigFile.Priority * 0x10 + bigFile.FileCount - 1;
+                            raw.Length = (UInt32)content.Length;
                             // prepare entry to write
                             foundEntry.Raw = raw;
                             bigFile.HeaderChanged = true;
@@ -1425,16 +1485,17 @@ namespace TRTR
                     }
                     if (!contentFits) // not fits in the end of last bigfile
                     {
+                        Log.LogDebugMsg(string.Format("  existing, new BF"));
                         // add a new bigfile
                         new FileStream(string.Format(bigFile.FilePatternFull, bigFile.FileCount), FileMode.CreateNew).Close();
                         // update header (increase file count)
                         bigFile.FileCount++;
-                        // update fat (location)
+                        // update fat (location & length)
                         raw.Location = (UInt32)(0) + bigFile.Priority * 0x10 + bigFile.FileCount - 1;
+                        raw.Length = (UInt32)content.Length;
                         // prepare entry to write
                         foundEntry.Raw = raw;
                         bigFile.HeaderChanged = true;
-
                     }
                 }
             }
@@ -1442,33 +1503,21 @@ namespace TRTR
             {
                 foundEntry = entry;
                 raw = foundEntry.Raw;
-                raw.Length = (UInt32)content.Length;
 
                 // determine there is free place in the end of last bigfile for content
                 bool contentFits = false;
-                ContentStream = bigFile.Parent.filePool.Open(bigFile.Name, bigFile.FileCount - 1);
+                FileStream LastBFStream = bigFile.Parent.filePool.Open(bigFile.Name, bigFile.FileCount - 1);
                 try
                 {
-                    contentFits = ContentStream.Length.ExtendToBoundary(0x800) + content.Length <= BigFile.Boundary;
+                    contentFits = LastBFStream.Length.ExtendToBoundary(0x800) + content.Length <= BigFile.Boundary;
                     if (contentFits) // fits in the end of last bigfile
                     {
-                        // fill file to its next boundary
-                        UInt32 newLocation = (UInt32)ContentStream.Length.ExtendToBoundary(0x800);
-                        byte[] PaddingBuffer = new byte[2000];
-                        Array.Clear(PaddingBuffer, 0, PaddingBuffer.Length);
-                        ContentStream.Seek(0, SeekOrigin.End);
-
-                        while (ContentStream.Length < newLocation)
-                        {
-                            int writeLen = (int)(newLocation - ContentStream.Length > PaddingBuffer.Length
-                                ? PaddingBuffer.Length
-                                : newLocation - ContentStream.Length);
-                            ContentStream.Write(PaddingBuffer, 0, writeLen);
-                        }
-
+                        Log.LogDebugMsg(string.Format("  new, fit BF"));
+                        // update header (increase entry count)
                         bigFile.EntryCount++;
-                        // update fat (location)
-                        raw.Location = (UInt32)(newLocation) + bigFile.Priority * 0x10 + bigFile.FileCount - 1;
+                        // update fat (location & length)
+                        raw.Location = (UInt32)LastBFStream.Length.ExtendToBoundary(0x800) + bigFile.Priority * 0x10 + bigFile.FileCount - 1;
+                        raw.Length = (UInt32)content.Length;
                         // prepare entry to write
                         foundEntry.Raw = raw;
                         // update fat (add new entry)
@@ -1482,14 +1531,16 @@ namespace TRTR
                 }
                 if (!contentFits) // not fits in the end of last bigfile
                 {
+                    Log.LogDebugMsg(string.Format("  new, not fit BF"));
                     // add a new bigfile
                     new FileStream(string.Format(bigFile.FilePatternFull, bigFile.FileCount), FileMode.CreateNew).Close();
                     // update header (increase file count)
                     bigFile.FileCount++;
                     // update header (increase entry count)
                     bigFile.EntryCount++;
-                    // update fat (location)
+                    // update fat (location & length)
                     raw.Location = (UInt32)(0) + bigFile.Priority * 0x10 + bigFile.FileCount - 1;
+                    raw.Length = (UInt32)content.Length;
                     // prepare entry to write
                     foundEntry.Raw = raw;
                     // update fat (add new entry)
@@ -1497,46 +1548,90 @@ namespace TRTR
                     bigFile.HeaderChanged = true;
                 }
             }
-            ContentStream = filePool.Open(entry.BigFile.Name, entry.Raw.BigFileIndex);
+            #endregion
+            #region file write
+            ContentStream = filePool.Open(foundEntry.BigFile.Name, foundEntry.Raw.BigFileIndex);
             try
             {
+                #region dump #1
+                bool dump = true;
+                string dumpFileName = string.Empty;
+                if (dump)
+                {
+                    dumpFileName = string.Format("{0}.{1}.{2}.{3}.txt", entry.Parent.ParentBigFile.Name, entry.Extra.FileNameOnlyForced, entry.FileType, entry.Extra.LangText);
+                    byte[] bufRead = new byte[entry.Raw.Length];
+                    ContentStream.Position = entry.Raw.Address;
+                    ContentStream.Read(bufRead, 0, (int)entry.Raw.Length);
+                    DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "source", dumpFileName), bufRead);
+
+                    string extractTrnFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "translated", dumpFileName);
+                    DumpToFile(extractTrnFileName, content);
+                }
+
+                ContentStream.Position = entry.Raw.Address;
+
+                if (ContentStream.Position < ofs)
+                {
+                    Log.LogDebugMsg(string.Format("!!!!! diffff {0:X8}", ofs - ContentStream.Position));
+                }
+                #endregion
+
+                // if file smallert than entry's start address, expand file
+                if (ContentStream.Length < foundEntry.Raw.Address)
+                {
+                    // fill bigfile to its next file boundary
+                    UInt32 newLength = (UInt32)ContentStream.Length.ExtendToBoundary(0x800);
+                    byte[] PaddingBuffer = new byte[2000];
+                    Array.Clear(PaddingBuffer, 0, PaddingBuffer.Length);
+                    ContentStream.Seek(0, SeekOrigin.End);
+
+                    while (ContentStream.Length < newLength)
+                    {
+                        int writeLen = (int)(newLength - ContentStream.Length > PaddingBuffer.Length
+                            ? PaddingBuffer.Length
+                            : newLength - ContentStream.Length);
+                        ContentStream.Write(PaddingBuffer, 0, writeLen);
+                    }
+                }
+
                 ContentStream.Position = entry.Raw.Address;
                 ContentStream.Write(content, 0, content.Length);
-                // clean file to boundary
+
+                Log.LogDebugMsg(string.Format("  writing  from {0:X8} to {1:X8} len {2:X8}", foundEntry.Raw.Address, foundEntry.Raw.Address + content.Length, content.Length));
+
+                // clean file end to its boundary
                 if (ContentStream.Position < ContentStream.Length - 1)
                 {
-                    byte[] buf = new byte[2000];
-                    Array.Clear(buf, 0, 2000);
-                    int targetSize = (int)ContentStream.Length.ExtendToBoundary(0x800);
+                    int padLen = (int)((foundEntry.Raw.Address + content.Length).ExtendToBoundary(0x800) - ContentStream.Position - 1);
+                    if (padLen > 0)
+                    {
+                        byte[] buf = new byte[padLen];
+                        Array.Clear(buf, 0, (int)padLen);
 
-                    ContentStream.Write(buf, 0, (int)(targetSize - ContentStream.Length - 1));
+                        Log.LogDebugMsg(string.Format("  cleaning from {0:X8} to {1:X8} len {2:X8}", ContentStream.Position, ContentStream.Position + padLen, padLen));
+                        ContentStream.Write(buf, 0, buf.Length);
+                    }
                 }
+                ofs = ContentStream.Position;
+
+                #region dump #2
+
+                if (dump)
+                {
+                    string extractSrcFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "reread", dumpFileName);
+                    byte[] bufRead = new byte[entry.Raw.Length];
+                    ContentStream.Position = entry.Raw.Address;
+                    ContentStream.Read(bufRead, 0, (int)entry.Raw.Length);
+                    DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "source", dumpFileName), bufRead);
+                    ContentStream.Position = ofs;
+                }
+                #endregion
             }
             finally
             {
                 filePool.Close(entry.BigFile.Name, entry.Raw.BigFileIndex);
             }
-        }
-
-        internal bool AddTransEntry(FileEntry entry)
-        {
-            FatEntryKey key = new FatEntryKey(entry.Raw.Hash, entry.Raw.Language);
-            FileEntry foundEntry = null;
-            if (transEntries.TryGetValue(key, out foundEntry))
-            {
-                if (foundEntry.BigFile.Priority < entry.BigFile.Priority)
-                {
-                    transEntries[key] = entry;
-                    foundEntry.Status = TranslationStatus.SkippedDueUpdated;
-                    Log.LogDebugMsg(string.Format("ATE: {0}.{1}.{2} discarded with file from {3}", foundEntry.BigFile.Name, entry.Extra.FileNameForced, foundEntry.Language, entry.BigFile.Name));
-                    return true;
-                }
-                Log.LogDebugMsg(string.Format("ATE: {0}.{1}.{2} kept - other {3}", foundEntry.BigFile.Name, foundEntry.Extra.FileNameForced, foundEntry.Language, entry.BigFile.Name));
-                return false;
-            }
-
-            transEntries.Add(key, entry);
-            return true;
+            #endregion
         }
 
     }

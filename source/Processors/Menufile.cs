@@ -156,8 +156,7 @@ namespace TRTR
                 //fx.Write(content, 0, content.Length);
                 //fx.Close();
 
-                if (!simulated)
-                    this.entry.BigFile.Parent.WriteFile(this.entry.BigFile, this.entry, content);
+                this.entry.BigFile.Parent.WriteFile(this.entry.BigFile, this.entry, content, simulated);
             }
             finally
             {

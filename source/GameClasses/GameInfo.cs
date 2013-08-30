@@ -154,7 +154,7 @@ namespace TRTR
             {
                 bigFile.UpdateEntryList();
                 bigFile.EntryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "source"), false);
-                bigFile.EntryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "hu"), true);
+                //bigFile.EntryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "hu"), true);
             }
         }
 
