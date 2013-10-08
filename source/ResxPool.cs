@@ -101,10 +101,15 @@ namespace TRTR
     class ResXPool
     {
         #region private declarations
-        private static Dictionary<string, ResXHelper> list = new Dictionary<string, ResXHelper>();
+        private Dictionary<string, ResXHelper> list = null;
         #endregion
 
-        internal static ResXHelper GetResX(string fileName)
+        internal ResXPool()
+        {
+            list = new Dictionary<string, ResXHelper>();
+        }
+
+        internal ResXHelper GetResX(string fileName)
         {
             ResXHelper ret;
             if (!list.TryGetValue(fileName, out ret))
@@ -115,11 +120,11 @@ namespace TRTR
             return ret;
         }
 
-        internal static void CloseAll()
+        internal void CloseAll()
         {
             foreach (KeyValuePair<string, ResXHelper> helper in list)
             {
-                if(helper.Value.LockMode == ResXLockMode.Write)
+                if (helper.Value.LockMode == ResXLockMode.Write)
                 {
                     helper.Value.Writer.Generate();
                     helper.Value.Writer.Close();
@@ -128,6 +133,23 @@ namespace TRTR
                     helper.Value.Reader.Close();
             }
             list.Clear();
+        }
+    }
+
+    class ResXPoolSingleton
+    {
+        #region private declarations
+        private static ResXPool internalPool = new ResXPool();
+        #endregion
+
+        internal static ResXHelper GetResX(string fileName)
+        {
+            return internalPool.GetResX(fileName);
+        }
+
+        internal static void CloseAll()
+        {
+            internalPool.CloseAll();
         }
     }
 }

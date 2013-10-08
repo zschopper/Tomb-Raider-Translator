@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Text;
-using System.Xml;
-using System.Globalization;
-using System.Media;
-using System.Threading;
-using System.Security.Cryptography;
-using System.Diagnostics;
-using System.Resources;
 using System.Text.RegularExpressions;
+using System.IO;
+using System.Diagnostics;
 using ExtensionMethods;
 
 namespace TRTR
@@ -33,754 +28,383 @@ namespace TRTR
         }
     }
 
-    class CineFile
+    static class CineFile
     {
-        private FileEntry entry;
-        private byte[] header;
-
-        internal List<CineBlock> Blocks = new List<CineBlock>();
-        internal byte[] Header { get { return header; } }
-        internal FileEntry Entry { get { return entry; } }
-
         internal static TextConv textConv = new TextConv(new char[] { }, new char[] { }, Encoding.UTF8); // null;
 
-        internal CineFile(FileEntry entry)
+        internal static bool Process(FileEntry entry, Stream outStream, TranslationProvider tran)
         {
-            this.entry = entry;
-            ParseFile();
-        }
-
-        private void ParseFile()
-        {
-            byte[] content = entry.ReadContent();
-            header = new byte[CineConsts.CineHeaderSize];
-            Array.Copy(content, 0, header, 0, CineConsts.CineHeaderSize);
-            UInt32 offset = CineConsts.CineHeaderSize;
-            UInt32 blockNo = 0;
-            while (offset < content.Length)
-            {
-                UInt32 blockSize = BitConverter.ToUInt32(content, (Int32)(offset + 4)) + CineConsts.CineBlockHeaderSize;
-
-                byte[] blockData = new byte[blockSize];
-                Array.Copy(content, offset, blockData, 0, blockSize);
-                CineBlock block = new CineBlock(this, blockNo, blockData);
-                Blocks.Add(block);
-                offset += blockSize.ExtendToBoundary(0x10);
-                blockNo++;
-            }
-        }
-
-        internal void Translate(bool simulated)
-        {
-            MemoryStream ms = new MemoryStream();
+            bool ret = false;
+            FileStream fs = TRGameInfo.FilePool.Open(entry);
             try
             {
-                ms.Write(header, 0, (Int32)CineConsts.CineHeaderSize);
-                foreach (CineBlock block in Blocks)
-                {
-                    block.Translate();
-                    ms.Write(block.TranslatedData, 0, block.TranslatedData.Length);
-                    //break;
-                }
-                byte[] content = ms.ToArray();
-
-                //string extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "simulate",
-                //        string.Format("{0}.{1}.{2}.{3}.txt", entry.Parent.ParentBigFile.Name, entry.Extra.FileNameOnlyForced, entry.FileType, entry.Extra.LangText));
-                //Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
-                //FileStream fx = new FileStream(extractFileName, FileMode.Create, FileAccess.ReadWrite);
-                //fx.Write(content, 0, content.Length);
-                //fx.Close();
-
-                entry.BigFile.Parent.WriteFile(entry.BigFile, entry, content, simulated);
+                fs.Position = entry.Offset;
+                ret = Process(entry, fs, entry.Raw.Length, outStream, tran);
             }
             finally
             {
-                ms.Close();
-            }
-        }
-
-        internal void Restore()
-        {
-            //MemoryStream ms = new MemoryStream();
-            //try
-            //{
-            //    ms.Write(header, 0, (Int32)CineConsts.CineHeaderSize);
-            //    XmlNode cineNode = TRGameInfo.Trans.RestorationDocument.SelectSingleNode(String.Format("/restoration/subtitle/cine[@hash=\"{0}\"]", entry.HashText));
-            //    foreach (CineBlock block in Blocks)
-            //    {
-            //        XmlNode blockNode = cineNode.SelectSingleNode(String.Format("block[@no=\"{0:d5}\"]", block.BlockNo));
-            //        block.Restore(blockNode);
-            //        ms.Write(block.TranslatedData, 0, block.TranslatedData.Length);
-            //    }
-            //    entry.WriteContent(ms.ToArray());
-            //}
-            //finally
-            //{
-            //    ms.Close();
-            //}
-        }
-
-        internal static void Extract(string destFolder, FileEntry entry, bool useDict)
-        {
-            if (entry.Raw.Language == FileLanguage.English || entry.Raw.Language == FileLanguage.NoLang)
-            {
-                // ExtractText(destFolder, entry);
-                ExtractResX(destFolder, entry, useDict);
-            }
-        }
-
-        private static void ExtractResX(string destFolder, FileEntry entry, bool useDict)
-        {
-            string resXFileName = Path.Combine(destFolder, entry.Extra.ResXFileName);
-
-            ResXHelper helper = null;
-
-            CineFile cine = new CineFile(entry);
-            string blockOrig = String.Empty;
-            string blockTrans = String.Empty;
-            //List<int> keys = new List<int>();
-
-            for (Int32 blockNo = 0; blockNo < cine.Blocks.Count; blockNo++)
-            {
-                CineBlock block = cine.Blocks[blockNo];
-                if (block.Subtitles != null)
-                {
-                    List<int> blockKeys = new List<int>();
-                    UInt32 textCount = block.Subtitles.TextCount(FileLanguage.English);
-                    for (UInt32 textIdx = 0; textIdx < textCount; textIdx++)
-                    {
-                        CineSubtitleEntry subtEntry = block.Subtitles.Entry(FileLanguage.English, textIdx);
-                        if (subtEntry.Language == FileLanguage.English)
-                        {
-                            if (subtEntry.NormalizedText != string.Empty)
-                            {
-                                int hash = subtEntry.NormalizedText.GetHashCode();
-                                // in some file, there is same text more than one in one block.
-                                //if (!keys.Contains(hash) && !blockKeys.Contains(hash))
-                                if (!blockKeys.Contains(hash))
-                                {
-                                    //keys.Add(hash);
-                                    blockKeys.Add(hash);
-                                    ResXDataNode resNode = new ResXDataNode(subtEntry.NormalizedText,
-                                        useDict
-                                        ? subtEntry.Translated
-                                        : subtEntry.NormalizedText
-                                        );
-                                    resNode.Comment = string.Format("blockNo: {0:X8}\r\nprefix: {1}\r\nfilename: {2}\r\nhash: {3}", blockNo, block.Subtitles.Entry(FileLanguage.English, textIdx).Prefix, block.Subtitles.ParentCineBlock.CineFile.Entry.Extra.FileNameForced, block.Subtitles.ParentCineBlock.CineFile.Entry.HashText);
-                                    if (helper == null)
-                                    {
-                                        helper = ResXPool.GetResX(resXFileName);
-                                        if (!helper.TryLockFor(ResXLockMode.Write))
-                                            throw new Exception(string.Format("Can not lock {0} for write", resXFileName));
-                                    }
-                                    helper.Writer.AddResource(resNode);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private static void ExtractText(string destFolder, FileEntry entry)
-        {
-            string valueSep = ";";
-            string fileName = Path.Combine(destFolder, entry.Parent.ParentBigFile.Name + "_" + entry.Extra.FileNameOnlyForced + "_subtitles.txt");
-
-            TextWriter cineWriter = new StreamWriter(fileName, false, Encoding.UTF8);
-            cineWriter.WriteLine(";extracted from datafiles");
-
-            Log.LogDebugMsg(string.Format("Extracting: {0}  {1} {2}", entry.Parent.ParentBigFile.Name, entry.HashText, entry.Extra.FileName));
-
-            CineFile cine = new CineFile(entry);
-            #region old method
-
-            /*
-                                    string header = "HASH: " + entry.HashText + 
-                                        (entry.Extra.FileName.Length > 0 ? valueSep + "FILENAME: " + entry.Extra.FileName : string.Empty)
-                                        //                            + " BLOCKS: "
-                                        ;
-                                    string blocks = string.Empty;
-                                    string original = string.Empty; // ";original\r\n";
-                                    string translated = string.Empty; // ";translation\r\n";
-
-                                    for (Int32 j = 0; j < cine.Blocks.Count; j++)
-                                    {
-                                        CineBlock block = cine.Blocks[j];
-                                        string blockNo = j.ToString("d4");
-                                        if (block.BlockTypeNo == 1 || block.IsEnic)
-                                        {
-                                            if (blocks.Length == 0)
-                                                blocks = blockNo;
-                                            else
-                                                blocks += ", " + blockNo;
-                                        }
-                                        if (block.subtitles != null)
-                                            if (block.subtitles.ContainsKey(FileLanguage.English))
-                                            {
-                                                string blockOrig = block.subtitles[FileLanguage.English];
-                                                // strip trailing spaces
-                                                blockOrig = blockOrig.Replace(" \n", "\n");
-                                                // replace original texts' newlines (cr) to normal text format (crlf)
-                                                blockOrig = blockOrig.Replace("\n", "\r\n");
-                                                // add double quotes if contains newline, double quote or comma
-                                                Int32 hashCode = blockOrig.GetHashCode();
-                                                if (!subTransEntries.ContainsKey(hashCode))
-                                                    throw new Exception("Key not found: \"" + blockOrig + "\"");
-                                                TranslationCovertFileEntry transEntry = subTransEntries[hashCode];
-                                                if (rxDblQuoteNeeded.IsMatch(blockOrig))
-                                                    blockOrig = "\"" + blockOrig + "\"";
-
-                                                string blockTrans = transEntry.Translation.Trim(strippedChars);
-                                                // strip trailing spaces
-                                                blockTrans = blockTrans.Replace(" \n", "\n");
-                                                // replace original texts' newlines (cr) to normal text format (crlf)
-                                                blockTrans = blockTrans.Replace("\n", "\r\n");
-                                                blockTrans = TRGameInfo.TextConv.ToOriginalFormat(blockTrans);
-                                                // add double quotes if contains newline, double quote or comma
-                                                if (rxDblQuoteNeeded.IsMatch(blockTrans))
-                                                    blockTrans = "\"" + blockTrans + "\"";
-
-                                                string blockDirectives =
-                                                    "$OLDHASH=" + transEntry.Hash + "\r\n" +
-                                                    (transEntry.Directives.Length > 0 ? transEntry.Directives + "\r\n" : string.Empty);
-
-                                                original +=
-                                                    //blockDirectives + 
-                                                    ";" + blockNo + valueSep + blockOrig + "\r\n";
-                                                translated +=
-                                                    //(transEntry.Comments.Length > 0 ? transEntry.Comments + "\r\n" : string.Empty) + 
-                                                    blockNo + valueSep + blockTrans + "\r\n";
-                                                // write to file
-                                            }
-                                    }
-                                    byte[] buf =
-                                        TRGameInfo.TextConv.Enc.GetBytes(
-                                        header +
-                                        //blocks + 
-                                        "\r\n" +
-                                        original +
-                                        translated +
-                                        valueSep + "\r\n");
-                                    fs.Write(buf, 0, buf.Length);
-                                } 
-                                     */
-            #endregion
-            string header = "HASH: " + entry.HashText +
-                (entry.Extra.FileName.Length > 0 ? valueSep + "FILENAME: " + entry.Extra.FileName : string.Empty);
-            if (entry.Raw.Language == FileLanguage.English)
-                header += ";sub";
-            else
-                header += ";dir";
-
-            string blockOrig = String.Empty;
-            string blockTrans = String.Empty;
-            for (Int32 j = 0; j < cine.Blocks.Count; j++)
-            {
-                CineBlock block = cine.Blocks[j];
-                if (block.Subtitles != null)
-                {
-                    UInt32 textCount = block.Subtitles.TextCount(FileLanguage.English);
-                    for (UInt32 k = 0; k < textCount; k++)
-                    {
-                        string text = block.Subtitles.Entry(FileLanguage.English, k).Text;
-                        text = text.Replace("\r\n", "\n");
-                        text = text.Replace(" \n", "\n");
-                        text = text.Replace("\n", "\r\n");
-                        text = j.ToString("d5") + valueSep + TRGameInfo.textConv.ToOriginalFormat(text);
-                        if (blockOrig.Length > 0)
-                            blockOrig += "\r\n" + TransConsts.OriginalPrefix + text.Replace("\r\n", "\r\n" + TransConsts.OriginalPrefix);
-                        else
-                            blockOrig += TransConsts.OriginalPrefix + text.Replace("\r\n", "\r\n" + TransConsts.OriginalPrefix);
-                        if (blockTrans.Length > 0)
-                            blockTrans += "\r\n" + text;
-                        else
-                            blockTrans += text;
-                    }
-                }
-            }
-            cineWriter.WriteLine(header + "\r\n" + blockOrig + "\r\n" + blockTrans + "\r\n");
-        }
-
-        internal void CreateRestoration(XmlElement subtitleElement, XmlNode subtitleNode)
-        {
-            XmlDocument resDoc = subtitleNode.OwnerDocument;
-            XmlElement cineElement = resDoc.CreateElement("cine");
-            cineElement.SetAttribute("hash", entry.HashText);
-            if (entry.Extra.FileName.Length > 0)
-                cineElement.SetAttribute("filename", entry.Extra.FileName);
-            XmlNode cineNode = subtitleNode.AppendChild(cineElement);
-
-            for (Int32 j = 0; j < Blocks.Count; j++)
-            {
-                CineBlock block = Blocks[j];
-                if (block.Subtitles != null)
-                    if (block.Subtitles.Count > 0)
-                    {
-                        XmlElement blockElement = resDoc.CreateElement("block");
-                        XmlNode blockNode = cineNode.AppendChild(blockElement);
-                        blockElement.SetAttribute("no", j.ToString("d5"));
-                        //blockElement.SetAttribute("offs", block.Data.Length.ToString("x8"));
-
-                        //blockElement.SetAttribute("translation", TextConv.ToOriginalFormat(block.subtitles[FileLanguage.English]));
-                        for (Int32 key = 0; key < block.Subtitles.Count; key++)
-                        {
-                            XmlElement langElement = resDoc.CreateElement("text");
-                            XmlNode langNode = blockNode.AppendChild(langElement);
-                            CineSubtitleEntry subtitleEntry = block.Subtitles[key];
-                            langElement.SetAttribute("id", key.ToString("d2"));
-                            langElement.SetAttribute("langid", ((Int32)subtitleEntry.Language).ToString("d2"));
-                            langElement.SetAttribute("lang", LangNames.Dict[subtitleEntry.Language]);
-                            langElement.SetAttribute("value", subtitleEntry.Text);
-                        }
-                    }
-            }
-        }
-    }
-
-    class CineBlock // block in a mul/cine file
-    {
-        #region private variables
-        private CineFile cineFile = null;
-        private bool isEnic;
-        private UInt32 blockTypeNo;
-        private UInt32 blockNo;
-        private byte[] data = null;
-        private byte[] translatedData = null;
-        private string text = string.Empty;
-        private string translation;
-        #endregion
-
-        internal UInt32 BlockTypeNo { get { return blockTypeNo; } }
-        internal UInt32 BlockNo { get { return blockNo; } }
-        internal CineFile CineFile { get { return cineFile; } }
-        internal bool IsEnic { get { return isEnic; } }
-        internal byte[] Data { get { return data; } }
-        internal byte[] TranslatedData { get { return translatedData; } }
-        internal UInt32 VirtualSize { get { UInt32 blockLen = (UInt32)Data.Length; return blockLen + 0x0F - (blockLen - 1) % 0x10; } }
-        internal string Translation { get { return translation; } set { translation = value; } }
-        internal CineSubtitles Subtitles { get; set; }
-
-        // ctor
-        internal CineBlock(CineFile cineFile, UInt32 blockNo, byte[] block)
-        {
-            this.cineFile = cineFile;
-            this.blockNo = blockNo;
-            ParseBlock(block);
-        }
-
-        private void ParseBlock(byte[] block)
-        {
-            // BigFileList.DumpToFile(Path.Combine( new string[]{TRGameInfo.Game.WorkFolder, "extract", "cine", cineFile.Entry.HashText, blockNo.ToString("X6")}), block);
-            // process header
-
-            blockTypeNo = BitConverter.ToUInt32(block, 0x00);
-            if (blockTypeNo != 0 && blockTypeNo != 1 && blockTypeNo != 3)
-                throw new Exception(Errors.ParseErrorBlockTypeError);
-
-            if (blockTypeNo == 0 || blockTypeNo == 1 || blockTypeNo == 3)
-            {  // v1.0.0.6
-                UInt32 virtualBlockSize = BitConverter.ToUInt32(block, 0x04); // block content size (block size - header size (0x16)
-
-                // !checkthis!
-                UInt32 blockSize;
-                if (block.Length >= 0x14)
-                { 
-                    blockSize = BitConverter.ToUInt32(block, 0x10); // exact size (when blocktypeno == 1 and it is non-enic)
-                    isEnic = BitConverter.ToUInt32(block, 0x10) == CineConsts.CineCineBlockMagicBytes;
-                } 
-                else
-                    blockSize = (UInt32)Math.Max(block.Length - 0x10, 0);
-               
-                UInt32 contentOffset;
-                
-                if (isEnic || blockTypeNo == 0)
-                {
-                    blockSize = virtualBlockSize;
-                    contentOffset = 0x10;
-                }
-                else
-                    contentOffset = 0x14;
-
-                if (blockSize > CineConsts.MaxBlockSize)
-                    throw new Exception(Errors.ParseErrorTooBig);
-
-                // search for text block
-                // sets textOffset & hasSubtitles
-                UInt32 textOffset = blockSize;
-                string subtitleText = string.Empty;
-                bool hasSubtitles = (blockTypeNo == 1 || isEnic);
-
-                // !!! search offset start at every 4 byte boundary.
-
-                #region search subtitles
-
-                if (hasSubtitles)
-                {
-                    // search last non 0x00 byte
-                    UInt32 maxTextBlockSize = Math.Min(CineConsts.MaxTextBlockSize, blockSize - contentOffset);
-                    UInt32 lastNotNull;
-                    for (lastNotNull = (UInt32)(block.Length - 1); lastNotNull >= CineConsts.MinBlockSize && block[lastNotNull] == 0; lastNotNull--) ;
-
-                    // it can have subtitles, if last non zero is 0x0D
-                    hasSubtitles = block[lastNotNull] == 0x0D;
-                    if (hasSubtitles)
-                    {
-                        UInt32 j = lastNotNull;
-                        UInt32 textBlockLen = 0;
-                        while (j >= CineConsts.MinBlockSize - 4 && textBlockLen == 0)
-                        {
-                            // search first 0 character (length value of textblock)
-                            if (block[j] == 0)
-                            {
-                                textOffset = (UInt32)j - 3 - contentOffset; //includes length indicator
-                                textBlockLen = (UInt32)lastNotNull - j + 4; //includes length indicator
-                                Int32 size = BitConverter.ToInt32(block, (Int32)(textOffset + contentOffset));
-                                if (size == textBlockLen - 4)
-                                    subtitleText = CineFile.textConv.Enc.GetString(block, (Int32)(textOffset + contentOffset), (Int32)textBlockLen);
-                            }
-                            j--;
-                        }
-                    }
-                }
-                #endregion
-
-
-                #region search subtitles (4 byte version) - commented out
-                /*
-            
-            if (hasSubtitles)
-            {
-                // search last non 0x00 byte
-                uint maxTextBlockSize = Math.Min(CineConsts.MaxTextBlockSize, blockSize - contentOffset);
-                uint lastNotNull;
-                for (lastNotNull = (uint)(block.Length - 1); lastNotNull >= CineConsts.MinBlockSize && block[lastNotNull] == 0; lastNotNull--) ;
-
-                // it can have subtitles, if last non zero is 0x0D
-                hasSubtitles = block[lastNotNull] == 0x0D;
-                if (hasSubtitles)
-                {
-                    uint j = (uint)(Boundary.Down((int)(lastNotNull - CineConsts.MinBlockSize), 4));
-                    uint textBlockLen = 0;
-                    while (j >= CineConsts.MinBlockSize - 4 && textBlockLen == 0)
-                    {
-                        Int32 size = BitConverter.ToInt32(block, (int)j);
-                        if (j < 0xFFFFFF)
-                            // end of search - reach first 
-                        // search first 0 character (length value of textblock)
-//                            Array.LastIndexOf(block,
-                        if (block[j] == 0)
-                        {
-                            textOffset = (uint)j - 3 - contentOffset; //includes length indicator
-                            textBlockLen = (uint)lastNotNull - j + 4; //includes length indicator
-                            //Int32 
-                                size = BitConverter.ToInt32(block, (Int32)(textOffset + contentOffset));
-                            if (size == textBlockLen - 4)
-                            {
-                                Log.Write(string.Format("Hash: {0:s14}, textOffset: {2:d4}, textBlockLen: {3:d4}, size: {4:d4}, contentOffset: {5:d4} FileName: {6}",
-                                    cineFile.Entry.HashText + "," + blockNo.ToString(), blockNo, textOffset, textBlockLen, size, contentOffset, cineFile.Entry.Extra.FileName));
-                                subtitleText = cineFile.Entry.Parent.GameInfo.TextConv.Enc.GetString(block, (Int32)(textOffset + contentOffset), (Int32)textBlockLen);
-                            }
-                        }
-                        j -= 4;
-                    }
-                }Array.LastIndexOf(
-            }
-*/
-                #endregion
-
-                if (subtitleText.Length == 0)
-                    textOffset = blockSize;
-
-                // store binary (untranslated) data
-                this.Subtitles = new CineSubtitles(this, subtitleText);
-                this.data = new byte[textOffset];
-                Array.Copy(block, contentOffset, this.data, 0, textOffset);
-            }
-        }  // v1.0.0.6
-
-        internal void Translate()
-        {
-                Write(Subtitles.GetTranslatedSubtitleBlock()); //checkthis
-        }
-
-        internal void Restore(XmlNode blockNode)
-        {
-            Write(Subtitles.GetRestoredSubtitleBlock(blockNode));
-        }
-
-        private void Write(byte[] subtitleBlock)
-        {
-            MemoryStream ms = new MemoryStream();
-            try
-            {
-                UInt32 headerLength;
-                if (BlockTypeNo == 0 || IsEnic)
-                    headerLength = CineConsts.CineBlockHeaderSize;
-                else
-                    headerLength = CineConsts.CineBlockHeaderSize + 4;
-
-                ms.Position = headerLength;
-
-                if (subtitleBlock.Length == 0)
-                    // write block content
-                    ms.Write(Data, 0, data.Length);
-                else
-                {
-                    if (this.isEnic)
-                        ms.Write(Data, 0, data.Length);
-                    else
-                    {
-                        // strip 4 byte zeros before subtitles
-                        Int32 lastNonNullInData = Math.Max(data.Length - 1, 0);
-
-                        Int32 pos;
-                        if (data.Length > 0)
-                        {
-                            while (data[lastNonNullInData] == 0)
-                                lastNonNullInData--;
-                            lastNonNullInData++;
-                            pos = (Int32)ms.Position + lastNonNullInData;
-                            pos = pos + 3 - (pos - 1) % 4;
-                        }
-                        else
-                            pos = (Int32)ms.Position;
-
-                        // write CORRECTED block content
-                        ms.Write(data, 0, pos - (Int32)ms.Length - (Int32)headerLength);
-                    }
-                    // write subtitles
-                    ms.Write(BitConverter.GetBytes(subtitleBlock.Length), 0, 4);
-                    ms.Write(subtitleBlock, 0, subtitleBlock.Length);
-                }
-
-                // fill remaining "virtual" space
-                Int32 virtSizeDiff = (Int32)(ms.Length.ExtendToBoundary(0x10) - ms.Length);
-                Int32 virtSize = (Int32)ms.Length + virtSizeDiff;
-                if (virtSizeDiff > 0)
-                {
-                    byte[] virtSpace = new byte[virtSizeDiff];
-                    //Array.Clear(virtSpace, 0, virtSizeDiff);
-                    //virtSpace[virtSizeDiff - 1] = 0xFE;
-                    ms.Write(virtSpace, 0, virtSizeDiff);
-                }
-
-                // write header
-
-                ms.Position = 0;
-                ms.Write(BitConverter.GetBytes(BlockTypeNo), 0, 4); // typeno
-
-                if (blockTypeNo == 1)
-                    ms.Write(BitConverter.GetBytes(virtSize - 0x10), 0, 4); // virtual size
-                else
-                    if (blockTypeNo == 0)
-                        ms.Write(BitConverter.GetBytes(data.Length), 0, 4); // virtual size
-
-                if (blockTypeNo == 1 && !isEnic)
-                {
-                    ms.Position = 0x10;
-                    ms.Write(BitConverter.GetBytes(virtSize - 0x14), 0, 4); // size xxx
-                }
-
-                // update translatedData
-                translatedData = new byte[ms.Length];
-                ms.Position = 0;
-                ms.Read(translatedData, 0, (Int32)ms.Length);
-            }
-            finally
-            {
-                ms.Close();
-            }
-        }
-    }
-
-    class CineSubtitles : List<CineSubtitleEntry>
-    {
-        #region private variables
-        private string text;
-        private CineBlock parentCineBlock;
-        #endregion
-
-        internal string Text { get { return text; } set { text = value; ParseBlockText(); } }
-        internal CineBlock ParentCineBlock { get { return parentCineBlock; } }
-
-        // ctor
-        internal CineSubtitles(CineBlock block, string text)
-        {
-            this.parentCineBlock = block;
-            this.Text = text;
-        }
-
-        internal CineSubtitleEntry Entry(FileLanguage lang, UInt32 index)
-        {
-            Int32 ret = -1;
-            foreach (CineSubtitleEntry entry in this)
-            {
-                if (entry.Language == lang)
-                    ret++;
-                if (ret == index)
-                    return entry;
-            }
-            return null;
-        }
-
-        internal UInt32 TextCount(FileLanguage lang)
-        {
-            UInt32 ret = 0;
-            foreach (CineSubtitleEntry entry in this)
-            {
-                if (entry.Language == lang)
-                    ret++;
+                TRGameInfo.FilePool.Close(entry);
             }
             return ret;
         }
 
-        internal bool ContainsLang(FileLanguage lang)
+        internal static bool Process(FileEntry entry, Stream inStream, long contentLength, Stream outStream, TranslationProvider tp)
         {
-            foreach (CineSubtitleEntry entry in this)
-                if (entry.Language == lang)
-                    return true;
-            return false;
-        }
+            bool ret = false;
+            //if (entry.Hash != 0x3E2465ECu)
+            //    return;
+            //Log.LogDebugMsg(string.Format("Processing: {0}", entry.Extra.FileNameOnlyForced));
+            Int64 startInPos = inStream.Position;
+            Int64 startOutPos = outStream.Position;
 
-        internal byte[] GetTranslatedSubtitleBlock()
-        {
-            StringBuilder entryTextBlock = new StringBuilder();
+            // dump
+            //BigFileList.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, entry.Extra.FileNameOnlyForced), entry); // "cine_tmp.dump"
+            //inStream.Position = startPos;
 
-            bool blockContainsSourceLang = false;
-            foreach (CineSubtitleEntry subtEntry in this)
-                if (subtEntry.Language == FileLanguage.English)
-                    blockContainsSourceLang = true;
+            // write _file_ header to output
+            outStream.WriteFromStream(inStream, CineConsts.CineHeaderSize);
 
-            foreach (CineSubtitleEntry subtEntry in this)
+            UInt32 blockNo = 0;
+
+            // processing blocks
+            while (inStream.Position < startInPos + contentLength)
             {
-                FileLanguage lang = subtEntry.Language;
-                if (!CineConsts.StrippedLangs.Contains(lang) || !blockContainsSourceLang)
-                {
-                    entryTextBlock.Append((Int32)subtEntry.Language);
-                    entryTextBlock.Append((char)0x0D);
-                    //if (subtEntry.Language == FileLanguage.English)
-                    //    entryTextBlock.Append(subtEntry.Prefix + CineFile.textConv.ToGameFormat(subtEntry.Translated).Replace("\r\n", "\n"));
-                    //else
-                    entryTextBlock.Append(subtEntry.Prefix + subtEntry.Text);
-                    entryTextBlock.Append((char)0x0D);
-                }
-            }
-            return CineFile.textConv.Enc.GetBytes(entryTextBlock.ToString());
-        }
+                Int64 _debugBlockStart = inStream.Position - startInPos;
+                UInt32 blockType = inStream.ReadUInt32();
+                UInt32 blockSize = inStream.ReadUInt32();
+                inStream.Position -= 2 * sizeof(UInt32);
+                Int64 blockCheck = inStream.Position + (blockSize + 0x10).ExtendToBoundary(0x10);
 
-        internal byte[] GetRestoredSubtitleBlock(XmlNode blockNode)
-        {
-            string translation = string.Empty;
-            if (blockNode != null)
-            {
-                XmlNodeList langNodeList = blockNode.SelectNodes("text");
-                StringBuilder sb = new StringBuilder();
-                foreach (XmlNode node in langNodeList)
-                {
-                    string langIdStr = UInt32.Parse(node.Attributes["langid"].Value).ToString();
-                    string text = node.Attributes["value"].Value;
-                    sb.Append(langIdStr);
-                    sb.Append((char)0x0D);
-                    sb.Append(text);
-                    sb.Append((char)0x0D);
-                }
-                translation = sb.ToString();
-            }
-            return CineFile.textConv.Enc.GetBytes(translation);
-        }
+                // parse cine block
 
-        private void ParseBlockText()
-        {
-            string[] elements; // for debug
-            Clear();
-            if (text.Length > 5)
-            {
-                //elements = text.Substring(4).Split(new char[] { (char)0xD }, StringSplitOptions.RemoveEmptyEntries); // remove content-length value and split texts at delimiters
-                elements = text.Substring(4).Split((char)0xD); // remove content-length value and split texts at delimiters
-                // add subtitles to dictionary
-                for (Int32 i = 0; i < elements.Length - 1; i += 2)
+                #region dump
+                bool dump = false;
+                if (dump)
                 {
-                    FileLanguage lang;
-                    Int32 value;
-                    if (!Int32.TryParse(elements[i], out value))
+                    FileStream fs = new FileStream(Path.Combine(TRGameInfo.Game.WorkFolder, "tmp.dump"), FileMode.Create);
+                    try
                     {
-                        Exception newEx = new Exception(Errors.ParseError);
-                        newEx.Data.Add("language code", elements[i]);
-                        throw newEx;
+                        Int64 _inpos = inStream.Position;
+                        //fs.Position = startPos;
+                        fs.WriteFromStream(inStream, blockSize + 0x10);
+                        inStream.Position = _inpos;
+                        //inStream.Position = inStream.Position.ExtendToBoundary(0x10);
                     }
-                    lang = (FileLanguage)value;
-                    Add(new CineSubtitleEntry(this, lang, elements[i + 1]));
-                }
-            }
-        }
-    }
-
-    class CineSubtitleEntry
-    {
-        private static Regex rx = new Regex(@"^(\[[0-9a-z\.]+\]|)(.*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        private CineSubtitles parentSubTitles;
-
-        public FileLanguage Language { get; set; }
-        public string Text { get; set; }
-        public string NormalizedText { get; set; }
-        public string Prefix { get; set; }
-        public string Translated { get; set; }
-        public CineSubtitles ParentSubTitles { get { return parentSubTitles; } }
-
-        //ctor
-        public CineSubtitleEntry(CineSubtitles parentSubTitles, FileLanguage language, string text)
-        {
-            this.parentSubTitles = parentSubTitles;
-            this.Language = language;
-            Parse(text);
-        }
-
-        private void Parse(string text)
-        {
-            if (text.Length > 2)
-                if (text[0] == '[' && text[text.Length - 1] == ']')
-                    Noop.DoIt();
-            FileEntry fileEntry = parentSubTitles.ParentCineBlock.CineFile.Entry;
-            Match m = rx.Match(text);
-            if (m.Success)
-            {
-                this.Prefix = m.Groups[1].Value;
-                this.Text = m.Groups[2].Value;
-                if (this.Text == string.Empty)
-                {
-                    //this.Prefix = string.Empty;
-                    //this.Text = string.Empty;
-                    this.NormalizedText = string.Empty;
-                    this.Translated = string.Empty;
-
-                    if (Language == FileLanguage.English)
-                        Log.LogDebugMsg(string.Format("Empty CineFile text: \"{0}\" Lang: {1}", text, Language.ToString())); //trans
-                }
-                else
-                {
-                    if (this.Language == FileLanguage.English)
+                    finally
                     {
-                        this.NormalizedText = this.Text.Replace("\r\n", "\n").Replace(" \n", "\n").Replace("\n", "\r\n");
-                        this.Translated = TRGameInfo.textConv.ToGameFormat(TranslationDict.GetTranslation(NormalizedText, fileEntry));
+                        fs.Close();
                     }
+                }
+                #endregion
+
+                //if (entry.Hash == 0x3E2465ECu)
+                //    Debug.WriteLine(string.Format("blockNo: {0} pos: {1:X8} len: {2:X8}", blockNo, inStream.Position - entry.Raw.Address, blockSize));
+
+                switch (blockType)
+                {
+                    case 0:
+                    case 3:
+                        processBinaryBlock(inStream, outStream);
+                        break;
+                    case 1:
+                        if (processType1Block(inStream, outStream, entry, blockNo, tp))
+                            ret = true;
+                        break;
+                    default:
+                        throw new Exception(Errors.ParseErrorBlockTypeError);
+                }
+                inStream.Position += inStream.Position.DiffToNextBoundary(0x10);
+
+                //if ((outStream.Position - startOutPos) != (inStream.Position - startInPos))
+                //    Noop.DoIt();
+
+                //if ((outStream.Position - startOutPos).DiffToNextBoundary(0x10) != 0)
+                //    Noop.DoIt();
+
+                //if ((inStream.Position) - startInPos != (outStream.Position - startOutPos))
+                //    Debug.WriteLine(string.Format("in: {0:X8} out: {1:X8} diff: {2:X8} {3}", (inStream.Position) - startInPos, (outStream.Position - startOutPos), (inStream.Position) - startInPos - (outStream.Position - startOutPos), blockType));
+
+                blockNo++;
+            }
+
+
+
+
+
+            //Log.LogDebugMsg(string.Format("Block Count {0} {0:X8}", blockNo));
+            return ret;
+        }
+
+        private static bool processType1Block(Stream inStream, Stream outStream, FileEntry entry, UInt32 blockNo, TranslationProvider tran)
+        {
+            //if (entry.Hash == 0x049164d5 && blockNo == 0x00000079)
+            //    Noop.DoIt();
+
+            long startInPos = inStream.Position;
+            long startOutPos = outStream.Position;
+            uint blockType = inStream.ReadUInt32();
+            uint blockContentLength = inStream.ReadUInt32();
+            uint blockHdr0008 = inStream.ReadUInt32();
+            uint blockHdr000C = inStream.ReadUInt32();
+            long blockStartPos = inStream.Position;
+            uint cineCnt0010 = inStream.ReadUInt32();
+            bool isEnic = cineCnt0010 == 0x43494E45; // "ENIC"
+
+            bool hasSubtitle = false;
+            long textStartPos = 0;
+            long textEndPos = 0;
+            string subtitleText = string.Empty;
+
+            if (isEnic)
+            {
+                UInt32 cineCnt0014 = inStream.ReadUInt32();
+                UInt32 cineCnt0018 = inStream.ReadUInt32();
+                hasSubtitle = cineCnt0018 == 0x64 && blockContentLength > 0x80;
+                if (hasSubtitle)
+                {
+                    // cineheader:
+                    byte[] cineCnt001C = new byte[0x60];         // 0x001C-0x007B
+                    inStream.Read(cineCnt001C, 0, cineCnt001C.Length);
+                    UInt32 textBlockLen = inStream.ReadUInt32(); // 0x007C
+                    UInt32 cineCnt0080 = inStream.ReadUInt32();  // 0x0080
+                    UInt32 transTextLen = inStream.ReadUInt32(); // 0x0084
+                    byte[] transText = new byte[transTextLen];   // 0x0088
+                    inStream.Read(transText, 0, transText.Length);
+                    //inStream.Move(textBlockLen - transTextLen - 8);
+                    inStream.Position += inStream.Position.DiffToNextBoundary(0x10);
+
+
+                    subtitleText = CineFile.textConv.Enc.GetString(transText);
+                    byte[] translated = TranslateTextBlock(subtitleText, entry, blockNo, tran);
+
+                    if (outStream != Stream.Null)
+                    {
+                        UInt32 newContentLength = (0x88 + (UInt32)translated.Length).ExtendToBoundary(0x10);
+                        // block header
+                        outStream.WriteUInt32(blockType);
+                        outStream.WriteUInt32((0x78 + (UInt32)translated.Length).ExtendToBoundary(0x10));
+                        outStream.WriteUInt32(blockHdr0008);
+                        outStream.WriteUInt32(blockHdr000C);
+                        // block content
+                        outStream.WriteUInt32(0x43494E45); // "ENIC"
+                        outStream.WriteUInt32(cineCnt0014);
+                        outStream.WriteUInt32(cineCnt0018);
+                        outStream.Write(cineCnt001C, 0, cineCnt001C.Length);
+                        outStream.WriteUInt32((0x08 + (UInt32)translated.Length).ExtendToBoundary(0x10));
+                        outStream.WriteUInt32(cineCnt0080);
+                        outStream.WriteUInt32((UInt32)translated.Length);
+                        outStream.Write(translated, 0, translated.Length);
+                        // extend out stream to 16 byte boundary
+                        UInt32 padLen = (UInt32)(outStream.Position - startOutPos).DiffToNextBoundary(0x10);
+                        byte[] padding = new byte[padLen];
+                        outStream.Write(padding, 0, padding.Length);
+                    }
+                    //if ((inStream.Position) - startInPos != (outStream.Position - startOutPos))
+                    //    Debug.WriteLine(string.Format("in: {0:X8} out: {1:X8} diff: {2:X8} {3}", (inStream.Position) - startInPos, (outStream.Position - startOutPos), (inStream.Position) - startInPos - (outStream.Position - startOutPos), blockType));
+
                 }
             }
             else
             {
-                this.Prefix = string.Empty;
-                this.Text = text;
-                this.NormalizedText = text.Replace("\r\n", "\n").Replace(" \n", "\n").Replace("\n", "\r\n");
-                if (this.Language == FileLanguage.English)
+                #region try find non-enic text
+                #region test #1
+                // test #1 - it can have subtitles, if last non zero is 0x0D
+
+                int lastNotNull = (int)(blockStartPos + blockContentLength);
+                byte charRead = 0;
+
+                inStream.Position = lastNotNull;
+                while (charRead == 0 && inStream.Position > blockStartPos)
                 {
-                    this.Translated = TRGameInfo.textConv.ToGameFormat(TranslationDict.GetTranslation(NormalizedText, fileEntry));
+                    inStream.Position -= 1;
+                    charRead = inStream.PeekByte();
+                }
+                // test #1 - passed
+                #endregion
+
+                #region test #2
+                if (charRead == 0x0D && inStream.Position > blockStartPos + 4)
+                {
+                    textEndPos = inStream.Position;
+
+                    // test #2 - read integers backward & try to found text size (offset to textEndPos)
+                    inStream.Position = (inStream.Position - startInPos - 4).ExtendToBoundary(4) + startInPos;
+
+                    while ((textEndPos - inStream.Position) < CineConsts.MaxBlockSize && inStream.Position > blockStartPos && subtitleText == string.Empty)
+                    {
+                        // old method: search first 0 character (length value of textblock)
+                        // new method: search text block content-length data on 4 bytes boundary
+                        UInt32 readNumber = inStream.ReadUInt32();
+                        // Debug.WriteLine(string.Format("testing {0:X4}", readNumber));
+                        if (readNumber == 0)
+                            break;
+                        if (readNumber == textEndPos + 1 - inStream.Position)
+                        {
+                            textStartPos = inStream.Position;
+                            byte[] buf = new byte[readNumber];
+                            inStream.Read(buf, 0, buf.Length);
+                            inStream.Position += inStream.Position.DiffToNextBoundary(0x10);
+
+                            subtitleText = CineFile.textConv.Enc.GetString(buf);
+                            hasSubtitle = true;
+                        }
+                        else
+                            inStream.Position -= 8;
+                    }
+                }
+                #endregion
+                #endregion
+                #region it has subtitle
+                if (subtitleText != string.Empty)
+                {
+                    if (entry.Hash == 0x3e2465ec && blockNo == 0x00000107)
+                        Noop.DoIt();
+                    byte[] translated = TranslateTextBlock(subtitleText, entry, blockNo, tran);
+                    if (outStream != Stream.Null)
+                    {
+                        // write block header
+                        outStream.WriteUInt32(blockType);
+                        outStream.WriteUInt32((UInt32)(textStartPos - startInPos + translated.Length - 0x10).ExtendToBoundary(0x10));
+                        outStream.WriteUInt32(blockHdr0008);
+                        outStream.WriteUInt32(blockHdr000C);
+
+                        // set instream position after block header
+                        inStream.Position = startInPos + 0x10;
+
+                        // calculate initial binary block content data length
+                        // text offset in block (textStartPos - startInPos)  -  block header size (0x10) - stored translation length (4)
+                        Int64 binDataLen = textStartPos - startInPos - 0x10 - 4;
+                        // write binary data (copy from instream)
+                        outStream.WriteFromStream(inStream, binDataLen);
+
+                        // write translated text len, text
+                        outStream.WriteUInt32((UInt32)translated.Length);
+                        outStream.Write(translated, 0, translated.Length);
+
+                        // extend out stream to 16 byte boundary
+                        UInt32 padLen = (UInt32)(outStream.Position - startOutPos).DiffToNextBoundary(0x10);
+                        byte[] padding = new byte[padLen];
+                        outStream.Write(padding, 0, padding.Length);
+                    }
+                }
+                #endregion
+            }
+
+            #region handle as binary data - copy block to output stream
+            if (subtitleText == string.Empty)
+            {
+                inStream.Position = startInPos;
+                outStream.WriteFromStream(inStream, (blockContentLength + CineConsts.CineBlockHeaderSize));
+
+                // extend out stream to 16 byte boundary
+                UInt32 padLen = (UInt32)(outStream.Position - startOutPos).DiffToNextBoundary(0x10);
+                byte[] padding = new byte[padLen];
+                outStream.Write(padding, 0, padding.Length);
+
+                inStream.Position += inStream.Position.DiffToNextBoundary(0x10);
+            }
+            #endregion
+
+            inStream.Position = startInPos + blockContentLength + 0x10;
+            return subtitleText != string.Empty;
+        }
+
+        private static void processBinaryBlock(Stream inStream, Stream outStream)
+        {
+            long startInPos = inStream.Position;
+            long startOutPos = outStream.Position;
+
+            uint blockType = inStream.ReadUInt32();
+            uint blockContentLength = inStream.ReadUInt32();
+            uint headerUnk0008 = inStream.ReadUInt32();
+            uint headerUnk000C = inStream.ReadUInt32();
+
+            outStream.WriteUInt32(blockType);
+            outStream.WriteUInt32(blockContentLength);
+            outStream.WriteUInt32(headerUnk0008);
+            outStream.WriteUInt32(headerUnk000C);
+            outStream.WriteFromStream(inStream, blockContentLength);
+            inStream.Position = inStream.Position.ExtendToBoundary(0x10);
+
+            // extend out stream to 16 byte boundary
+            UInt32 padLen = (UInt32)(outStream.Position - startOutPos).DiffToNextBoundary(0x10);
+            byte[] padding = new byte[padLen];
+            outStream.Write(padding, 0, padding.Length);
+
+            if ((inStream.Position) - startInPos != (outStream.Position - startOutPos))
+                Noop.DoIt();
+        }
+
+        private static byte[] TranslateTextBlock(string textBlock, FileEntry entry, UInt32 blockNo, TranslationProvider tp)
+        {
+            Regex rx = new Regex(@"^(\[[0-9a-z\.]+\]|)(.*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            StringBuilder ret = new StringBuilder();
+
+            // split texts 
+            //string[] elements = textBlock.Substring(4).Split((char)0x0D); // remove content-length value and split texts at delimiters
+            string[] elements = textBlock.Split((char)0x0D); // remove content-length value and split texts at delimiters
+            List<int> dupeFilter = new List<int>(); // for avoiding dupes in bigfile_english/thechosenone.mul
+            for (Int32 i = 0; i < elements.Length - 1; i += 2)
+            {
+                // parse language code
+                string langCode = elements[i];
+                Int32 langCodeValue;
+                if (!Int32.TryParse(langCode, out langCodeValue))
+                    throw new Exception(string.Format("Invalid language code: \"{0}\"", langCode));
+
+                string textElement = elements[i + 1];
+                FileLanguage language = (FileLanguage)langCodeValue;
+
+                if (language == FileLanguage.English && !dupeFilter.Contains(textElement.GetHashCode()))
+                {
+                    dupeFilter.Add(textElement.GetHashCode());  // for avoiding dupes in bigfile_english/thechosenone.mul
+                    // debug
+                    if (textBlock.Length > 2)
+                        if (textElement.Length > 0)
+                            if (textElement[0] == '[' && textElement[textElement.Length - 1] == ']')
+                                Noop.DoIt();
+
+                    string translated = string.Empty;
+                    string prefix = string.Empty;
+                    string text = string.Empty;
+
+                    // split text element into prefix and text
+                    Match m = rx.Match(textElement);
+                    if (m.Success)
+                    {
+                        prefix = m.Groups[1].Value;
+                        text = m.Groups[2].Value;
+
+                        if (text == string.Empty)
+                            Log.LogDebugMsg(string.Format("Empty CineFile text: \"{0}\" Lang: {1}", textBlock, language.ToString())); //trans
+                    }
+                    else
+                    {
+                        prefix = string.Empty;
+                        text = textElement;
+                    }
+                    string[] context = null;
+
+                    if (tp.UseContext)
+                        context = new string[] { 
+                            "blockNo", blockNo.ToString("X8"),
+                            "prefix", prefix,
+                            "filename", entry.Extra.FileNameForced, 
+                            "hash", entry.HashText, 
+                            "bigfile", entry.BigFile.Name,
+                        };
+
+                    translated = TRGameInfo.textConv.ToGameFormat(tp.GetTranslation(text.Replace("\n", "\r\n"), entry, context)).Replace("\r\n", "\n");
+                    ret.Append(langCode + (char)0x0D + prefix + translated + (char)0x0D);
                 }
                 else
                 {
-                    this.Translated = string.Empty;
+                    // non-english texts: simply add them to return value
+                    ret.Append(langCode + (char)0x0D + textElement + (char)0x0D);
                 }
             }
+            return Encoding.UTF8.GetBytes(ret.ToString());
         }
     }
-
 }
+

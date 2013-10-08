@@ -21,7 +21,7 @@ namespace TRTR
             Type a = typeof(TRTR.Processors.SampleTransProc);
             procIntfList.Clear();
 //            procIntfList.Add("MNU", typeof(TRTR.Processors.MenuFileIntf));
-            procIntfList.Add("CINE", typeof(TRTR.Processors.CineFileIntf));
+            //procIntfList.Add("CINE", typeof(TRTR.Processors.CineFileIntf));
             //procIntfList.Add("FNTENC", typeof(TRTR.Processors.FontFileIntf));
 //            procIntfList.Add("EXTSCH", typeof(TRTR.Processors.SubtitleFileIntf));
         }

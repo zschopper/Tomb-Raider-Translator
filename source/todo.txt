@@ -1,4 +1,8 @@
-﻿+ Indító exe meghatározása
+﻿- az eltérő fordítás formátumok kezelése (tmx, resx)
+- fordítási nyelvek kezelése
+- tömörített fájlok kezelése
+
++ Indító exe meghatározása
 - Új fordítás formátumának kezelése xml összeállításakor (régiből új, újból xml)
 - Opció: Nyelv és felirat átváltása angolra (ha nem az), vagy figyelmeztetés
 + kiírni hogy épp min dolgozik.
@@ -123,3 +127,42 @@ Fájl írás:
         - FAT fájlhosszt hozzáadjuk
         - a FAT kezdőcímet hozzáadjuk
         - mentjük
+
+
+
+- GameCommon.xml
+  
+  Név
+  FAT verzió
+  exe név
+  install dir
+  Steam id
+  Font típus (raw/mul)
+  Videó felirat típus (belső, külső)
+
+- GameLocal.xml  
+  cserélendő karakterek
+
+
+
+internal void ExtractN(string fileName, MenuFile menu)
+        {
+            //TextWriter menuWriter = new StreamWriter(fileName + "_nemes", false, Encoding.UTF8);
+            //int j = 0;
+            //foreach (MenuFileEntry menuEntry in menu.MenuEntries)
+            //{
+            //    if (!menuEntry.PlaceHolder)
+            //    {
+            //        menuWriter.WriteLine("#" + j.ToString());
+            //        menuWriter.WriteLine("{ENG");
+            //        menuWriter.WriteLine(CineFile2.textConv.ToOriginalFormat(menuEntry.Current).Replace("\n", "\r\n"));
+            //        menuWriter.WriteLine("}");
+            //        menuWriter.WriteLine("{HUN");
+            //        //menuWriter.WriteLine(CineFile.textConv.ToOriginalFormat(menuEntry.Current).Replace("\n", "\r\n"));
+            //        menuWriter.WriteLine("");
+            //        menuWriter.WriteLine("}");
+            //        j++;
+            //    }
+            //}
+            //menuWriter.Close();
+        }

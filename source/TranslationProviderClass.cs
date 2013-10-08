@@ -5,14 +5,14 @@ using System.Text;
 
 namespace TRTR
 {
-    internal static class TranslationDict // singleton dictionary
+    internal static class TranslationDict_removed // singleton dictionary
     {
 
         internal static TranslationProvider Provider { get; set; }
 
-        static TranslationDict()
+        static TranslationDict_removed()
         {
-            TranslationDict.Provider = null;
+            TranslationDict_removed.Provider = null;
         }
 
         internal static void LoadTranslations()
@@ -29,6 +29,16 @@ namespace TRTR
             return Provider.GetTranslation(text, entry, context);
         }
 
+        internal static bool UseContext
+        {
+            get
+            {
+                if (Provider == null)
+                    throw new Exception("Translation provider isn't initialized.");
+                return Provider.UseContext;
+            }
+        }
+
         internal static void Clear()
         {
             if (Provider == null)
@@ -39,10 +49,14 @@ namespace TRTR
 
     internal abstract class TranslationProvider
     {
-        internal abstract void LoadTranslations();
+        internal bool UseContext { get { return getUseContext(); } }
 
-        internal abstract string GetTranslation(string text, FileEntry entry, string[] context = null);
-
+        internal abstract void Open();
         internal abstract void Clear();
+        internal abstract void LoadTranslations();
+        internal abstract string GetTranslation(string text, FileEntry entry, string[] context = null);
+        internal abstract void Close();
+
+        protected abstract bool getUseContext();
     }
 }

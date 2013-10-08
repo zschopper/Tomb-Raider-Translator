@@ -92,46 +92,46 @@ namespace TRTR
         }
     }
 
-    //// all FAT entry of a bigfile/tiger
-    //class FATEntryList : List<FATEntry>
-    //{
-    //    internal void SortByHash()
-    //    {
-    //        Sort(compareByHash);
-    //    }
+    // all FAT entry of a bigfile/tiger
+    class FATEntryList : List<FATEntry>
+    {
+        internal void SortByHash()
+        {
+            Sort(compareByHash);
+        }
 
-    //    internal void SortByAddress()
-    //    {
-    //        Sort(compareByLocation);
-    //    }
+        internal void SortByAddress()
+        {
+            Sort(compareByLocation);
+        }
 
-    //    internal void SortByIndex()
-    //    {
-    //        Sort(compareByIndex);
-    //    }
+        internal void SortByIndex()
+        {
+            Sort(compareByIndex);
+        }
 
-    //    private int compareByHash(FATEntry item1, FATEntry item2)
-    //    {
-    //        int cmp = item1.Hash.CompareTo(item2.Hash);
-    //        if (cmp != 0)
-    //            return cmp;
-    //        return item1.LangCode.CompareTo(item2.LangCode);
-    //    }
+        private int compareByHash(FATEntry item1, FATEntry item2)
+        {
+            int cmp = item1.Hash.CompareTo(item2.Hash);
+            if (cmp != 0)
+                return cmp;
+            return item1.LangCode.CompareTo(item2.LangCode);
+        }
 
-    //    private int compareByLocation(FATEntry item1, FATEntry item2)
-    //    {
-    //        // compare by bigfile
-    //        int cmp = item1.BigFileIndex.CompareTo(item2.BigFileIndex);
-    //        if (cmp != 0)
-    //            return cmp;
-    //        // compare by address
-    //        return item1.Address.CompareTo(item2.Address);
-    //    }
+        private int compareByLocation(FATEntry item1, FATEntry item2)
+        {
+            // compare by bigfile
+            int cmp = item1.BigFileIndex.CompareTo(item2.BigFileIndex);
+            if (cmp != 0)
+                return cmp;
+            // compare by address
+            return item1.Address.CompareTo(item2.Address);
+        }
 
-    //    private int compareByIndex(FATEntry item1, FATEntry item2)
-    //    {
-    //        // compare by index
-    //        return item1.Index.CompareTo(item2.Index);
-    //    }
-    //}
+        private int compareByIndex(FATEntry item1, FATEntry item2)
+        {
+            // compare by index
+            return item1.Index.CompareTo(item2.Index);
+        }
+    }
 }

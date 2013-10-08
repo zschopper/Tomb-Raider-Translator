@@ -65,13 +65,13 @@ namespace TRTR
         public FileEntry Entry { get { return entry; } }
 
         // constructor
-        internal MovieFile(FileEntry entry)
+        internal MovieFile(FileEntry entry, TranslationProvider tp)
         {
             this.entry = entry;
-            ParseFile();
+            ParseFile(tp);
         }
 
-        void ParseFile()
+        void ParseFile(TranslationProvider tp)
         {
             //MemoryStream ms = new MemoryStream();
 
@@ -121,8 +121,20 @@ namespace TRTR
                         if (lng.language == "english")
                         {
                             // Log.LogDebugMsg(string.Format("{0} {1}", m2.Groups.Count, s));
-
-                            fileEntry.Translated = TRGameInfo.textConv.ToGameFormat(TranslationDict.GetTranslation(fileEntry.Original, Entry));
+                            string[] context = null;
+                            if (tp.UseContext)
+                                context = new string[] { 
+                                    //"index", i.ToString(),
+                                    //"prefix", prefix,
+                                    "filename", entry.Extra.FileNameForced, 
+                                    "hash", entry.HashText, 
+                                    "bigfile", entry.BigFile.Name,
+                                    "time", fileEntry.TimeStr,
+                                };
+                            context = new string[] { 
+                                    fileEntry.TimeStr,
+                                };
+                            fileEntry.Translated = TRGameInfo.textConv.ToGameFormat(tp.GetTranslation(fileEntry.Original, Entry, context));
                         }
                         else
                             fileEntry.Translated = fileEntry.Original;
@@ -136,7 +148,7 @@ namespace TRTR
             //OriginalFileContent = content;
         }
 
-        internal void Translate(bool simulated)
+        internal void Translate(bool simulated, TranslationProvider tp)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Version 1");
@@ -189,22 +201,23 @@ namespace TRTR
         internal void Extract(string destFolder, bool useDict)
         {
 
-            foreach (MovieFile.MovieLanguage lang in this.langs)
-            {
-                if (lang.Language == "english") // export only english texts as translation source
-                {
-                    // ExtractText(destFolder, lang);
-                    // ExtractXML(destFolder, lang);
-                    ExtractResX(destFolder, lang, useDict);
-                }
-            }
+            return;
+            //foreach (MovieFile.MovieLanguage lang in this.langs)
+            //{
+            //    if (lang.Language == "english") // export only english texts as translation source
+            //    {
+            //        // ExtractText(destFolder, lang);
+            //        // ExtractXML(destFolder, lang);
+            //        ExtractResX(destFolder, lang, useDict);
+            //    }
+            //}
         }
 
         private void ExtractResX(string destFolder, MovieFile.MovieLanguage lang, bool useDict)
         {
             string resXFileName = Path.Combine(destFolder, entry.Extra.ResXFileName);
 
-            ResXHelper helper = ResXPool.GetResX(resXFileName);
+            ResXHelper helper = ResXPoolSingleton.GetResX(resXFileName);
             if (!helper.TryLockFor(ResXLockMode.Write))
                 throw new Exception(string.Format("Can not lock {0} for write", resXFileName)); // trans
 

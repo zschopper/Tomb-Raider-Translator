@@ -24,6 +24,7 @@ namespace TRTR
         private static List<string> processors = new List<string>();
         //private static XmlDocument gameDataDocument;
         private static GameInstance game = null;
+        
         private static BigFilePool filePool = null;
         private static BigFileList bigFiles = null;
         #endregion
@@ -37,6 +38,7 @@ namespace TRTR
 
         internal static BigFilePool FilePool { get { return filePool; } }
         internal static BigFileList BigFiles { get { return bigFiles; } }
+
 
         /*
                 internal static event GameChangeHandler Change2
@@ -58,8 +60,18 @@ namespace TRTR
             try
             {
                 // load install type-dependent data
+                Log.LogDebugMsg("Loading game...");
                 game.Load();
+                Log.LogDebugMsg("Game loaded.");
+                Log.LogDebugMsg("Parsing files...");
                 bigFiles = new BigFileList(game.InstallFolder);
+                Log.LogDebugMsg("Parsing files finished.");
+                if (filePool != null)
+                    filePool.CloseAll();
+
+                filePool = new BigFilePool(bigFiles);
+                Log.LogDebugMsg("Load OK.");
+
             }
             catch (Exception e)
             {
@@ -92,9 +104,9 @@ namespace TRTR
 
                 //ResXDict dict = new ResXDict(files.ToArray());
             }
-            TMXProvider dict = new TMXProvider();
-            TranslationDict.Provider = dict;
-            TranslationDict.LoadTranslations();
+            //TMXProvider dict = new TMXProvider();
+            //TranslationDict.Provider = dict;
+            //TranslationDict.LoadTranslations();
             #endregion
 
             OnChange();
@@ -150,12 +162,7 @@ namespace TRTR
 
         internal static void Extract()
         {
-            foreach (BigFile bigFile in bigFiles)
-            {
-                bigFile.UpdateEntryList();
-                bigFile.EntryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "source"), false);
-                //bigFile.EntryList.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "hu"), true);
-            }
+            bigFiles.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "source"), false);
         }
 
         internal static void Restore() { }

@@ -45,6 +45,27 @@ namespace ExtensionMethods
         {
             return me - (me % boundary);
         }
+
+        public static Int32 DiffToNextBoundary(this Int32 me, Int32 boundary)
+        {
+            return (Int32)((boundary - 1) - (me - 1) % boundary);
+        }
+
+        public static UInt32 DiffToNextBoundary(this UInt32 me, UInt32 boundary)
+        {
+            return (UInt32)((boundary - 1) - (me - 1) % boundary);
+        }
+
+        public static Int64 DiffToNextBoundary(this Int64 me, Int64 boundary)
+        {
+            return (Int64)((boundary - 1) - (me - 1) % boundary);
+        }
+
+        public static UInt64 DiffToNextBoundary(this UInt64 me, UInt64 boundary)
+        {
+            return (UInt64)((boundary - 1) - (me - 1) % boundary);
+        }
+
     }
 }
 

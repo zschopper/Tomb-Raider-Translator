@@ -60,6 +60,11 @@ namespace TRTR
             this.files = files;
         }
 
+        internal override void Open() { }
+        internal override void Close() { }
+
+        protected override bool getUseContext() { return true; }
+
         internal override void LoadTranslations()
         {
             foreach (string file in files)
