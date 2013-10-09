@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TRTR
 {
-    class DebugTools
+    static class DebugTools
     {
 
     }

@@ -808,21 +808,21 @@ namespace TRTR
 
             List<string> dupeFilter = new List<string>();
 
-            dupeFilter.Add("bigfile.000.tiger");
+            //dupeFilter.Add("bigfile.000.tiger");
             //dupeFilter.Add("bigfile_english.000.tiger");
             //dupeFilter.Add("patch.000.tiger");
-            dupeFilter.Add("patch_english.000.tiger");
+            //dupeFilter.Add("patch_english.000.tiger");
             //dupeFilter.Add("patch2.000.tiger");
-            dupeFilter.Add("patch2_english.000.tiger");
+            //dupeFilter.Add("patch2_english.000.tiger");
             //dupeFilter.Add("title.000.tiger");
-            dupeFilter.Add("title_english.000.tiger");
-            dupeFilter.Add("pack4.000.tiger");
-            dupeFilter.Add("pack5.000.tiger");
-            dupeFilter.Add("pack6.000.tiger");
-            dupeFilter.Add("pack7.000.tiger");
-            dupeFilter.Add("pack8.000.tiger");
+            //dupeFilter.Add("title_english.000.tiger");
+            //dupeFilter.Add("pack4.000.tiger");
+            //dupeFilter.Add("pack5.000.tiger");
+            //dupeFilter.Add("pack6.000.tiger");
+            //dupeFilter.Add("pack7.000.tiger");
+            //dupeFilter.Add("pack8.000.tiger");
 
-            //dupeFilter.Clear();
+            dupeFilter.Clear();
 
             foreach (string file in files)
             {
@@ -1115,7 +1115,6 @@ namespace TRTR
                     {
                         case FileTypeEnum.MUL_CIN:
                             {
-                                break;
                                 if (entry.Raw.Language == FileLanguage.English || entry.Raw.Language == FileLanguage.NoLang)
                                 {
                                     //string fileName;
@@ -1159,17 +1158,10 @@ namespace TRTR
                                 {
                                     ms.Close();
                                 }
-
-                                //if (entry.Raw.Language == FileLanguage.English)
-                                //{
-                                //    MenuFile menu = new MenuFile(entry, tp);
-                                //    menu.Translate(simulated, tp);
-                                //}
                                 break;
                             }
                         case FileTypeEnum.SCH:
                             {
-                                break;
                                 MovieFile movie = new MovieFile(entry, tp);
                                 movie.Translate(simulated, tp);
                                 break;

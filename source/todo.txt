@@ -1,4 +1,11 @@
-﻿- az eltérő fordítás formátumok kezelése (tmx, resx)
+﻿- folyamatjelző
+- debug cuccok a debugtools-ba
+  - LogDebug
+  - DupeFilter
+  - Dump
+  - Process FileTypes
+- dll-be a providerek
+- az eltérő fordítás formátumok kezelése (tmx, resx)
 - fordítási nyelvek kezelése
 - tömörített fájlok kezelése
 
