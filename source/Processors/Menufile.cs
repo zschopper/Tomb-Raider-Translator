@@ -6,7 +6,7 @@ using System.Xml;
 using System.IO;
 using System.Resources; //resource writer
 using ExtensionMethods;
-using System.Linq;
+using System.Globalization;
 
 namespace TRTR
 {
@@ -40,6 +40,67 @@ namespace TRTR
             return ret;
         }
 
+        private static string CharToKeyPlaceholders(string text, out string[] chars)
+        {
+            chars = null;
+            //return text;
+
+            List<string> charsFind = new List<string>();
+            List<int> pos = new List<int>();
+            for (int i = 0; i < text.Length; i++)
+            {
+                char c = text[i];
+                if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(text, i) == UnicodeCategory.PrivateUse)
+                {
+                    charsFind.Add(c.ToString());
+                    pos.Add(i);
+                }
+            }
+
+            chars = charsFind.ToArray();
+
+            if (pos.Count > 1)
+                Noop.DoIt();
+            if (pos.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                int lastPos = 0;
+                for (int i = 0; i < pos.Count; i++)
+                {
+                    sb.Append(text.Substring(lastPos, pos[i] - lastPos));
+                    sb.Append(string.Format("{{{0}}}", i));
+                    lastPos = pos[i] + 1;
+                }
+                if (lastPos != text.Length - 1)
+                    sb.Append(text.Substring(lastPos, text.Length - lastPos));
+
+                if (pos.Count > 1)
+                    Noop.DoIt();
+
+                string rb = KeyPlaceholdersToChar(text, chars);
+                if (rb != text)
+                    Noop.DoIt();
+                return sb.ToString();
+            }
+
+            return text;
+        }
+
+        private static string KeyPlaceholdersToChar(string text, string[] chars)
+        {
+            if (chars == null)
+                return text;
+            if (chars.Length == 0)
+                return text;
+
+            return string.Format(text, chars);
+
+            //for (int i = 0; i < chars.Length; i++)
+            //    ret.Replace("{" + i.ToString() + "}", chars[i].ToString()); 
+            //return ret;
+        }
+
+
         internal static bool Process(FileEntry entry, Stream inStream, long contentLength, Stream outStream, TranslationProvider tp)
         {
             Int64 startInPos = inStream.Position;
@@ -63,8 +124,6 @@ namespace TRTR
                 outStream.WriteUInt32(entryCount1);
                 outStream.WriteUInt32(entryCount2);
             }
-            
-            Log.LogDebugMsg(string.Format("Menu parsing: {0} Entry count: {1} ({2}+{3}), ", entry.Extra.FileName, entryCount, entryCount1, entryCount2));
 
             MenuTable[] table = new MenuTable[entryCount];
             MenuTable lastValidEntry = null;
@@ -122,7 +181,8 @@ namespace TRTR
                         inStream.Position = startInPos + tableEntry.StartOffs;
                         inStream.Read(textBuf, 0, (int)(tableEntry.Length));
 
-                        string text = TRGameInfo.textConv.Enc.GetString(textBuf, 0, (int)(tableEntry.Length));
+                        string[] keyPlaceHolders;
+                        string text = CharToKeyPlaceholders(TRGameInfo.Conv.Enc.GetString(textBuf, 0, (int)(tableEntry.Length)).Trim(new char[]{'\0'}), out keyPlaceHolders);
 
                         string[] context = null;
                         if (tp.UseContext)
@@ -133,11 +193,14 @@ namespace TRTR
                                 "hash", entry.HashText, 
                                 "bigfile", entry.BigFile.Name,
                             };
-                        translation = TRGameInfo.textConv.ToGameFormat(tp.GetTranslation(text.Replace("\n", "\r\n"), entry, context));
+                        translation = TRGameInfo.Conv.ToGameFormat(tp.GetTranslation(text.Replace("\n", "\r\n"), entry, context));
                         // if we aren't in read-only mode: write translation
                         if (outStream != Stream.Null && translation != string.Empty)
                         {
-                            byte[] buf = TRGameInfo.textConv.Enc.GetBytes(translation.Replace("\r\n", "\n") + (char)(0));
+                            byte[] buf;
+                            if (keyPlaceHolders.Length > 0)
+                                translation = KeyPlaceholdersToChar(translation, keyPlaceHolders);
+                            buf = TRGameInfo.Conv.Enc.GetBytes(translation.Replace("\r\n", "\n") + (char)(0));
                             textBlockStream.Write(buf, 0, buf.Length);
                         }
                     }
@@ -151,7 +214,6 @@ namespace TRTR
                 outStream.WriteFromStream(textBlockStream, textBlockStream.Length);
             }
 
-            Log.LogDebugMsg(string.Format("Valid menu entries: {0} placeholders {1}", debugValidEntryCount, debugPlaceHolderCount));
             return true;
         }
     }

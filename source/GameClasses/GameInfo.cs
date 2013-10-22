@@ -24,13 +24,13 @@ namespace TRTR
         private static List<string> processors = new List<string>();
         //private static XmlDocument gameDataDocument;
         private static GameInstance game = null;
-        
+
         private static BigFilePool filePool = null;
         private static BigFileList bigFiles = null;
         #endregion
 
         internal static FileLanguage OverwriteLang = FileLanguage.English;
-        internal static TextConv textConv = new TextConv(new char[] { (char)0x0150, (char)0x0151, (char)0x0170, (char)0x0171 }, new char[] { (char)0x00D4, (char)0x00F4, (char)0x00DB, (char)0x00FB }, Encoding.UTF8);
+        internal static TextConv Conv = new TextConv(new char[] { (char)0x0150, (char)0x0151, (char)0x0170, (char)0x0171 }, new char[] { (char)0x00D4, (char)0x00F4, (char)0x00DB, (char)0x00FB }, Encoding.UTF8);
 
         internal static TRGameStatus GameStatus { get { return gameStatus; } }
         internal static List<string> Processors { get { return processors; } }
@@ -57,26 +57,18 @@ namespace TRTR
         internal static void Load(GameInstance game)
         {
             TRGameInfo.Game = game;
-            try
-            {
-                // load install type-dependent data
-                Log.LogDebugMsg("Loading game...");
-                game.Load();
-                Log.LogDebugMsg("Game loaded.");
-                Log.LogDebugMsg("Parsing files...");
-                bigFiles = new BigFileList(game.InstallFolder);
-                Log.LogDebugMsg("Parsing files finished.");
-                if (filePool != null)
-                    filePool.CloseAll();
+            // load install type-dependent data
+            Log.LogDebugMsg("Loading game...");
+            game.Load();
+            Log.LogDebugMsg("Game loaded.");
+            Log.LogDebugMsg("Parsing files...");
+            bigFiles = new BigFileList(game.InstallFolder);
+            Log.LogDebugMsg("Parsing files finished.");
+            if (filePool != null)
+                filePool.CloseAll();
 
-                filePool = new BigFilePool(bigFiles);
-                Log.LogDebugMsg("Load OK.");
-
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
+            filePool = new BigFilePool(bigFiles);
+            Log.LogDebugMsg("Load OK.");
 
             // load info doc, if exists
             //if (File.Exists(Trans.InfoDocFileName))

@@ -136,8 +136,7 @@ namespace TRTR
 
                 // update version and language label label
                 FileVersionInfo info = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-                string versionNumber = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                labelVersion.Text = String.Format(GeneralTexts.Version, versionNumber) + (info.IsDebug ? " (dev)" : string.Empty);
+                labelVersion.Text = String.Format(GeneralTexts.Version, Settings.version.ToString()) + (info.IsDebug ? " (dev)" : string.Empty);
                 labelLang.Text = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName.ToUpper();
 
                 menuItemCompileTexts.Visible = false;
@@ -266,8 +265,8 @@ namespace TRTR
                 ChangeTexts(item);
             labelLang.Text = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName.ToUpper();
             FileVersionInfo info = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-            string versionNumber = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            labelVersion.Text = String.Format(GeneralTexts.Version, versionNumber) + (info.IsDebug ? " (dev)" : string.Empty);
+            
+            labelVersion.Text = String.Format(GeneralTexts.Version, Settings.version.ToString()) + (info.IsDebug ? " (dev)" : string.Empty);
             if (initControls)
             {
                 Location = loc;

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
-using System.Diagnostics;
 using ExtensionMethods;
 
 namespace TRTR
@@ -30,8 +28,6 @@ namespace TRTR
 
     static class CineFile
     {
-        internal static TextConv textConv = new TextConv(new char[] { }, new char[] { }, Encoding.UTF8); // null;
-
         internal static bool Process(FileEntry entry, Stream outStream, TranslationProvider tran)
         {
             bool ret = false;
@@ -174,7 +170,7 @@ namespace TRTR
                     inStream.Position += inStream.Position.DiffToNextBoundary(0x10);
 
 
-                    subtitleText = CineFile.textConv.Enc.GetString(transText);
+                    subtitleText = TRGameInfo.Conv.Enc.GetString(transText);
                     byte[] translated = TranslateTextBlock(subtitleText, entry, blockNo, tran);
 
                     if (outStream != Stream.Null)
@@ -245,7 +241,7 @@ namespace TRTR
                             inStream.Read(buf, 0, buf.Length);
                             inStream.Position += inStream.Position.DiffToNextBoundary(0x10);
 
-                            subtitleText = CineFile.textConv.Enc.GetString(buf);
+                            subtitleText = TRGameInfo.Conv.Enc.GetString(buf);
                             hasSubtitle = true;
                         }
                         else
@@ -343,7 +339,7 @@ namespace TRTR
             // split texts 
             //string[] elements = textBlock.Substring(4).Split((char)0x0D); // remove content-length value and split texts at delimiters
             string[] elements = textBlock.Split((char)0x0D); // remove content-length value and split texts at delimiters
-            List<int> dupeFilter = new List<int>(); // for avoiding dupes in bigfile_english/thechosenone.mul
+            Dictionary<int, string> dupeFilter = new Dictionary<int, string>(); // for avoiding dupes in bigfile_english/thechosenone.mul
             for (Int32 i = 0; i < elements.Length - 1; i += 2)
             {
                 // parse language code
@@ -355,9 +351,8 @@ namespace TRTR
                 string textElement = elements[i + 1];
                 FileLanguage language = (FileLanguage)langCodeValue;
 
-                if (language == FileLanguage.English && !dupeFilter.Contains(textElement.GetHashCode()))
+                if (language == FileLanguage.English)
                 {
-                    dupeFilter.Add(textElement.GetHashCode());  // for avoiding dupes in bigfile_english/thechosenone.mul
                     // debug
                     if (textBlock.Length > 2)
                         if (textElement.Length > 0)
@@ -394,7 +389,12 @@ namespace TRTR
                             "bigfile", entry.BigFile.Name,
                         };
 
-                    translated = TRGameInfo.textConv.ToGameFormat(tp.GetTranslation(text.Replace("\n", "\r\n"), entry, context)).Replace("\r\n", "\n");
+                    if (!dupeFilter.TryGetValue(textElement.GetHashCode(), out translated))
+                    {
+                        translated = TRGameInfo.Conv.ToGameFormat(tp.GetTranslation(text.Replace("\n", "\r\n"), entry, context)).Replace("\r\n", "\n");
+                        dupeFilter.Add(textElement.GetHashCode(), translated);  // for avoiding dupes in bigfile_english/thechosenone.mul
+                    }
+
                     ret.Append(langCode + (char)0x0D + prefix + translated + (char)0x0D);
                 }
                 else
@@ -407,4 +407,3 @@ namespace TRTR
         }
     }
 }
-

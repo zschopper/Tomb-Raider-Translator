@@ -150,6 +150,29 @@ Fájl írás:
 - GameLocal.xml  
   cserélendő karakterek
 
+  amit nyilván kell tartani/bekérni
+  forrás szinkronnyelv
+  forrás felirat nyelv
+  cél felirat nyelv
+  cserélendő karakterek
+  játék média típus (steam, install, egyedi)
+  steam appid
+  registry path
+  install dir
+  exe név
+  jelenlegi win locale
+  
+  extract:
+  kimeneti formátum
+  előfordítás szótárja
+  forrás felirat nyelv
+  cél felirat nyelv
+  cserélendő karakterek
+  játék verziószám
+  
+  
+  
+  
 
 
 internal void ExtractN(string fileName, MenuFile menu)

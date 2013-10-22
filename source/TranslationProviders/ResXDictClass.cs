@@ -11,7 +11,7 @@ using ICSharpCode.SharpZipLib.Zip;
 
 namespace TRTR
 {
-    class ResXDictEntry 
+    class ResXDictEntry
     {
         internal int SourceHash { get; set; }
         internal int TranslationHash { get; set; }
@@ -19,7 +19,7 @@ namespace TRTR
         internal string Translation { get; set; }
         internal string FileName { get; set; }
         internal Dictionary<string, string> ContextData = new Dictionary<string, string>();
-        
+
         internal ResXDictEntry(string source, string translation, string comments, string fileName)
         {
             this.SourceText = source;
@@ -60,12 +60,12 @@ namespace TRTR
             this.files = files;
         }
 
-        internal override void Open() { }
-        internal override void Close() { }
+        internal ResXDict(string workFolder)
+        {
+            this.files = Directory.GetFiles(workFolder, "*.resx", SearchOption.AllDirectories);
+        }
 
-        protected override bool getUseContext() { return true; }
-
-        internal override void LoadTranslations()
+        internal override void Open()
         {
             foreach (string file in files)
                 ReadResXFile(file);
@@ -73,9 +73,13 @@ namespace TRTR
             Log.LogDebugMsg(string.Format("{0} translation entries added", dict.Count));
 
             string zippedFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "hu.zip");
-            if(File.Exists(zippedFileName))
+            if (File.Exists(zippedFileName))
                 ReadCompressedResX(zippedFileName);
         }
+
+        internal override void Close() { }
+
+        protected override bool getUseContext() { return true; }
 
         internal override void Clear()
         {
@@ -189,7 +193,7 @@ namespace TRTR
                 if (!entryList.IsUnique)
                 {
                     //string 
-                    
+
                     bool translationsIsUnique = true;
                     Nullable<int> firstTranslated = null;
 
@@ -197,7 +201,7 @@ namespace TRTR
                     {
                         if (entry.SourceHash != entry.TranslationHash) // text is localized
                         {
-                            if (firstTranslated == null)    
+                            if (firstTranslated == null)
                                 firstTranslated = entry.TranslationHash;
                             else
                                 if (firstTranslated != entry.TranslationHash) // text isn't match with first localized

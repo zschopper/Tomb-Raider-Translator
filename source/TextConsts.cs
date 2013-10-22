@@ -12,6 +12,7 @@ using System.Management.Instrumentation;
 using System.Resources;
 using System.Reflection;
 
+
 namespace TRTR
 {
     enum FileLanguage
@@ -193,7 +194,7 @@ namespace TRTR
         static internal string CannotFoundInstalledGame { get { return ResTexts.GetValue("CannotFoundInstalledGame"); } }
         static internal string InitializationError { get { return ResTexts.GetValue("InitializationError"); } }
         static internal string ParseError { get { return ResTexts.GetValue("ParseError"); } }
-        static internal string UnknownInstallType { get { return ResTexts.GetValue("Unknown install type"); } }
+        static internal string UnknownInstallType { get { return ResTexts.GetValue("UnknownInstallType"); } }
     }
 
     static class StaticTexts

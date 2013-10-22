@@ -34,37 +34,7 @@ namespace TRTR
         private string langCode = string.Empty;
         #endregion
 
-        internal override void Open() { LoadTranslations(); }
-        internal override void Close() { DoStat(); Clear(); }
-
-        private void DoStat()
-        {
-
-            Log.LogDebugMsg("Translation source statistics:");
-            foreach (KeyValuePair<int, TMXDictEntry> dictEntry in dict)
-            {
-                if (dictEntry.Value.RefNo == 0)
-                {
-                    Log.LogDebugMsg(string.Format("Translation not used: \r\n\"{0}\"", dictEntry.Value.Source));
-                }
-                //else
-                //{
-                //    Log.LogDebugMsg(string.Format("Translation used: {0} {1}", dictEntry.Key, dictEntry.Value.RefNo));
-                //}
-            }
-        }
-
-        protected override bool getUseContext() { return false; }
-
-        protected static Regex normalizeRx = new Regex("[\r\n ]+");
-
-        protected int normalizedTextHash(string text)
-        {
-            return text.Replace("&#13;", "\r").Replace("&#10;", "\n").Replace("\r\n", "\n").GetHashCode();
-            // return normalizeRx.Replace(text.Replace("&#13;", "\\r").Replace("&#10;", "\\n"), " ").Trim().GetHashCode();
-        }
-
-        internal override void LoadTranslations()
+        internal override void Open()
         {
             CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.InstalledWin32Cultures);
             dict.Clear();
@@ -112,10 +82,17 @@ namespace TRTR
                     TMXDictEntry value1;
                     if (dict.TryGetValue(key, out value1))
                     {
-                        Log.LogDebugMsg("Key exists.");
+                        if (value1.Text == value)
+                            Log.LogDebugMsg("Key exists, values are matching.");
+                        else
+                            Log.LogDebugMsg("Key exists, values are DIFFERENT.");
+
                         Log.LogDebugMsg(string.Format("  Key: \"{0}\"", source));
-                        Log.LogDebugMsg(string.Format("  Value1: \"{0}\"", value1.Text));
-                        Log.LogDebugMsg(string.Format("  Value2: \"{0}\"", value));
+                        if (value1.Text != value)
+                        {
+                            Log.LogDebugMsg(string.Format("  Value1: \"{0}\"", value1.Text));
+                            Log.LogDebugMsg(string.Format("  Value2: \"{0}\"", value));
+                        }
                     }
                     else
                     {
@@ -136,8 +113,34 @@ namespace TRTR
                 Log.LogDebugMsg("No translation files found.");
                 //throw new Exception("No translation files found.");
             }
+        }
+        internal override void Close() { DoStat(); Clear(); }
 
+        private void DoStat()
+        {
 
+            Log.LogDebugMsg("Translation source statistics:");
+            foreach (KeyValuePair<int, TMXDictEntry> dictEntry in dict)
+            {
+                if (dictEntry.Value.RefNo == 0)
+                {
+                    Log.LogDebugMsg(string.Format("Translation not used: \r\n\"{0}\"", dictEntry.Value.Source));
+                }
+                //else
+                //{
+                //    Log.LogDebugMsg(string.Format("Translation used: {0} {1}", dictEntry.Key, dictEntry.Value.RefNo));
+                //}
+            }
+        }
+
+        protected override bool getUseContext() { return false; }
+
+        protected static Regex normalizeRx = new Regex("[\r\n ]+");
+
+        protected int normalizedTextHash(string text)
+        {
+            return text.Replace("&#13;", "\r").Replace("&#10;", "\n").Replace("\r\n", "\n").GetHashCode();
+            // return normalizeRx.Replace(text.Replace("&#13;", "\\r").Replace("&#10;", "\\n"), " ").Trim().GetHashCode();
         }
 
         internal override void Clear()
@@ -154,20 +157,7 @@ namespace TRTR
                 Log.LogDebugMsg(string.Format("No translation for \"{0}\"", text));
                 return text;
             }
-
-            //if (!dict.TryGetValue(replaced.GetHashCode(), out ret))
-            //{
-            //    if (!dict.TryGetValue(replaced.Trim().GetHashCode(), out ret))
-            //    {
-            //        if (!dict.TryGetValue(replaced.Trim().Replace("  ", " ").GetHashCode(), out ret))
-            //        {
-            //            Log.LogDebugMsg(string.Format("No translation for \"{0}\"", text));
-            //            return text;
-            //        }
-            //    }
-            //}
             return dictEntry.Text;
-
         }
     }
 }

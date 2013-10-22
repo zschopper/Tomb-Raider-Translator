@@ -30,9 +30,11 @@ namespace TRTR
         static internal string LastGame { get { return lastGame; } set { lastGame = value; } }
         static internal Dictionary<string, CultureInfo> Cultures { get { return cultures; } }
         static internal string[] Args { get { return args; } set { args = value; } }
+        static internal Version version;
 
         static internal void Load()
         {
+            version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
             Regex rx = new Regex(@"lang\-([a-z]+\-[A-Z]+)\.xml");
             // string fileName = string.Format("lang-{0}.xml", Application.CurrentCulture.Name);
 //            string fileNameEN = "lang-en-GB.xml";

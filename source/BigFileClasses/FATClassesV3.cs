@@ -96,8 +96,6 @@ namespace TRTR
         internal string FileNameOnlyForced { get { return FileName.Length > 0 ? Path.GetFileName(FileName) : entry.HashText; } }
         internal string FileNameForced { get { return FileName.Length > 0 ? FileName : entry.HashText; } }
 
-        internal string ResXFileName { get; set; }
-
         internal FileExtraInfo(FileEntry entry)
         {
             this.entry = entry;
@@ -109,25 +107,7 @@ namespace TRTR
             // try assign file name from hash code
             string matchedFileName;
 
-            this.ResXFileName = string.Empty;
-
             this.FileNameResolved = entry.BigFile.Parent.FileNameHashDict.TryGetValue(entry.Hash, out matchedFileName);
-            if (this.FileNameResolved)
-            {
-                this.FileName = matchedFileName;
-                string path = Path.GetDirectoryName(this.FileName);
-                int pathHash = path.GetHashCode();
-                string alias;
-
-                if (entry.BigFile.Parent.FileNameAliasDict.TryGetValue(pathHash, out alias))
-                    this.ResXFileName = alias;
-                else
-                    if (entry.BigFile.Parent.FolderAliasDict.TryGetValue(pathHash, out alias))
-                        this.ResXFileName = Path.ChangeExtension(this.FileName.Replace(path, alias), ".resx");
-            }
-
-            if (this.ResXFileName == string.Empty)
-                this.ResXFileName = entry.HashText + ".resx";
 
         }
     }
@@ -330,7 +310,7 @@ namespace TRTR
         internal List<FileEntryCompareField> CompareFields { get { return compareFields; } }
         internal BigFile ParentBigFile { get { return parentBigFile; } }
 
-        internal bool simulateWrite = false;
+        //internal bool simulateWrite = false;
 
         internal FileEntryList(BigFile parent)
         {
@@ -497,7 +477,7 @@ namespace TRTR
             FileStream fs = new FileStream(fileName, FileMode.Open);
             byte[] buf = new byte[headerSize + entryCount * 0x10];
             fs.Read(buf, 0, buf.Length);
-            BigFileList.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", this.name + ".fat_raw_src.txt"), buf);
+            //BigFileList.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", this.name + ".fat_raw_src.txt"), buf);
             fs.Position = 0;
 
             BinaryWriter bw = new BinaryWriter(fs);
@@ -523,7 +503,7 @@ namespace TRTR
                 buf = new byte[headerSize + entryCount * 0x10];
                 fs.Position = 0;
                 fs.Read(buf, 0, buf.Length);
-                BigFileList.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", this.name + ".fat_raw_mod.txt"), buf);
+                //BigFileList.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", this.name + ".fat_raw_mod.txt"), buf);
             }
             finally
             {
@@ -695,37 +675,9 @@ namespace TRTR
 
                 #endregion
 
-                // debug
-                //if (entry.Hash == 0xD79F6A34u)
-                //    entry.Status = TranslationStatus.Translatable;
-                //else
-                //    entry.Status = TranslationStatus.NotTranslatable;
-                // end of debug
-
-
                 if (entry.Status == TranslationStatus.Translatable)
                     entry.BigFile.Parent.AddTransEntry(entry);
 
-                #region Determine .resx filename
-                if (entry.Status == TranslationStatus.Translatable)
-                {
-                    if (entry.Extra.FileNameResolved)
-                    {
-                        string path = Path.GetDirectoryName(entry.Extra.FileName);
-                        int pathHash = path.GetHashCode();
-                        string alias;
-
-                        if (parent.FileNameAliasDict.TryGetValue(pathHash, out alias))
-                            entry.Extra.ResXFileName = alias;
-                        else
-                            if (parent.FolderAliasDict.TryGetValue(pathHash, out alias))
-                                entry.Extra.ResXFileName = Path.ChangeExtension(entry.Extra.FileName.Replace(path, alias), ".resx");
-
-                    }
-                    else
-                        entry.Extra.ResXFileName = entry.HashText + ".resx";
-                }
-                #endregion
             }
 
             #region dump file info
@@ -776,16 +728,16 @@ namespace TRTR
         #region private declarations
         private string folder;
         private Dictionary<uint, string> fileNameHashDict = new Dictionary<uint, string>();
-        private Dictionary<int, string> folderAliasDict = new Dictionary<int, string>();
-        private Dictionary<int, string> fileNameAliasDict = new Dictionary<int, string>();
+        //private Dictionary<int, string> folderAliasDict = new Dictionary<int, string>();
+        //private Dictionary<int, string> fileNameAliasDict = new Dictionary<int, string>();
         private Dictionary<string, BigFile> itemsByName = new Dictionary<string, BigFile>();
         private Dictionary<FatEntryKey, FileEntry> transEntries = null;
         #endregion
 
         internal string Folder { get { return folder; } }
         internal Dictionary<uint, string> FileNameHashDict { get { return fileNameHashDict; } }
-        internal Dictionary<int, string> FolderAliasDict { get { return folderAliasDict; } }
-        internal Dictionary<int, string> FileNameAliasDict { get { return fileNameAliasDict; } }
+        //internal Dictionary<int, string> FolderAliasDict { get { return folderAliasDict; } }
+        //internal Dictionary<int, string> FileNameAliasDict { get { return fileNameAliasDict; } }
         internal Dictionary<string, BigFile> ItemsByName { get { return itemsByName; } }
 
         internal Dictionary<FatEntryKey, FileEntry> TransEntries { get { return transEntries; } }
@@ -802,7 +754,7 @@ namespace TRTR
 
             // loading filelist for hash - filename resolution
             LoadFileNamesFile(Path.Combine(TRGameInfo.Game.WorkFolder, "filelist.txt"), out fileNameHashDict);
-            LoadPathAliasesFile(Path.Combine(TRGameInfo.Game.WorkFolder, "path_aliases.txt"), out folderAliasDict, out fileNameAliasDict);
+            //LoadPathAliasesFile(Path.Combine(TRGameInfo.Game.WorkFolder, "path_aliases.txt"), out folderAliasDict, out fileNameAliasDict);
 
             Log.LogMsg(LogEntryType.Debug, string.Format("Building file structure: {0}", folder));
 
@@ -822,12 +774,12 @@ namespace TRTR
             //dupeFilter.Add("pack7.000.tiger");
             //dupeFilter.Add("pack8.000.tiger");
 
-            dupeFilter.Clear();
+            //dupeFilter.Clear();
 
             foreach (string file in files)
             {
                 string fileNameOnly = Path.GetFileName(file).ToLower();
-                ;
+
                 if (!dupeFilter.Contains(fileNameOnly))
                 {
                     dupeFilter.Add(fileNameOnly);
@@ -971,8 +923,6 @@ namespace TRTR
                     if (delFolders.IndexOf(filePath) == -1)
                         delFolders.Add(filePath);
                 }
-                //Log.LogDebugMsg(string.Format("delfolders: {0}\r\n{1}", extractFolder, string.Join("\r\n", delFolders.ToArray())));
-                //Log.LogDebugMsg("/delfolders\r\n");
                 delFolders = new List<string>(Directory.GetDirectories(extractFolder, "*.*", SearchOption.AllDirectories));
                 delFolders.Reverse();
 
@@ -988,7 +938,13 @@ namespace TRTR
 
         internal void Extract(string destFolder, bool useDict)
         {
-            TranslationProvider tp = new ResXExtractor(destFolder);
+            // TranslationProvider tp = new ResXExtractor(destFolder);
+            //TranslationProvider tpTransSrc = new TMXProvider();
+            //TranslationProvider tpTransSrc = new ResXDict(Path.Combine(TRGameInfo.Game.WorkFolder, "hu"));
+            //TranslationProvider tpTransSrc = new NMSTranslationProvider(Path.Combine(TRGameInfo.Game.WorkFolder, "nemes"));
+            TranslationProvider tpTransSrc = new TMXProvider();
+            tpTransSrc.Open();
+            TranslationProvider tp = new TMXExtractor(Path.Combine(destFolder, "extract.tmx"), tpTransSrc);
             tp.Open();
 
             UpdateBigFiles();
@@ -1015,9 +971,7 @@ namespace TRTR
                                 {
                                     if (entry.Raw.Language == FileLanguage.English || entry.Raw.Language == FileLanguage.NoLang)
                                     {
-                                        //CineFile.Extract(extractFolder, entry, useDict);
-                                        //CineFile2.Process(entry, Stream.Null, tp);
-
+                                        CineFile.Process(entry, Stream.Null, tp);
                                     }
                                     break;
                                 }
@@ -1026,8 +980,6 @@ namespace TRTR
                                     if (entry.Raw.Language == FileLanguage.English)
                                     {
                                         MenuFile.Process(entry, Stream.Null, tp);
-                                        //MenuFile menu = new MenuFile(entry, tp);
-                                        //menu.Extract(extractFolder, useDict, tp);
                                     }
                                     break;
                                 }
@@ -1047,8 +999,7 @@ namespace TRTR
                                 }
                             case FileTypeEnum.SCH:
                                 {
-                                    //MovieFile movie = new MovieFile(entry, tp);
-                                    //movie.Extract(extractFolder, useDict);
+                                    MovieFile.Process(entry, Stream.Null, tp);
                                     break;
                                 }
                         }
@@ -1064,6 +1015,7 @@ namespace TRTR
                 }
             }
             tp.Close();
+            tpTransSrc.Close();
         }
 
         internal void Translate(bool simulated)
@@ -1162,8 +1114,20 @@ namespace TRTR
                             }
                         case FileTypeEnum.SCH:
                             {
-                                MovieFile movie = new MovieFile(entry, tp);
-                                movie.Translate(simulated, tp);
+                                MemoryStream ms = new MemoryStream();
+                                try
+                                {
+                                    if (MovieFile.Process(entry, ms, tp))
+                                    {
+                                        //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFile.Name, entry.Extra.FileNameForced });
+                                        //DumpToFile(fileName, ms.ToArray());
+                                        entry.BigFile.Parent.WriteFile(entry.BigFile, entry, ms.ToArray(), simulated);
+                                    }
+                                }
+                                finally
+                                {
+                                    ms.Close();
+                                }
                                 break;
                             }
                         case FileTypeEnum.RAW_FNT:

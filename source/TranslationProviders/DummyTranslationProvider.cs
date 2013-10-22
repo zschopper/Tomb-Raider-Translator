@@ -9,12 +9,9 @@ namespace TRTR
     {
         internal override void Open() { }
         internal override void Close() { }
+        internal override void Clear() { }
 
         protected override bool getUseContext() { return false; }
-
-        internal override void LoadTranslations() { }
-
-        internal override void Clear() { }
 
         internal override string GetTranslation(string text, FileEntry entry, string[] context)
         {
