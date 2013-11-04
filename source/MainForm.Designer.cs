@@ -42,7 +42,6 @@ namespace TRTR
             this.labelGame = new System.Windows.Forms.Label();
             this.comboGame = new System.Windows.Forms.ComboBox();
             this.groupBoxGameInfo = new System.Windows.Forms.GroupBox();
-            this.buttonTest1 = new System.Windows.Forms.Button();
             this.labelAvailableTranslationVersion = new System.Windows.Forms.Label();
             this.labelSelectedSubtitleLanguage = new System.Windows.Forms.Label();
             this.labelSelectedLanguage = new System.Windows.Forms.Label();
@@ -72,6 +71,9 @@ namespace TRTR
             this.menuItemConvertOldTranslationsPT = new System.Windows.Forms.ToolStripMenuItem();
             this.bulgarianBGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
             this.groupBoxGameInfo.SuspendLayout();
@@ -137,7 +139,7 @@ namespace TRTR
             this.labelVersion.AutoSize = true;
             this.labelVersion.BackColor = System.Drawing.Color.Transparent;
             this.labelVersion.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelVersion.Location = new System.Drawing.Point(265, 227);
+            this.labelVersion.Location = new System.Drawing.Point(242, 227);
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(53, 13);
             this.labelVersion.TabIndex = 37;
@@ -151,7 +153,7 @@ namespace TRTR
             this.linkTombRaiderHU.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.linkTombRaiderHU.Location = new System.Drawing.Point(398, 227);
             this.linkTombRaiderHU.Name = "linkTombRaiderHU";
-            this.linkTombRaiderHU.Size = new System.Drawing.Size(129, 13);
+            this.linkTombRaiderHU.Size = new System.Drawing.Size(134, 13);
             this.linkTombRaiderHU.TabIndex = 36;
             this.linkTombRaiderHU.TabStop = true;
             this.linkTombRaiderHU.Text = "http://www.tombraiders.hu";
@@ -202,6 +204,7 @@ namespace TRTR
             this.buttonRestore.Size = new System.Drawing.Size(75, 23);
             this.buttonRestore.TabIndex = 29;
             this.buttonRestore.Text = "&Restore";
+            this.buttonRestore.Visible = false;
             this.buttonRestore.Click += new System.EventHandler(this.buttonRestore_Click);
             // 
             // labelGame
@@ -228,7 +231,6 @@ namespace TRTR
             // groupBoxGameInfo
             // 
             this.groupBoxGameInfo.BackColor = System.Drawing.Color.Transparent;
-            this.groupBoxGameInfo.Controls.Add(this.buttonTest1);
             this.groupBoxGameInfo.Controls.Add(this.labelAvailableTranslationVersion);
             this.groupBoxGameInfo.Controls.Add(this.labelSelectedSubtitleLanguage);
             this.groupBoxGameInfo.Controls.Add(this.labelSelectedLanguage);
@@ -247,16 +249,6 @@ namespace TRTR
             this.groupBoxGameInfo.TabIndex = 26;
             this.groupBoxGameInfo.TabStop = false;
             this.groupBoxGameInfo.Text = "Game Informations";
-            // 
-            // buttonTest1
-            // 
-            this.buttonTest1.Location = new System.Drawing.Point(436, 109);
-            this.buttonTest1.Name = "buttonTest1";
-            this.buttonTest1.Size = new System.Drawing.Size(75, 23);
-            this.buttonTest1.TabIndex = 18;
-            this.buttonTest1.Text = "button1";
-            this.buttonTest1.UseVisualStyleBackColor = true;
-            this.buttonTest1.Click += new System.EventHandler(this.buttonTest1_Click);
             // 
             // labelAvailableTranslationVersion
             // 
@@ -378,9 +370,9 @@ namespace TRTR
             this.progressTask.Location = new System.Drawing.Point(169, 208);
             this.progressTask.Name = "progressTask";
             this.progressTask.Size = new System.Drawing.Size(323, 13);
-            this.progressTask.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressTask.Step = 1;
+            this.progressTask.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressTask.TabIndex = 28;
-            this.progressTask.Value = 20;
             this.progressTask.Visible = false;
             // 
             // contextExtra
@@ -388,6 +380,9 @@ namespace TRTR
             this.contextExtra.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuItemExtractTexts,
             this.menuItemCompileTexts,
+            this.toolStripMenuItem3,
+            this.toolStripMenuItem2,
+            this.toolStripMenuItem1,
             this.menuItemCreateRestoration,
             this.menuItemRunGame,
             this.menuItemRunGameWithConfiguration,
@@ -395,7 +390,7 @@ namespace TRTR
             this.menuItemSimulateRestoration,
             this.generateFilestxtToolStripMenuItem});
             this.contextExtra.Name = "contextMenuStrip1";
-            this.contextExtra.Size = new System.Drawing.Size(257, 202);
+            this.contextExtra.Size = new System.Drawing.Size(257, 246);
             // 
             // menuItemExtractTexts
             // 
@@ -413,6 +408,7 @@ namespace TRTR
             this.menuItemCompileTexts.Name = "menuItemCompileTexts";
             this.menuItemCompileTexts.Size = new System.Drawing.Size(256, 22);
             this.menuItemCompileTexts.Text = "Compile &text translations into XML";
+            this.menuItemCompileTexts.Visible = false;
             // 
             // menuItemCompileTextsHU
             // 
@@ -443,6 +439,7 @@ namespace TRTR
             this.menuItemCreateRestoration.Name = "menuItemCreateRestoration";
             this.menuItemCreateRestoration.Size = new System.Drawing.Size(256, 22);
             this.menuItemCreateRestoration.Text = "Create &restoration XML";
+            this.menuItemCreateRestoration.Visible = false;
             this.menuItemCreateRestoration.Click += new System.EventHandler(this.menuItemCreateRestoration_Click);
             // 
             // menuItemRunGame
@@ -471,6 +468,7 @@ namespace TRTR
             this.menuItemSimulateRestoration.Name = "menuItemSimulateRestoration";
             this.menuItemSimulateRestoration.Size = new System.Drawing.Size(256, 22);
             this.menuItemSimulateRestoration.Text = "Simulate restoration";
+            this.menuItemSimulateRestoration.Visible = false;
             this.menuItemSimulateRestoration.Click += new System.EventHandler(this.menuItemSimulateRestore_Click);
             // 
             // generateFilestxtToolStripMenuItem
@@ -478,6 +476,7 @@ namespace TRTR
             this.generateFilestxtToolStripMenuItem.Name = "generateFilestxtToolStripMenuItem";
             this.generateFilestxtToolStripMenuItem.Size = new System.Drawing.Size(256, 22);
             this.generateFilestxtToolStripMenuItem.Text = "Generate files.txt";
+            this.generateFilestxtToolStripMenuItem.Visible = false;
             this.generateFilestxtToolStripMenuItem.Click += new System.EventHandler(this.generateFilestxtToolStripMenuItem_Click);
             // 
             // menuItemConvertOldTranslationsHU
@@ -496,6 +495,30 @@ namespace TRTR
             this.bulgarianBGToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.bulgarianBGToolStripMenuItem.Tag = "bg";
             this.bulgarianBGToolStripMenuItem.Text = "Bulgarian";
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(256, 22);
+            this.toolStripMenuItem1.Text = "Generate files.txt";
+            this.toolStripMenuItem1.Visible = false;
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.generateFilestxtToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(256, 22);
+            this.toolStripMenuItem2.Text = "Simulate restoration";
+            this.toolStripMenuItem2.Visible = false;
+            this.toolStripMenuItem2.Click += new System.EventHandler(this.menuItemSimulateRestore_Click);
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(256, 22);
+            this.toolStripMenuItem3.Text = "Create &restoration XML";
+            this.toolStripMenuItem3.Visible = false;
+            this.toolStripMenuItem3.Click += new System.EventHandler(this.menuItemCreateRestoration_Click);
             // 
             // form_Main
             // 
@@ -566,8 +589,10 @@ namespace TRTR
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.ToolStripMenuItem bulgarianBGToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem bulgarianToolStripMenuItem;
-        private System.Windows.Forms.Button buttonTest1;
         private System.Windows.Forms.ToolStripMenuItem generateFilestxtToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
 
     }
 }

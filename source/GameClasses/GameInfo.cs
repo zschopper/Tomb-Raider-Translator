@@ -9,6 +9,8 @@ using System.Security.Cryptography;
 using System.Globalization;
 using ExtensionMethods;
 using System.Diagnostics;
+using System.Resources;
+using System.Windows;
 
 namespace TRTR
 {
@@ -18,7 +20,7 @@ namespace TRTR
     static class TRGameInfo
     {
         #region private variables
-        private static GameChangeHandler ChangeDelegate = null;
+        //private static GameChangeHandler ChangeDelegate = null;
         private static Object changeLock = new object();
         private static TRGameStatus gameStatus = TRGameStatus.None;
         private static List<string> processors = new List<string>();
@@ -29,7 +31,6 @@ namespace TRTR
         private static BigFileList bigFiles = null;
         #endregion
 
-        internal static FileLanguage OverwriteLang = FileLanguage.English;
         internal static TextConv Conv = new TextConv(new char[] { (char)0x0150, (char)0x0151, (char)0x0170, (char)0x0171 }, new char[] { (char)0x00D4, (char)0x00F4, (char)0x00DB, (char)0x00FB }, Encoding.UTF8);
 
         internal static TRGameStatus GameStatus { get { return gameStatus; } }
@@ -38,7 +39,8 @@ namespace TRTR
 
         internal static BigFilePool FilePool { get { return filePool; } }
         internal static BigFileList BigFiles { get { return bigFiles; } }
-
+        internal static FileLocale TransTextLang { get { return FileLocale.English; } }
+        internal static FileLocale TransVoiceLang { get; set; }
 
         /*
                 internal static event GameChangeHandler Change2
@@ -46,20 +48,21 @@ namespace TRTR
                     add { lock (changeLock) { ChangeDelegate = (GameChangeHandler)Delegate.Combine(ChangeDelegate, value); } }
                     remove { lock (changeLock) { ChangeDelegate = (GameChangeHandler)Delegate.Remove(ChangeDelegate, value); } }
                 }
-        */
 
-        internal static void OnChange()
-        {
-            if (ChangeDelegate != null)
-                ChangeDelegate();
-        }
+                 private static void OnChange()
+                {
+                    if (ChangeDelegate != null)
+                        ChangeDelegate();
+                }
+        */
 
         internal static void Load(GameInstance game)
         {
             TRGameInfo.Game = game;
             // load install type-dependent data
+
             Log.LogDebugMsg("Loading game...");
-            game.Load();
+            gameStatus = game.Load();
             Log.LogDebugMsg("Game loaded.");
             Log.LogDebugMsg("Parsing files...");
             bigFiles = new BigFileList(game.InstallFolder);
@@ -70,38 +73,7 @@ namespace TRTR
             filePool = new BigFilePool(bigFiles);
             Log.LogDebugMsg("Load OK.");
 
-            // load info doc, if exists
-            //if (File.Exists(Trans.InfoDocFileName))
-            //{
-            //    Trans.InfoDoc = new XmlDocument();
-            //    Trans.InfoDoc.Load(Trans.InfoDocFileName);
-            //}
-
-            #region load translations
-            if (Directory.Exists(TRGameInfo.Game.WorkFolder))
-            {
-                //string[] foldersByPriority = {
-                //    "bigfile",
-                //    "bigfile_ENGLISH",
-                //    "title",
-                //    "title_ENGLISH",
-                //    "patch",
-                //    "patch_ENGLISH",
-                //    "patch2",
-                //};
-
-                //List<string> files = new List<string>();
-                //foreach (string folder in foldersByPriority)
-                //    files.AddRange(Directory.GetFiles(Path.Combine(TRGameInfo.Game.WorkFolder, "hu", folder), "*.resx", SearchOption.AllDirectories));
-
-                //ResXDict dict = new ResXDict(files.ToArray());
-            }
-            //TMXProvider dict = new TMXProvider();
-            //TranslationDict.Provider = dict;
-            //TranslationDict.LoadTranslations();
-            #endregion
-
-            OnChange();
+            //OnChange();
         }
 
         internal static void LoadAsync(GameInstance game)
@@ -152,18 +124,11 @@ namespace TRTR
             public static CultureInfo CurrentCulture = null;
         }
 
-        internal static void Extract()
-        {
-            bigFiles.Extract(Path.Combine(TRGameInfo.game.ExtractFolder, "source"), false);
-        }
-
-        internal static void Restore() { }
-
         internal static void CreateRestorationPoint() { }
 
     }
 
-
+    // Filename hasher algorythm
     internal static class Hash
     {
 
@@ -182,11 +147,8 @@ namespace TRTR
 
         internal static int MakeFileNameHash(string fileName)
         {
-            int hashCode;
-            unchecked
-            {
-                hashCode = (int)0xFFFFFFFF;
-            }
+            int hashCode = -1; //(int)0xFFFFFFFF;
+
             for (int i = 0; i < fileName.Length; i++)
             {
                 int ascii = (int)(fileName[i]);
@@ -214,22 +176,21 @@ namespace TRTR
 
         internal static string MakeFileNameHashString(string name)
         {
-            return string.Format("{0:X8}", TRTR.Hash.MakeFileNameHash(name));
+            return string.Format("{0:X8}", MakeFileNameHash(name));
         }
     }
 
     [Flags]
     enum TRGameStatus
     {
-        None = 0x0,
-        OK = 0x1,
-        InstallDirectoryNotExist = 0x2,
-        DataFilesNotFound = 0x4,
-        FileInfoFileNotFound = 0x8,
-        TranslationDataFileNotFound = 0x10,
+        None = 0,
+        InstallDirectoryNotExist = 1,
+        DataFilesNotFound = 2,
+        FileInfoFileNotFound = 4,
+        TranslationDataFileNotFound = 8,
     }
 
-    class TRGameTransInfo
+    class TRGameTransInfo_REMOVED
     {
         private string version;
 
@@ -264,7 +225,7 @@ namespace TRTR
         // pre-calculated fields
         internal bool NeedToReplaceChars { get { return needToReplaceChars; } set { needToReplaceChars = value; } }
 
-        public TRGameTransInfo(string fileName)
+        public TRGameTransInfo_REMOVED(string fileName)
         {
             XmlDocument doc = new XmlDocument();
             //folder = Path.GetDirectoryName(fileName);

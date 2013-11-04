@@ -14,7 +14,7 @@ namespace TRTR
     {
         private static StreamLogListener internalListener = new StreamLogListener(new MemoryStream());
 
-        private static Dictionary<string, LogListener> Listeners = new Dictionary<string, LogListener>();
+        private static Dictionary<string, ILogListener> Listeners = new Dictionary<string, ILogListener>();
 
         private static void Write(Exception ex, Int32 indent)
         {
@@ -69,7 +69,7 @@ namespace TRTR
             AddListener("internal", internalListener);
         }
 
-        internal static LogListener AddListener(string name, LogListener listener)
+        internal static ILogListener AddListener(string name, ILogListener listener)
         {
             Listeners.Add(name, listener);
             return listener;
@@ -77,7 +77,7 @@ namespace TRTR
 
         internal static bool RemoveListener(string name)
         {
-            LogListener item;
+            ILogListener item;
             if (Listeners.TryGetValue(name, out item))
                 item.FinalizeListener();
             return Listeners.Remove(name);
@@ -85,7 +85,7 @@ namespace TRTR
 
         internal static void LogMsg(LogMessage logmsg)
         {
-            foreach (LogListener lstnr in Listeners.Values)
+            foreach (ILogListener lstnr in Listeners.Values)
                 lstnr.LogMsg(logmsg);
         }
 
@@ -111,7 +111,7 @@ namespace TRTR
         }
     }
 
-    internal class LogMessage
+    public class LogMessage
     {
         internal LogEntryType LogType { get; set; }
         internal string Message { get; set; }
@@ -119,25 +119,22 @@ namespace TRTR
         internal DateTime Time { get; set; }
     }
 
-    internal abstract class LogListener
+    interface ILogListener
     {
-        internal abstract void InitializeListener();
-        internal abstract void LogMsg(LogMessage msg);
-        internal abstract void FinalizeListener();
+        void InitializeListener();
+        void LogMsg(LogMessage msg);
+        void FinalizeListener();
     }
 
-    internal class DebugLogListener : LogListener
+    public class DebugLogListener : ILogListener
     {
         [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
         public static extern void OutputDebugString(string message);
 
-        internal override void InitializeListener()
-        {
-        }
+        public void InitializeListener() { }
 
-        internal override void LogMsg(LogMessage msg)
+        public void LogMsg(LogMessage msg)
         {
-
             string msgText;
             if(msg.LogType != LogEntryType.Progress)
                 msgText = string.Format("{0} {1} {2}", msg.Time.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss.ffff"), msg.LogType.ToString(), msg.Message);
@@ -147,20 +144,20 @@ namespace TRTR
             OutputDebugString(msgText);
         }
 
-        internal override void FinalizeListener()
+        public void FinalizeListener()
         {
         }
 
     }
 
-    internal class StreamLogListener : LogListener
+    public class StreamLogListener : ILogListener
     {
         protected Stream internalStream;
         private Encoding encoding = Encoding.UTF8;
 
-        internal override void InitializeListener() { }
+        public void InitializeListener() { }
 
-        internal override void LogMsg(LogMessage msg)
+        public void LogMsg(LogMessage msg)
         {
             if (msg.LogType != LogEntryType.Progress) // suppress progress reports
             {
@@ -169,7 +166,7 @@ namespace TRTR
             }
         }
 
-        internal override void FinalizeListener()
+        public void FinalizeListener()
         {
             internalStream.Close();
         }

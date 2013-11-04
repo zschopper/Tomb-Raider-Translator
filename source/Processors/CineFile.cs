@@ -223,7 +223,7 @@ namespace TRTR
                 {
                     textEndPos = inStream.Position;
 
-                    // test #2 - read integers backward & try to found text size (offset to textEndPos)
+                    // test #2 - read integers backward & try to found text size (Offset to textEndPos)
                     inStream.Position = (inStream.Position - startInPos - 4).ExtendToBoundary(4) + startInPos;
 
                     while ((textEndPos - inStream.Position) < CineConsts.MaxBlockSize && inStream.Position > blockStartPos && subtitleText == string.Empty)
@@ -268,7 +268,7 @@ namespace TRTR
                         inStream.Position = startInPos + 0x10;
 
                         // calculate initial binary block content data length
-                        // text offset in block (textStartPos - startInPos)  -  block header size (0x10) - stored translation length (4)
+                        // text Offset in block (textStartPos - startInPos)  -  block header size (0x10) - stored translation length (4)
                         Int64 binDataLen = textStartPos - startInPos - 0x10 - 4;
                         // write binary data (copy from instream)
                         outStream.WriteFromStream(inStream, binDataLen);
@@ -331,33 +331,46 @@ namespace TRTR
                 Noop.DoIt();
         }
 
+        private static Regex rx = new Regex(@"^(\[[0-9a-z\.]+\]|)(.*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         private static byte[] TranslateTextBlock(string textBlock, FileEntry entry, UInt32 blockNo, TranslationProvider tp)
         {
-            Regex rx = new Regex(@"^(\[[0-9a-z\.]+\]|)(.*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
             StringBuilder ret = new StringBuilder();
 
             // split texts 
             //string[] elements = textBlock.Substring(4).Split((char)0x0D); // remove content-length value and split texts at delimiters
             string[] elements = textBlock.Split((char)0x0D); // remove content-length value and split texts at delimiters
-            Dictionary<int, string> dupeFilter = new Dictionary<int, string>(); // for avoiding dupes in bigfile_english/thechosenone.mul
+
+            string rusText = string.Empty;
+            bool isRus = false;
+            for (Int32 i = 0; i < elements.Length - 1; i += 2)
+            {
+                if (elements[i] == "9")
+                    rusText = elements[i + 1];
+            }
+
             for (Int32 i = 0; i < elements.Length - 1; i += 2)
             {
                 // parse language code
                 string langCode = elements[i];
+
+                string textElement = elements[i + 1];
+                if (textElement.ToLower().Contains("speaking russian"))
+                {
+                    textElement = rusText;
+                    isRus = true;
+                }
+
                 Int32 langCodeValue;
                 if (!Int32.TryParse(langCode, out langCodeValue))
                     throw new Exception(string.Format("Invalid language code: \"{0}\"", langCode));
 
-                string textElement = elements[i + 1];
-                FileLanguage language = (FileLanguage)langCodeValue;
+                FileLocale language = (FileLocale)(1 << langCodeValue);
 
-                if (language == FileLanguage.English)
+                if ((language & TRGameInfo.TransTextLang) == TRGameInfo.TransTextLang)
                 {
-                    // debug
-                    if (textBlock.Length > 2)
-                        if (textElement.Length > 0)
-                            if (textElement[0] == '[' && textElement[textElement.Length - 1] == ']')
-                                Noop.DoIt();
+                    Dictionary<int, string> dupeFilter = new Dictionary<int, string>(); // for avoiding dupes in bigfile_english/thechosenone.mul
 
                     string translated = string.Empty;
                     string prefix = string.Empty;
@@ -378,16 +391,22 @@ namespace TRTR
                         prefix = string.Empty;
                         text = textElement;
                     }
-                    string[] context = null;
+                    Dictionary<string, string> context = null;
 
                     if (tp.UseContext)
-                        context = new string[] { 
-                            "blockNo", blockNo.ToString("X8"),
-                            "prefix", prefix,
-                            "filename", entry.Extra.FileNameForced, 
-                            "hash", entry.HashText, 
-                            "bigfile", entry.BigFile.Name,
+                        context = new Dictionary<string, string> { 
+                            {"blockNo", blockNo.ToString("X8")},
+                            {"prefix", prefix},
+                            {"filename", entry.Extra.FileNameForced}, 
+                            {"hash", entry.HashText}, 
+                            {"bigfile", entry.BigFile.Name},
                         };
+
+                    if (isRus)
+                    {
+                        if (tp.UseContext)
+                            context.Add("SrcLang", "ru");
+                    }
 
                     if (!dupeFilter.TryGetValue(textElement.GetHashCode(), out translated))
                     {
@@ -395,7 +414,9 @@ namespace TRTR
                         dupeFilter.Add(textElement.GetHashCode(), translated);  // for avoiding dupes in bigfile_english/thechosenone.mul
                     }
 
-                    ret.Append(langCode + (char)0x0D + prefix + translated + (char)0x0D);
+                    string translatedLangBlock = prefix + translated;
+
+                    ret.Append(langCode + (char)0x0D + translatedLangBlock + (char)0x0D);
                 }
                 else
                 {

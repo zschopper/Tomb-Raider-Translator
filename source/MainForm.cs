@@ -14,12 +14,43 @@ using System.Threading;
 using System.Globalization;
 using System.Diagnostics;
 using System.Reflection;
+using System.Linq;
 
 namespace TRTR
 {
 
-    internal partial class form_Main : Form
+    internal partial class form_Main : Form, ILogListener
     {
+        private delegate void SetControlPropertyThreadSafeDelegate(Control control, string propertyName, object propertyValue);
+
+        public static void SetControlPropertyThreadSafe(Control control, string propertyName, object propertyValue)
+        {
+            if (control.InvokeRequired)
+            {
+                control.Invoke(new SetControlPropertyThreadSafeDelegate(SetControlPropertyThreadSafe), new object[] { control, propertyName, propertyValue });
+            }
+            else
+            {
+                control.GetType().InvokeMember(propertyName, BindingFlags.SetProperty, null, control, new object[] { propertyValue });
+            }
+        }
+
+        public void InitializeListener()
+        {
+        }
+
+        public void LogMsg(LogMessage msg)
+        {
+            if (msg.LogType == LogEntryType.Progress)
+            {
+                SetControlPropertyThreadSafe(labelProgressText, "Text", msg.Message);
+                SetControlPropertyThreadSafe(progressTask, "Value", msg.Progress);
+            }
+        }
+
+        public void FinalizeListener()
+        {
+        }
 
         internal class GamesComboBoxItem
         {
@@ -37,6 +68,7 @@ namespace TRTR
 
         internal form_Main()
         {
+            Log.AddListener("form", this);
             Settings.Load();
             //            Application.CurrentCulture = new CultureInfo(Settings.LastLocale);
             //            Thread.CurrentThread.CurrentCulture = new CultureInfo(Settings.LastLocale);
@@ -88,7 +120,7 @@ namespace TRTR
                 // search for installed games in registry and fill game selector combo
 
                 //ezvanelbaszva:
-                
+
                 comboGame.Items.Clear();
 
                 comboGame.ValueMember = "Game";
@@ -120,7 +152,7 @@ namespace TRTR
                             break;
 
                         default:
-                            
+
                             break;
                     }
 
@@ -139,13 +171,13 @@ namespace TRTR
                 labelVersion.Text = String.Format(GeneralTexts.Version, Settings.version.ToString()) + (info.IsDebug ? " (dev)" : string.Empty);
                 labelLang.Text = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName.ToUpper();
 
-                menuItemCompileTexts.Visible = false;
-                menuItemExtractTexts.Visible = false;
+                //menuItemCompileTexts.Visible = false;
+                //menuItemExtractTexts.Visible = false;
                 //menuItemSimulateRestoration.Visible = false;
                 //menuItemSimulateTranslation.Visible = false;
 
                 // show debug menu items in debug mode
-                
+
                 ShowExtraDebugMenuItems();
                 #region FullScreen settings
                 /*
@@ -232,10 +264,10 @@ namespace TRTR
 
         private void ShowExtraDebugMenuItems()
         {
-            menuItemCompileTexts.Visible = true;
-            menuItemExtractTexts.Visible = true;
-            menuItemSimulateRestoration.Visible = true;
-            menuItemSimulateTranslation.Visible = true;
+            //menuItemCompileTexts.Visible = true;
+            //menuItemExtractTexts.Visible = true;
+            //menuItemSimulateRestoration.Visible = true;
+            //menuItemSimulateTranslation.Visible = true;
         }
 
         // change language of application texts
@@ -265,7 +297,7 @@ namespace TRTR
                 ChangeTexts(item);
             labelLang.Text = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName.ToUpper();
             FileVersionInfo info = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-            
+
             labelVersion.Text = String.Format(GeneralTexts.Version, Settings.version.ToString()) + (info.IsDebug ? " (dev)" : string.Empty);
             if (initControls)
             {
@@ -314,7 +346,7 @@ namespace TRTR
                     }
                 }
             }
-            
+
             if (game != null)
             {
                 LockThreadControls();
@@ -464,7 +496,8 @@ namespace TRTR
         private void menuItemRunGame_Click(object sender, EventArgs e)
         {
             Process pr = new Process();
-            pr.StartInfo.FileName = Path.Combine("", "");
+            //if (TRGameInfo.Game.InstallType == InstallTypeEnum.Steam)
+            pr.StartInfo.FileName = "TombRaider.exe";
             pr.StartInfo.WorkingDirectory = TRGameInfo.Game.InstallFolder;
             pr.Start();
         }
@@ -522,10 +555,13 @@ namespace TRTR
             {
                 TRGameStatus gameStatus = TRGameInfo.GameStatus;
 
-                if ((gameStatus & TRGameStatus.TranslationDataFileNotFound) != TRGameStatus.None)
-                    labelAvailableTranslationVersion.Text = Errors.TranslationDataFileNotFound;
+                //if ((gameStatus & TRGameStatus.TranslationDataFileNotFound) != TRGameStatus.None)
+                //    labelAvailableTranslationVersion.Text = Errors.TranslationDataFileNotFound;
                 //else
-                //    labelAvailableTranslationVersion.Text = TRGameInfo.Trans.TransVersion;
+                if (TRGameInfo.Game.TransFiles.Count > 0)
+                    labelAvailableTranslationVersion.Text = TRGameInfo.Game.TransFiles[0].Description;
+                else
+                    labelAvailableTranslationVersion.Text = Errors.TranslationDataFileNotFound;
 
                 if ((gameStatus & TRGameStatus.InstallDirectoryNotExist) != TRGameStatus.None)
                     labelInstallPath.Text = Errors.InstallDirectoryNotExist;
@@ -571,12 +607,5 @@ namespace TRTR
                 activeBeforeLocked.Focus();
         }
 
-        public void valami(object sender, DoWorkEventArgs e)
-        {
-        }
-
-        private void buttonTest1_Click(object sender, EventArgs e)
-        {
-        }
     }
 }

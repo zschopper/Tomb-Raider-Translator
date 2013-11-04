@@ -86,7 +86,7 @@ namespace TRTR
             dict = new Dictionary<int, ResXDictEntryList>();
         }
 
-        internal override string GetTranslation(string text, FileEntry entry, string[] context)
+        internal override string GetTranslation(string text, FileEntry entry, Dictionary<string, string> context)
         {
             if (text.Trim().Length == 0)
                 return text;
@@ -94,16 +94,11 @@ namespace TRTR
             ResXDictEntryList dictEntries = null;
             int sourceHash = text.GetHashCode();
 
-            string[] innerContext = new string[] {
-                            string.Format("FileType: {0}", entry.FileType),
-                            string.Format("BigFile: {0}", entry.BigFile),
-                            string.Format("FileName: {0}", entry.Extra.FileNameForced),
-                        };
             if (!dict.TryGetValue(sourceHash, out dictEntries))
             {
                 //throw new Exception(string.Format("No translation for \"{0}\"", text));
                 Log.LogDebugMsg(string.Format("No translation for \"{0}\"", text));
-                Log.LogDebugMsg(string.Format("  Context: \"{0}\"", string.Join("; ", innerContext)));
+                Log.LogDebugMsg(string.Format("  Context: \"{0}\"", string.Join("; ", context)));
                 return text;
             }
 
@@ -119,7 +114,7 @@ namespace TRTR
             if (dictEntries[0].SourceHash == dictEntries[0].TranslationHash)
             {
                 Log.LogDebugMsg(string.Format("Text not translated: \"{0}\"", text));
-                Log.LogDebugMsg(string.Format("  Context: \"{0}\"", string.Join("; ", innerContext)));
+                Log.LogDebugMsg(string.Format("  Context: \"{0}\"", string.Join("; ", context)));
             }
             return dictEntries[0].Translation;
         }

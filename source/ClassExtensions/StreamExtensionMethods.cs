@@ -68,6 +68,20 @@ namespace ExtensionMethods
             return ret;
         }
 
+        public static sbyte ReadInt8(this Stream me)
+        {
+            byte[] buf = new byte[1];
+            me.Read(buf, 0, buf.Length);
+            return (sbyte)(buf[0]);
+        }
+
+        public static byte ReadUInt8(this Stream me)
+        {
+            byte[] buf = new byte[1];
+            me.Read(buf, 0, buf.Length);
+            return (byte)(buf[0]);
+        }
+
         public static Int16 ReadInt16(this Stream me)
         {
             byte[] buf = new byte[2];
@@ -180,8 +194,8 @@ namespace ExtensionMethods
 
         public static void WriteFromStream(this Stream me, Stream sourceStream, long count, int bufferSize = 1048576)
         {
-            if (count > sourceStream.Length - sourceStream.Position)
-                throw new IOException("Source stream is too small");
+            //if (count > sourceStream.Length - sourceStream.Position)
+            //    throw new IOException("Source stream is too small");
 
             long copiedBytes = 0;
             byte[] buf = new byte[Math.Min(bufferSize, count)];
@@ -194,4 +208,5 @@ namespace ExtensionMethods
             };
         }
     }
+
 }

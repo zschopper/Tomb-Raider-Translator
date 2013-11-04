@@ -27,7 +27,6 @@ namespace TRTR
             buttonRestore.Enabled = false;
             comboGame.Enabled = false;
             labelLang.Enabled = false;
-
         }
 
         internal void UnlockThreadControls()
@@ -98,12 +97,7 @@ namespace TRTR
         private void workerExtract_DoWork(object sender, DoWorkEventArgs e)
         {
             InitializeWorker((BackgroundWorker)sender);
-            TRGameInfo.Extract();
-            
-            //FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
-            //entryList.Extract(TRGameInfo.Game.WorkFolder);
-            //MovieSubtitles sub = new MovieSubtitles();
-            //sub.Extract(TRGameInfo.Game.WorkFolder);
+            TRGameInfo.BigFiles.Extract(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "source"), false);
         }
 
         private void workerTranslate_DoWork(object sender, DoWorkEventArgs e)
@@ -121,9 +115,9 @@ namespace TRTR
 
         private void workerGenerateFilesTxt_DoWork(object sender, DoWorkEventArgs e)
         {
-            //InitializeWorker((BackgroundWorker)sender);
+            InitializeWorker((BackgroundWorker)sender);
             //FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
-            //entryList.GenerateFilesTxt();
+            TRGameInfo.BigFiles.GenerateFilesTxt();
         }
 
         private void workerRestore_DoWork(object sender, DoWorkEventArgs e)

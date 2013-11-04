@@ -15,6 +15,7 @@ using System.Reflection;
 
 namespace TRTR
 {
+
     enum FileLanguage
     {
         Default = -1,
@@ -250,7 +251,7 @@ namespace TRTR
         private static bool initialized = false;
         static ResTexts()
         {
-           // Refresh();
+            // Refresh();
         }
 
         internal static void Refresh()

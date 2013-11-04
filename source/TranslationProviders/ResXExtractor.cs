@@ -142,7 +142,7 @@ namespace TRTR
             return compareRes;
         }
 
-        internal override string GetTranslation(string text, FileEntry entry, string[] context)
+        internal override string GetTranslation(string text, FileEntry entry, Dictionary<string, string> context)
         {
             if (text == "")
                 return "";
@@ -213,17 +213,12 @@ namespace TRTR
                 {
                     bool discardValue = false;
                     StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < context.Length; i++)
+                    foreach (string key in context.Keys)
                     {
-                        if (i % 2 == 0)
-                        {
-                            discardValue = context[i] == "bigfile";
-                            if (!discardValue)
-                                sb.Append("\r\n" + context[i]);
-                        }
-                        else
-                            if (!discardValue)
-                                sb.Append(": " + context[i]);
+                        discardValue = (key != "bigfile");
+
+                        if(!discardValue)
+                            sb.Append(string.Format("{0}: {1}\r\n", key, context[key]));
                     }
                     resNode.Comment = sb.ToString().Trim();
                 }

@@ -131,8 +131,8 @@ namespace TRTR
         //   buffer:
         //     The buffer to read the data into.
         //
-        //   offset:
-        //     The byte offset in buffer at which to begin writing data read from the stream.
+        //   Offset:
+        //     The byte Offset in buffer at which to begin writing data read from the stream.
         //
         //   count:
         //     The maximum number of bytes to read.
@@ -170,8 +170,8 @@ namespace TRTR
         //   buffer:
         //     The buffer to write data from.
         //
-        //   offset:
-        //     The byte offset in buffer from which to begin writing.
+        //   Offset:
+        //     The byte Offset in buffer from which to begin writing.
         //
         //   count:
         //     The maximum number of bytes to write.
@@ -341,11 +341,11 @@ namespace TRTR
         // Parameters:
         //   buffer:
         //     An array of bytes. When this method returns, the buffer contains the specified
-        //     byte array with the values between offset and (offset + count - 1) replaced
+        //     byte array with the values between Offset and (Offset + count - 1) replaced
         //     by the bytes read from the current source.
         //
-        //   offset:
-        //     The zero-based byte offset in buffer at which to begin storing the data read
+        //   Offset:
+        //     The zero-based byte Offset in buffer at which to begin storing the data read
         //     from the current stream.
         //
         //   count:
@@ -358,13 +358,13 @@ namespace TRTR
         //
         // Exceptions:
         //   System.ArgumentException:
-        //     The sum of offset and count is larger than the buffer length.
+        //     The sum of Offset and count is larger than the buffer length.
         //
         //   System.ArgumentNullException:
         //     buffer is null.
         //
         //   System.ArgumentOutOfRangeException:
-        //     offset or count is negative.
+        //     Offset or count is negative.
         //
         //   System.IO.IOException:
         //     An I/O error occurs.
@@ -396,8 +396,8 @@ namespace TRTR
         //     stream.
         //
         // Parameters:
-        //   offset:
-        //     A byte offset relative to the origin parameter.
+        //   Offset:
+        //     A byte Offset relative to the origin parameter.
         //
         //   origin:
         //     A value of type System.IO.SeekOrigin indicating the reference point used
@@ -463,8 +463,8 @@ namespace TRTR
         //     An array of bytes. This method copies count bytes from buffer to the current
         //     stream.
         //
-        //   offset:
-        //     The zero-based byte offset in buffer at which to begin copying bytes to the
+        //   Offset:
+        //     The zero-based byte Offset in buffer at which to begin copying bytes to the
         //     current stream.
         //
         //   count:

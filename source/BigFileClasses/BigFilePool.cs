@@ -97,7 +97,7 @@ namespace TRTR
 
             if (!pool.ContainsKey(key))
             {
-                BigFile bigFile = null;
+                BigFileV3 bigFile = null;
                 if (!bigFiles.ItemsByName.TryGetValue(name, out bigFile))
                 {
                     bigFile = null;
@@ -171,7 +171,7 @@ namespace TRTR
 
             if (!pool.ContainsKey(key))
             {
-                BigFile bigFile = null;
+                BigFileV3 bigFile = null;
                 if (!bigFiles.ItemsByName.TryGetValue(name, out bigFile))
                 {
                     bigFile = null;

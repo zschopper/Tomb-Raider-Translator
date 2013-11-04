@@ -11,9 +11,19 @@ namespace TRTR
 
         internal abstract void Open();
         internal abstract void Clear();
-        internal abstract string GetTranslation(string text, FileEntry entry, string[] context = null);
+        internal abstract string GetTranslation(string text, FileEntry entry, Dictionary<string, string> context = null);
         internal abstract void Close();
 
         protected abstract bool getUseContext();
+
+        internal string getContextText(Dictionary<string, string> dict) 
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (string key in dict.Keys)
+            {
+                
+            }
+            return sb.ToString();
+        }
     }
 }

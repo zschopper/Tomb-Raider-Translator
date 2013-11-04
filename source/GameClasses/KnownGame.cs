@@ -119,16 +119,16 @@ namespace TRTR
                 AppId = "203160", //203178 - dlc VIDEO
                 ExeName = "TombRaider.exe",
                 BigfileVersion = "3",
-                BigFiles = new KnownGame.KnownBigfileData[] { 
-                    new KnownGame.KnownBigfileData{ name = "bigfile",     pattern = "bigfile.{0:D3}.tiger", entryOfs = 0 },
-                    new KnownGame.KnownBigfileData{ name = "bigfile_loc", pattern = "bigfile_ENGLISH.{0:D3}.tiger", entryOfs = 0 },
-                    new KnownGame.KnownBigfileData{ name = "patch", pattern = "patch.{0:D3}.tiger", entryOfs = 0 },
-                    new KnownGame.KnownBigfileData{ name = "patch_loc", pattern = "patch_ENGLISH.{0:D3}.tiger", entryOfs = 0 },
-                    new KnownGame.KnownBigfileData{ name = "patch2", pattern = "patch2.{0:D3}.tiger", entryOfs = 0 },
-                    new KnownGame.KnownBigfileData{ name = "patch2_loc", pattern = "patch2_ENGLISH.{0:D3}.tiger", entryOfs = 0 },
-                    new KnownGame.KnownBigfileData{ name = "title", pattern = "title.{0:D3}.tiger", entryOfs = 0 },
-                    new KnownGame.KnownBigfileData{ name = "title_loc", pattern = "title_ENGLISH.{0:D3}.tiger", entryOfs = 0 },
-                },
+                //BigFiles = new KnownGame.KnownBigfileData[] { 
+                //    new KnownGame.KnownBigfileData{ name = "bigfile",     pattern = "bigfile.{0:D3}.tiger", entryOfs = 0 },
+                //    new KnownGame.KnownBigfileData{ name = "bigfile_loc", pattern = "bigfile_ENGLISH.{0:D3}.tiger", entryOfs = 0 },
+                //    new KnownGame.KnownBigfileData{ name = "patch", pattern = "patch.{0:D3}.tiger", entryOfs = 0 },
+                //    new KnownGame.KnownBigfileData{ name = "patch_loc", pattern = "patch_ENGLISH.{0:D3}.tiger", entryOfs = 0 },
+                //    new KnownGame.KnownBigfileData{ name = "patch2", pattern = "patch2.{0:D3}.tiger", entryOfs = 0 },
+                //    new KnownGame.KnownBigfileData{ name = "patch2_loc", pattern = "patch2_ENGLISH.{0:D3}.tiger", entryOfs = 0 },
+                //    new KnownGame.KnownBigfileData{ name = "title", pattern = "title.{0:D3}.tiger", entryOfs = 0 },
+                //    new KnownGame.KnownBigfileData{ name = "title_loc", pattern = "title_ENGLISH.{0:D3}.tiger", entryOfs = 0 },
+                //},
             });
         }
     }

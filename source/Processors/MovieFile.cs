@@ -80,17 +80,17 @@ namespace TRTR
                             string prefix = m2.Groups[2].Value;
                             string text = m2.Groups[3].Value;
 
-                            string[] context = null;
+                            Dictionary<string, string> context = null;
                             if (tp.UseContext)
-                                context = new string[] { 
+                                context = new Dictionary<string, string> { 
                                     //"index", i.ToString(),
                                     //"prefix", prefix,
-                                    "filename", entry.Extra.FileNameForced, 
-                                    "hash", entry.HashText, 
-                                    "bigfile", entry.BigFile.Name,
-                                    "time", timeStr,
+                                    {"filename", entry.Extra.FileNameForced}, 
+                                    {"hash", entry.HashText},
+                                    {"bigfile", entry.BigFile.Name},
+                                    {"time", timeStr},
                                 };
-                            //context = new string[] { 
+                            //context = new Dictionary<string> { 
                             //        timeStr,
                             //    };
                             string translatedText = TRGameInfo.Conv.ToGameFormat(tp.GetTranslation(text, entry, context));

@@ -182,17 +182,17 @@ namespace TRTR
                         inStream.Read(textBuf, 0, (int)(tableEntry.Length));
 
                         string[] keyPlaceHolders;
-                        string text = CharToKeyPlaceholders(TRGameInfo.Conv.Enc.GetString(textBuf, 0, (int)(tableEntry.Length)).Trim(new char[]{'\0'}), out keyPlaceHolders);
+                        string text = CharToKeyPlaceholders(TRGameInfo.Conv.Enc.GetString(textBuf, 0, (int)(tableEntry.Length)).Trim(new char[] { '\0' }), out keyPlaceHolders);
 
-                        string[] context = null;
+                        Dictionary<string, string> context = null;
                         if (tp.UseContext)
-                            context = new string[] { 
-                                "index", i.ToString(),
-                                //"prefix", prefix,
-                                "filename", entry.Extra.FileNameForced, 
-                                "hash", entry.HashText, 
-                                "bigfile", entry.BigFile.Name,
-                            };
+                            context = new Dictionary<string, string> {
+                                {"index", i.ToString()},
+                                //{"prefix", prefix},
+                                {"filename", entry.Extra.FileNameForced},
+                                {"hash", entry.HashText},
+                                {"bigfile", entry.BigFile.Name},
+                                      };
                         translation = TRGameInfo.Conv.ToGameFormat(tp.GetTranslation(text.Replace("\n", "\r\n"), entry, context));
                         // if we aren't in read-only mode: write translation
                         if (outStream != Stream.Null && translation != string.Empty)

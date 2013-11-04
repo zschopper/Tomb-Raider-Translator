@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace TRTR
 {
-    class TMXExtractor : TranslationProvider
+    class RUTMXExtractor : TranslationProvider
     {
         #region private declarations
         //private Dictionary<int, ResXDictEntryList> dict = new Dictionary<int, ResXDictEntryList>();
@@ -20,7 +20,7 @@ namespace TRTR
         private XmlNode bodyNode = null;
         private TranslationProvider tp = null;
         private List<int> transHashes;
-        RUTMXExtractor tpRUS = null;
+        TMXExtractor tpRUS = null;
         private int tuId = 0;
         private static string[] bigfile_locals = new string[] { "ARABIC", "ENGLISH", "FRENCH", "GERMAN", "ITALIAN", "POLISH", "RUSSIAN", "SPANISH" };
         #endregion
@@ -28,21 +28,26 @@ namespace TRTR
         internal string SrcLang { get; set; }
 
         // ctor
-        internal TMXExtractor(string path, TranslationProvider tp = null)
+        internal RUTMXExtractor(string path, TranslationProvider tp = null)
         {
             this.extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, path);
             this.tp = tp;
-            this.SrcLang = "en";
+            this.SrcLang = "ru";
         }
 
         internal override void Open()
         {
 
             // purge old translations
+            if (SrcLang != "ru")
+            {
+                tpRUS = new TMXExtractor(Path.ChangeExtension(extractFileName, ".ru-ext.tmx"));
+                tpRUS.SrcLang = "ru";
+            }
+
             Clear();
             tuId = 0;
-            tpRUS = new RUTMXExtractor(Path.ChangeExtension(extractFileName, ".ru-ext.tmx"), tp);
-            tpRUS.Open();
+
             // load filename aliases file
             LoadPathAliasesFile(Path.Combine(TRGameInfo.Game.WorkFolder, "path_aliases.txt"), out folderAliasDict, out fileNameAliasDict);
 
@@ -60,7 +65,7 @@ namespace TRTR
             elemHeader.SetAttribute("datatype", "PlainText");
             elemHeader.SetAttribute("segtype", "sentence");
             elemHeader.SetAttribute("adminlang", "en");
-            elemHeader.SetAttribute("srclang", "en");
+            elemHeader.SetAttribute("srclang", SrcLang);
             elemHeader.SetAttribute("o-tmf", "TRTR2TranslationMemory");
             XmlNode nodeHeader = nodeTmx.AppendChild(elemHeader);
             bodyNode = nodeTmx.AppendChild(doc.CreateElement("body"));
@@ -86,8 +91,6 @@ namespace TRTR
             if (!Directory.Exists(Path.GetDirectoryName(extractFileName)))
                 Directory.CreateDirectory(Path.GetDirectoryName(extractFileName));
             doc.Save(this.extractFileName);
-            if(tpRUS != null)
-                tpRUS.Close();
         }
 
         protected override bool getUseContext() { return true; }
@@ -145,13 +148,6 @@ namespace TRTR
             if (text.Trim() == "")
                 return text;
 
-            string textSrcLang = this.SrcLang;
-            if (context.TryGetValue("SrcLang", out textSrcLang))
-                if (textSrcLang == "ru")
-                {
-                    return tpRUS.GetTranslation(text, entry, context);
-                }
-
             string trans = text;
 
             int textHashCode = text.GetHashCode();
@@ -195,7 +191,7 @@ namespace TRTR
 
                     //source
                     XmlElement elemTuvSource = doc.CreateElement("tuv");
-                    elemTuvSource.SetAttribute("xml:lang", "en");
+                    elemTuvSource.SetAttribute("xml:lang", SrcLang);
                     XmlNode nodeTuvSource = nodeTu.AppendChild(elemTuvSource);
 
 
@@ -217,6 +213,8 @@ namespace TRTR
                     //nodeTuvTrans.AppendChild(doc.CreateElement("crowdin-metadata"));
 
                 }
+
+
             }
             return trans;
         }
