@@ -7,7 +7,7 @@ using ExtensionMethods;
 
 namespace TRTR
 {
-    
+
 
     class FontV3
     {
@@ -33,8 +33,8 @@ namespace TRTR
             Directory.CreateDirectory(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name));
             BigFileList.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name, entry.Extra.FileNameOnlyForced), entry);
             inStream.Position = entry.Raw.Address;
-            DRMFile drm = new DRMFile();
-            drm.Parse(entry, inStream, contentLength, outStream);
+            DRMFile drm = new DRMFile(entry);
+            drm.Parse(inStream, contentLength, outStream);
 
             return true;
         }

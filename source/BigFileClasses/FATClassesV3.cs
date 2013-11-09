@@ -1023,10 +1023,13 @@ namespace TRTR
             //TranslationProvider tpTransSrc = new TMXProvider();
             //TranslationProvider tpTransSrc = new ResXDict(Path.Combine(TRGameInfo.Game.WorkFolder, "hu"));
             //TranslationProvider tpTransSrc = new NMSTranslationProvider(Path.Combine(TRGameInfo.Game.WorkFolder, "nemes"));
-            TranslationProvider tpTransSrc = new TMXProvider();
-            tpTransSrc.Open();
+
+
+            //TranslationProvider tpTransSrc = new TMXProvider();
+            TranslationProvider tpTransSrc = null;
+            //tpTransSrc.Open();
             TranslationProvider tp = new TMXExtractor(Path.Combine(destFolder, "extract.tmx"), tpTransSrc);
-            tp.Open();
+            //tp.Open();
             int lastReported = 0;
             //BigFileIdx.EntryList.SortBy(FileEntryCompareField.FileName);
 
@@ -1076,8 +1079,8 @@ namespace TRTR
                     lastReported = percent;
                 }
             }
-            tp.Close();
-            tpTransSrc.Close();
+            //tp.Close();
+            //tpTransSrc.Close();
         }
 
         internal void Translate(bool simulated)

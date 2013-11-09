@@ -162,6 +162,7 @@
     <Compile Include="GameClasses\ProcessMan.cs" />
     <Compile Include="Processors\DRMFile.cs" />
     <Compile Include="Processors\FontV3.cs" />
+    <Compile Include="Processors\PCD9File.cs" />
     <Compile Include="TranslationProviders\DummyTranslationProvider.cs" />
     <Compile Include="TranslationProviders\ResXDictClass.cs" />
     <Compile Include="GameClasses\InstalledGames.cs" />

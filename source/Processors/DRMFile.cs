@@ -52,7 +52,18 @@ namespace TRTR
 
     partial class DRMFile
     {
-        internal void Parse(FileEntry entry, Stream inStream, long contentLength, Stream outStream)
+        #region private declarations
+        FileEntry entry = null;
+        #endregion
+
+        FileEntry Entry { get { return entry; } }
+
+        internal DRMFile(FileEntry entry)
+        {
+            this.entry = entry;
+        }
+
+        internal void Parse(Stream inStream, long contentLength, Stream outStream)
         {
             Int64 startInPos = inStream.Position;
             ;
@@ -61,7 +72,7 @@ namespace TRTR
             uint unknown04_Size = inStream.ReadUInt32();
             uint unknown08_Size = inStream.ReadUInt32();
             uint unknown0C = inStream.ReadUInt32(); // extra data after first block?
-            var unknown10 = inStream.ReadUInt32();
+            uint unknown10 = inStream.ReadUInt32();
             uint Flags = inStream.ReadUInt32();
             uint sectionCount = inStream.ReadUInt32();
             uint unknown1C_Count = inStream.ReadUInt32();
@@ -142,9 +153,9 @@ namespace TRTR
                 fs.Position = hdr.Offset;
                 try
                 {
-                    Debug.WriteLine(string.Format("ExtractCDRM {0} {1} {2} {3:X8}", entry.BigFile.Name, entry.Extra.FileNameForced, i, hdr.Offset));
-                    ExtractCDRM(entry, fs, hdr.Length, i);
-                    Debug.WriteLine(string.Format("ExtractCDRM end"));
+                    //Debug.WriteLine(string.Format("ExtractCDRM {0} {1} {2} {3:X8}", entry.BigFile.Name, entry.Extra.FileNameForced, i, hdr.Offset));
+                    ExtractCDRM(fs, hdr.Length, i);
+                    //Debug.WriteLine(string.Format("ExtractCDRM end"));
                 }
                 finally
                 {
@@ -162,7 +173,7 @@ namespace TRTR
             public UInt32 cmpSize;
         }
 
-        internal void ExtractCDRM(FileEntry entry, Stream inStream, long contentLength, int idx)
+        internal void ExtractCDRM(Stream inStream, long contentLength, int idx)
         {
             long inStreamPos = inStream.Position;
             uint magic = inStream.ReadUInt32();     // CDRM
@@ -190,9 +201,10 @@ namespace TRTR
             for (int i = 0; i < count; i++)
             {
                 CDRMHeader hdr = items[i];
-                Debug.WriteLine(string.Format("{0}, {1} {2}", entry.Extra.FileName, i, hdr.type));
+                //Debug.WriteLine(string.Format("{0}, {1} {2}", entry.Extra.FileName, i, hdr.type));
                 if (count > 2)
                     Noop.DoIt();
+                
                 inStream.Position = inStream.Position.ExtendToBoundary(0x10);
                 if (hdr.type == 2)
                 {
@@ -208,6 +220,21 @@ namespace TRTR
                             long start = inStream.Position;
                             byte[] buf = new byte[hdr.ucmpSize];
                             unzipStream.Read(buf, 0, (int)hdr.ucmpSize);
+                            
+                            string dataMagic = Encoding.ASCII.GetString(buf, 0, 4);
+                            if (dataMagic == "PCD9")
+                            {
+                                PCD9 pcd9 = new PCD9();
+                                MemoryStream ms = new MemoryStream(buf);
+                                try
+                                {
+                                    pcd9.ReadFromStream(ms);
+                                }
+                                finally
+                                {
+                                    ms.Close();
+                                }
+                            }
                             outputStream.Write(buf, 0, buf.Length);
                             if (inStream.Position > start + hdr.cmpSize.ExtendToBoundary(0x10))
                             {

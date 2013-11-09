@@ -79,7 +79,7 @@ namespace ExtensionMethods
         {
             byte[] buf = new byte[1];
             me.Read(buf, 0, buf.Length);
-            return (byte)(buf[0]);
+            return buf[0];
         }
 
         public static Int16 ReadInt16(this Stream me)
