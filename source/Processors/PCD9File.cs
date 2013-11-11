@@ -128,6 +128,12 @@ namespace TRTR
             //    throw new InvalidOperationException();
             //}
             MakeBitmapFromTrueColor(this.Width, this.Height, data, true);
+            string folder = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "drm", entry.BigFile.Name, entry.Extra.FileNameOnlyForced);
+            Directory.CreateDirectory(folder);
+            Stream outputStream = new FileStream(Path.Combine(folder, string.Format("{0:X4},{1:X4}c", idx, i)), FileMode.Create);
+
+            bitmap.Save("c:\\tmp\\x.bmp", ImageFormat.Bmp);
+
         }
 
         private static Bitmap MakeBitmapFromTrueColor(uint width, uint height, byte[] input, bool keepAlpha)
@@ -147,7 +153,6 @@ namespace TRTR
             BitmapData data = bitmap.LockBits(area, ImageLockMode.WriteOnly, bitmap.PixelFormat);
             Marshal.Copy(output, 0, data.Scan0, output.Length);
             bitmap.UnlockBits(data);
-            bitmap.Save("c:\\tmp\\x.bmp", ImageFormat.Bmp);
             return bitmap;
         }
 

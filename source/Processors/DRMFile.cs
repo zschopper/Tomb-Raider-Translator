@@ -196,8 +196,6 @@ namespace TRTR
                 hdr.cmpSize = inStream.ReadUInt32();
                 items.Add(hdr);
             }
-//            if (count > 2)
-            //Debug.WriteLine(string.Format("{0}, {1} count: {2}", entry.BigFile.Name, entry.Extra.FileName, count));
             for (int i = 0; i < count; i++)
             {
                 CDRMHeader hdr = items[i];
@@ -211,10 +209,10 @@ namespace TRTR
                     InflaterInputStream unzipStream = new InflaterInputStream(inStream);
                     try
                     {
-                        string folder = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "drm", entry.BigFile.Name, entry.Extra.FileNameOnlyForced);
-                        Directory.CreateDirectory(folder);
-                        Stream outputStream = new FileStream(Path.Combine(folder, string.Format("{0:X4},{1:X4}c", idx, i)), FileMode.Create);
-                        //Stream outputStream = new MemoryStream();
+                        //string folder = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "drm", entry.BigFile.Name, entry.Extra.FileNameOnlyForced);
+                        //Directory.CreateDirectory(folder);
+                        //Stream outputStream = new FileStream(Path.Combine(folder, string.Format("{0:X4},{1:X4}c", idx, i)), FileMode.Create);
+                        Stream outputStream = new MemoryStream();
                         try
                         {
                             long start = inStream.Position;
@@ -259,9 +257,10 @@ namespace TRTR
                     Noop.DoIt();
                     try
                     {
-                        string folder = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "drm", entry.BigFile.Name, entry.Extra.FileNameOnlyForced);
-                        Directory.CreateDirectory(folder);
-                        Stream outputStream = new FileStream(Path.Combine(folder, string.Format("{0:X4},{1:X4}u", idx, i)), FileMode.Create);
+                        //string folder = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "drm", entry.BigFile.Name, entry.Extra.FileNameOnlyForced);
+                        //Directory.CreateDirectory(folder);
+                        //Stream outputStream = new FileStream(Path.Combine(folder, string.Format("{0:X4},{1:X4}u", idx, i)), FileMode.Create);
+                        Stream outputStream = new MemoryStream();
                         try
                         {
                             byte[] buf = new byte[hdr.ucmpSize];

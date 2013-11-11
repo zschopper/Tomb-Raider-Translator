@@ -369,7 +369,7 @@ namespace TRTR
         private string name;
         private FileLocale locale;
         private string neutralName;
-        private bool isDLC;
+        //private bool isDLC;
         #endregion
 
         // header data
