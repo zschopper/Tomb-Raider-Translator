@@ -1011,8 +1011,8 @@ namespace TRTR
                                 if (entry.Extra.FileName.Contains("generalbank.drm"))
                                     transEntries.Add(entry);
 
-                                if (entry.Extra.FileName.Contains("fontuniversal.drm"))
-                                    transEntries.Add(entry);
+                                //if (entry.Extra.FileName.Contains("fontuniversal.drm"))
+                                //    transEntries.Add(entry);
                                 break;
                             }
                     }

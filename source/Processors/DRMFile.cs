@@ -34,6 +34,7 @@ namespace TRTR
 
         public struct DRMHeader
         {
+            public int OrigIdx;
             public uint DataSize;
             public SectionType Type;
             public byte Unknown05;
@@ -82,6 +83,7 @@ namespace TRTR
             DRMFile.DRMHeader[] header = new DRMHeader[sectionCount];
             for (int i = 0; i < sectionCount; i++)
             {
+                header[i].OrigIdx = i;
                 header[i].DataSize = inStream.ReadUInt32();
                 header[i].Type = (SectionType)(inStream.ReadUInt8());
                 header[i].Unknown05 = inStream.ReadUInt8();
@@ -156,7 +158,7 @@ namespace TRTR
                 try
                 {
                     //Debug.WriteLine(string.Format("ExtractCDRM {0} {1} {2} {3:X8}", entry.BigFile.Name, entry.Extra.FileNameForced, i, hdr.Offset));
-                    ExtractCDRM(fs, hdr.Length, i);
+                    ExtractCDRM(hdr, fs);
                     //Debug.WriteLine(string.Format("ExtractCDRM end"));
                 }
                 finally
@@ -175,8 +177,9 @@ namespace TRTR
             public UInt32 cmpSize;
         }
 
-        internal void ExtractCDRM(Stream inStream, long contentLength, int idx)
+        internal void ExtractCDRM(DRMHeader drmHdr, Stream inStream)
         {
+            long contentLength = drmHdr.Length;
             long inStreamPos = inStream.Position;
             uint magic = inStream.ReadUInt32();     // CDRM
             uint version = inStream.ReadUInt32();   // 0 ( 2??)
@@ -222,7 +225,7 @@ namespace TRTR
                             unzipStream.Read(buf, 0, (int)hdr.ucmpSize);
 
                             string dataMagic = Encoding.ASCII.GetString(buf, 0, 4);
-                            if (dataMagic == "PCD9File")
+                            if (dataMagic == "PCD9")
                             {
                                 MemoryStream ms = new MemoryStream(buf);
                                 try
@@ -233,10 +236,10 @@ namespace TRTR
                                     if (pcd9.header.Width == 512 && pcd9.header.Height == 128)
                                     {
                                         Bitmap bmp = pcd9.GetBitmap(ms);
-                                        string folder = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "font", entry.BigFile.Name, entry.Extra.FileNameOnlyForced);
+                                        string folder = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "font", entry.BigFile.Name);
                                         Directory.CreateDirectory(folder);
-                                        bmp.Save(Path.Combine(folder, entry.Extra.FileNameOnlyForced + ".bmp"), ImageFormat.Bmp);
-                                        bmp.Save(Path.Combine(folder, entry.Extra.FileNameOnlyForced + ".png"), ImageFormat.Png);
+                                        bmp.Save(Path.Combine(folder, string.Format("{0}.{1:X4}-{2:X4}-{3:X4}.bmp", entry.Extra.FileNameOnlyForced, drmHdr.Id, drmHdr.OrigIdx, i)), ImageFormat.Bmp);
+                                        bmp.Save(Path.Combine(folder, string.Format("{0}.{1:X4}-{2:X4}-{3:X4}.png", entry.Extra.FileNameOnlyForced, drmHdr.Id, drmHdr.OrigIdx, i)), ImageFormat.Png);
                                     }
 
                                 }
