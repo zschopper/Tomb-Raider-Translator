@@ -643,7 +643,7 @@ namespace TRTR
                             case "Vers":
                                 entry.FileType = FileTypeEnum.SCH;
                                 break;
-                            case "PCD9":
+                            case "PCD9File":
                                 entry.FileType = FileTypeEnum.PCD9;
                                 break;
                             case "\x16\x00\x00\x00":

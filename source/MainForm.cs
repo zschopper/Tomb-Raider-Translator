@@ -63,7 +63,7 @@ namespace TRTR
         /*[DllImport("user32.dll")]
         internal static extern void
             SetWindowPos(IntPtr hwnd, IntPtr hwndInsertAfter,
-                         Int32 X, Int32 Y, Int32 width, Int32 height, uint flags);
+                         Int32 X, Int32 Y, Int32 width, Int32 height, uint Flags);
         */
 
         internal form_Main()

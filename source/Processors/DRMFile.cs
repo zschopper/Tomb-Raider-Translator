@@ -8,6 +8,8 @@ using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace TRTR
 {
@@ -126,7 +128,7 @@ namespace TRTR
             Directory.CreateDirectory(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name));
             TextWriter tw = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name, Path.ChangeExtension(entry.Extra.FileNameOnlyForced, ".log")));
             tw.WriteLine(string.Format("{0,-8} {1,-2} {2,-2} {3,-4} {4,-8} {5,-8} {6,-8} | {7,-8} {8,-8} {9,-8} {10,-8} | {11,-15} | {12,-2} {13,-2} {14,-8} {15}",
-                "DataSize", "ty", "05", "06", "flags", "id", "unk10", "u1", "Ad", "Le", "u4", "type", "pr", "bf", "offset", "bigfile"));
+                "DataSize", "ty", "05", "06", "Flags", "id", "unk10", "u1", "Ad", "Le", "u4", "type", "pr", "bf", "offset", "bigfile"));
             for (int i = 0; i < sectionCount; i++)
             {
                 DRMHeader hdr = header[i];
@@ -202,7 +204,7 @@ namespace TRTR
                 //Debug.WriteLine(string.Format("{0}, {1} {2}", entry.Extra.FileName, i, hdr.type));
                 if (count > 2)
                     Noop.DoIt();
-                
+
                 inStream.Position = inStream.Position.ExtendToBoundary(0x10);
                 if (hdr.type == 2)
                 {
@@ -218,15 +220,25 @@ namespace TRTR
                             long start = inStream.Position;
                             byte[] buf = new byte[hdr.ucmpSize];
                             unzipStream.Read(buf, 0, (int)hdr.ucmpSize);
-                            
+
                             string dataMagic = Encoding.ASCII.GetString(buf, 0, 4);
-                            if (dataMagic == "PCD9")
+                            if (dataMagic == "PCD9File")
                             {
-                                PCD9 pcd9 = new PCD9();
                                 MemoryStream ms = new MemoryStream(buf);
                                 try
                                 {
-                                    pcd9.ReadFromStream(ms);
+                                    PCD9File pcd9 = new PCD9File(ms);
+
+                                    Debug.WriteLine(string.Format("PCD9File: {0}x{1} ({2}bpp) {3} size: {4}", pcd9.header.Width, pcd9.header.Height, pcd9.header.BPP, pcd9.header.MipMapCount, pcd9.header.DataSize));
+                                    if (pcd9.header.Width == 512 && pcd9.header.Height == 128)
+                                    {
+                                        Bitmap bmp = pcd9.GetBitmap(ms);
+                                        string folder = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "font", entry.BigFile.Name, entry.Extra.FileNameOnlyForced);
+                                        Directory.CreateDirectory(folder);
+                                        bmp.Save(Path.Combine(folder, entry.Extra.FileNameOnlyForced + ".bmp"), ImageFormat.Bmp);
+                                        bmp.Save(Path.Combine(folder, entry.Extra.FileNameOnlyForced + ".png"), ImageFormat.Png);
+                                    }
+
                                 }
                                 finally
                                 {

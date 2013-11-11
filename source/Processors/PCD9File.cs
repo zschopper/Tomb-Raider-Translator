@@ -27,49 +27,61 @@ namespace TRTR
         public byte[] Data;
     }
 
-    class PCD9
+    class PCD9File
     {
-        PCD9Format Format { get; set; }
-        public ushort Width;
-        public ushort Height;
-        public UInt16 BPP;
-        public List<PCD9Mipmap> Mipmaps = new List<PCD9Mipmap>();
-
-        public uint Unknown0C;
-        public ushort Unknown16;
-        //        public bool unknownFlag;
-
-        public void ReadFromStream(Stream inStream)
+        public class Header
         {
+            public Stream innerStream;
+            public PCD9Format Format { get; set; }
+            public ushort Width;
+            public ushort Height;
+            public UInt16 BPP;
+            public List<PCD9Mipmap> Mipmaps = new List<PCD9Mipmap>();
+            public UInt32 DataSize;
+
+            public uint Unknown0C;
+            public ushort Unknown16;
+            public byte MipMapCount;
+            public UInt16 Flags;
+            public UInt16 Unknown1A;
+        };
+
+        public Header header = new Header();
+
+        internal PCD9File(Stream inStream)
+        {
+            header.innerStream = inStream;
             uint magic = (inStream.ReadUInt32());
-            Format = (PCD9Format)(inStream.ReadUInt32());
-            UInt32 dataSize = inStream.ReadUInt32();
-            Unknown0C = inStream.ReadUInt32();
-            Width = inStream.ReadUInt16();
-            Height = inStream.ReadUInt16();
-            BPP = inStream.ReadUInt16();
-            Unknown16 = inStream.ReadUInt8();
-            byte mipMapCount = (byte)(inStream.ReadUInt8() + 1);
-            UInt16 flags = inStream.ReadUInt16();
-            UInt16 Unknown1A = inStream.ReadUInt16();
+            header.Format = (PCD9Format)(inStream.ReadUInt32());
+            header.DataSize = inStream.ReadUInt32();
+            header.Unknown0C = inStream.ReadUInt32();
+            header.Width = inStream.ReadUInt16();
+            header.Height = inStream.ReadUInt16();
+            header.BPP = inStream.ReadUInt16();
+            header.Unknown16 = inStream.ReadUInt8();
+            header.MipMapCount = (byte)(inStream.ReadUInt8() + 1);
+            header.Flags = inStream.ReadUInt16();
+            header.Unknown1A = inStream.ReadUInt16();
+        }
 
-            Debug.WriteLine(string.Format("PCD9: {0}x{1} ({2}bpp) {3} size: {4}", Width, Height, BPP, mipMapCount, dataSize));
-            if (Width != 512 || Height != 128)
-                return;
+        public Bitmap GetBitmap(Stream inStream = null)
+        {
+            if (inStream == null)
+                inStream = header.innerStream;
 
-            if ((flags & (0x8000 | 0x4000)) != 0)
+            if ((header.Flags & (0x8000 | 0x4000)) != 0)
             {
                 throw new NotImplementedException();
             }
-            this.Mipmaps.Clear();
-            byte[] data = new byte[dataSize];
+            this.header.Mipmaps.Clear();
+            byte[] data = new byte[header.DataSize];
 
-            ushort mipWidth = this.Width;
-            ushort mipHeight = this.Height;
+            ushort mipWidth = this.header.Width;
+            ushort mipHeight = this.header.Height;
 
-            inStream.Read(data, 0, (int)dataSize);
+            inStream.Read(data, 0, (int)(header.DataSize));
 
-            for (int i = 0; i < mipMapCount; i++)
+            for (int i = 0; i < header.MipMapCount; i++)
             {
                 if (mipWidth == 0)
                 {
@@ -82,7 +94,7 @@ namespace TRTR
                 }
 
                 int size;
-                switch (this.Format)
+                switch (this.header.Format)
                 {
                     case PCD9Format.A8R8G8B8:
                         {
@@ -95,7 +107,7 @@ namespace TRTR
                     case PCD9Format.DXT5:
                         {
                             int blockCount = ((mipWidth + 3) / 4) * ((mipHeight + 3) / 4);
-                            int blockSize = this.Format == PCD9Format.DXT1 ? 8 : 16;
+                            int blockSize = this.header.Format == PCD9Format.DXT1 ? 8 : 16;
                             size = blockCount * blockSize;
                             break;
                         }
@@ -112,7 +124,7 @@ namespace TRTR
                 //    throw new EndOfStreamException();
                 //}
 
-                this.Mipmaps.Add(new PCD9Mipmap()
+                this.header.Mipmaps.Add(new PCD9Mipmap()
                 {
                     Width = mipWidth,
                     Height = mipHeight,
@@ -127,13 +139,7 @@ namespace TRTR
             //{
             //    throw new InvalidOperationException();
             //}
-            MakeBitmapFromTrueColor(this.Width, this.Height, data, true);
-            string folder = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "drm", entry.BigFile.Name, entry.Extra.FileNameOnlyForced);
-            Directory.CreateDirectory(folder);
-            Stream outputStream = new FileStream(Path.Combine(folder, string.Format("{0:X4},{1:X4}c", idx, i)), FileMode.Create);
-
-            bitmap.Save("c:\\tmp\\x.bmp", ImageFormat.Bmp);
-
+            return MakeBitmapFromTrueColor(this.header.Width, this.header.Height, data, true);
         }
 
         private static Bitmap MakeBitmapFromTrueColor(uint width, uint height, byte[] input, bool keepAlpha)
