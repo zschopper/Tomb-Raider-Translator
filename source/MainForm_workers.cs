@@ -109,21 +109,21 @@ namespace TRTR
         private void workerCreateRestoration_DoWork(object sender, DoWorkEventArgs e)
         {
             //InitializeWorker((BackgroundWorker)sender);
-            //FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
+            //IFileEntryList entryList = new IFileEntryList((BackgroundWorker)sender);
             //entryList.CreateRestoration();
         }
 
         private void workerGenerateFilesTxt_DoWork(object sender, DoWorkEventArgs e)
         {
             InitializeWorker((BackgroundWorker)sender);
-            //FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
+            //IFileEntryList entryList = new IFileEntryList((BackgroundWorker)sender);
             TRGameInfo.BigFiles.GenerateFilesTxt();
         }
 
         private void workerRestore_DoWork(object sender, DoWorkEventArgs e)
         {
             //InitializeWorker((BackgroundWorker)sender);
-            //FileEntryList entryList = new FileEntryList((BackgroundWorker)sender);
+            //IFileEntryList entryList = new IFileEntryList((BackgroundWorker)sender);
             //entryList.simulateWrite = (Int32)(e.Argument) != 0;
             //entryList.Restore();
         }

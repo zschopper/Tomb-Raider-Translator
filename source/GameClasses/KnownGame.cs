@@ -45,6 +45,7 @@ namespace TRTR
                 AppId = "7000",
                 ExeName = "TRL.exe",
                 BigfileVersion = "1",
+                //BigFileClass = 
                 BigFiles = new KnownGame.KnownBigfileData[] { 
                     new KnownGame.KnownBigfileData{ name = "bigfile", pattern = "bigfile.{D3}", entryOfs = 0 }
                 },
@@ -100,6 +101,10 @@ namespace TRTR
                     new KnownGame.KnownBigfileData{ name = "bigfile", pattern = "bigfile.{D3}", entryOfs = 0 }
                 },
             });
+
+            Items.Clear(); // Old games disabled until app isn't compatible with it
+            #endregion
+
             Items.Add(new KnownGame
             {
                 Name = "Lara Croft and the Guardian of Light",
@@ -110,8 +115,6 @@ namespace TRTR
                     new KnownGame.KnownBigfileData{ name = "bigfile", pattern = "bigfile.{D3}", entryOfs = 0 }
                 },
             });
-            Items.Clear(); // Old games disabled until app isn't compatible with it
-            #endregion
 
             Items.Add(new KnownGame
             {

@@ -14,15 +14,65 @@ using ExtensionMethods;
 namespace TRTR
 {
 
+    struct RawFileInfo
+    {
+        internal UInt32 Length;
+        internal UInt32 Location;
+        internal UInt32 LangCode;
+        internal UInt32 Unknown;
+        internal FileLanguage Language
+        {
+            get
+            {
+                switch (LangCode & 0x0F)
+                {
+                    case 0x0:
+                        return FileLanguage.Spanish;
+                    case 0x1:
+                        return FileLanguage.English;
+                    case 0x2:
+                        return FileLanguage.French;
+                    case 0x4:
+                        return FileLanguage.German;
+                    case 0x8:
+                        return FileLanguage.Italian;
+                    case 0xF:
+                        return FileLanguage.NoLang;
+                    default:
+                        throw new Exception(Errors.InvalidLanguageCode);
+                }
+
+            }
+        }
+
+        static internal Int32 Size = 0x10;
+
+        internal void ToRawFileInfo(byte[] buf, Int32 startIndex)
+        {
+            Length = BitConverter.ToUInt32(buf, startIndex + 0x00);
+            Location = BitConverter.ToUInt32(buf, startIndex + 0x04);
+            LangCode = BitConverter.ToUInt32(buf, startIndex + 0x08);
+            Unknown = BitConverter.ToUInt32(buf, startIndex + 0x0C);
+        }
+
+        internal void GetBytes(byte[] buf, Int32 startIndex)
+        {
+            Array.Copy(BitConverter.GetBytes(Length), 0, buf, startIndex + 0x00, 4);
+            Array.Copy(BitConverter.GetBytes(Location), 0, buf, startIndex + 0x04, 4);
+            Array.Copy(BitConverter.GetBytes(LangCode), 0, buf, startIndex + 0x08, 4);
+            Array.Copy(BitConverter.GetBytes(Unknown), 0, buf, startIndex + 0x0C, 4);
+        }
+    }
+    
     // calculated, converted & stored data about files in bigfiles
-    class FileExtraInfoV3 : IFileExtraInfo
+    class FileExtraInfoV2 : IFileExtraInfo
     {
         // Block count = bigfile boundary / block size
         //const uint BLOCK_COUNT_IN_BIGFILES = 0x12C00; // TRA/TRL v1.0.0.6
         //const uint BLOCK_COUNT_IN_BIGFILES = 0xFFE00;  // TRU/LCGOL 0x7FF00000 / 0x800
 
         #region private declarations
-        private FileEntryV3 entry;
+        private FileEntryV2 entry;
         private string fileName = string.Empty;
         #endregion
 
@@ -33,7 +83,7 @@ namespace TRTR
         public string FileNameOnlyForced { get { return FileName.Length > 0 ? Path.GetFileName(FileName) : entry.HashText; } }
         public string FileNameForced { get { return FileName.Length > 0 ? FileName : entry.HashText; } }
 
-        internal FileExtraInfoV3(FileEntryV3 entry)
+        internal FileExtraInfoV2(FileEntryV2 entry)
         {
             this.entry = entry;
 
@@ -46,7 +96,7 @@ namespace TRTR
         }
     }
 
-    class FileEntryV3 : IFileEntry // : IComparable<IFileEntry>
+    class FileEntryV2 : IFileEntry // : IComparable<IFileEntry>
     {
         #region private variables
         private string hashText;
@@ -54,7 +104,7 @@ namespace TRTR
         //        private BigFilePool filePool = null;
 
         private FATEntry raw;
-        private FileExtraInfoV3 extra = null;
+        private FileExtraInfoV2 extra = null;
 
         private IFileEntryList parent = null;
 
@@ -65,32 +115,34 @@ namespace TRTR
 
         public UInt32 Hash { get { return raw.Hash; } }
         public string HashText { get { return hashText; } }
+
         public FATEntry Raw { get { return raw; } set { raw = value; } }
         public IFileExtraInfo Extra { get { return getExtra(); } }
         public FileTypeEnum FileType { get { return fileType; } set { fileType = value; } }
 
         public IFileEntryList Parent { get { return parent; } }
         public UInt32 OriginalIndex { get { return raw.Index; } }
-        public UInt32 VirtualSize { get { return virtualSize; } set { virtualSize = value; } }
 
+        public Int64 Offset { get { return raw.Address; } }
         public TranslationStatus Status { get { return status; } set { status = value; } }
         public IBigFile BigFile { get { return bigFile; } }
-        public Int64 Offset { get { return raw.Address; } }
+        
+        public UInt32 VirtualSize { get { return virtualSize; } set { virtualSize = value; } }
 
         // ctor
-        internal FileEntryV3(FATEntry raw, IFileEntryList parent, IBigFile bigFile)
+        internal FileEntryV2(FATEntry raw, IFileEntryList parent, IBigFile bigFile)
         {
             this.raw = raw;
             this.parent = parent;
             this.bigFile = bigFile;
-            this.extra = null;
+            this.extra = null;// new IFileExtraInfo(this);
             this.hashText = raw.Hash.ToString("X8");
         }
 
         private IFileExtraInfo getExtra()
         {
             if (extra == null)
-                extra = new FileExtraInfoV3(this);
+                extra = new FileExtraInfoV2(this);
             return extra;
         }
 
@@ -230,8 +282,8 @@ namespace TRTR
 
     }
 
-    // bigfile's file entry list
-    class FileEntryListV3 : List<IFileEntry>, IFileEntryList
+    // IBigFile's file entry list
+    class FileEntryListV2 : List<IFileEntry>, IFileEntryList
     {
         #region private declarations
         private IBigFile parentBigFile;
@@ -245,7 +297,7 @@ namespace TRTR
 
         //internal bool simulateWrite = false;
 
-        internal FileEntryListV3(IBigFile parent)
+        internal FileEntryListV2(IBigFile parent)
         {
             this.parentBigFile = parent;
         }
@@ -281,10 +333,11 @@ namespace TRTR
         {
             return entry1.CompareTo(entry2);
         }
+
     }
 
-    // data for a bigfile
-    class BigFileV3 : IBigFile
+    // data for a IBigFile
+    class BigFileV2 : IBigFile
     {
         internal static readonly UInt32 Boundary = 0x7FF00000;
         internal static string[] knowBFLocalTexts = new string[] { "ARABIC", "ENGLISH", "FRENCH", "GERMAN", "ITALIAN", "POLISH", "RUSSIAN", "SPANISH" };
@@ -298,7 +351,7 @@ namespace TRTR
         private Int32 entryCount;
         private UInt32 priority;
         private byte[] pathPrefix;
-        private FileEntryListV3 entryList;
+        private FileEntryListV2 entryList;
         private UInt32 headerSize;
         private string filePattern;
         private string filePatternFull;
@@ -307,7 +360,7 @@ namespace TRTR
         private List<FATEntry> itemsByIndex;
         private List<FATEntry> itemsByLocation;
         //private Dictionary<UInt32, RawFileInfo> itemsByHash;
-        private BigFileListV3 parent;
+        private BigFileListV2 parent;
         private string name;
         private FileLocale locale;
         private string neutralName;
@@ -338,7 +391,7 @@ namespace TRTR
         internal bool LoadedCompletely = false;
 
         // ctor
-        internal BigFileV3(string fileName, BigFileListV3 parent, bool isDLC)
+        internal BigFileV2(string fileName, BigFileListV2 parent, bool isDLC)
         {
             this.parent = parent;
             HeaderChanged = false;
@@ -368,12 +421,16 @@ namespace TRTR
             try
             {
                 // read header
-                magic = br.ReadBytes(4);
-                version = br.ReadUInt32();
-                fileCount = br.ReadUInt32();
+                magic = new byte[4];
+                version = 2;
+                fileCount = 1;
                 entryCount = br.ReadInt32();
-                priority = br.ReadUInt32();
-                pathPrefix = br.ReadBytes(0x20);
+                priority = 0;
+
+                Int32 hashBlockSize = entryCount * sizeof(Int32);
+                Int32 fileBlockSize = entryCount * RawFileInfo.Size;
+
+                //pathPrefix = br.ReadBytes(0x20);
 
                 // derivate some useful data
                 headerSize = (UInt32)(fs.Position);
@@ -383,7 +440,7 @@ namespace TRTR
                 itemsByLocation = new List<FATEntry>(entryCount);
                 //itemsByHash = new Dictionary<UInt32, RawFileInfo>(entryCount);
 
-                entryList = new FileEntryListV3(this);
+                entryList = new FileEntryListV2(this);
 
                 for (UInt32 i = 0; i < entryCount; i++)
                 {
@@ -407,13 +464,13 @@ namespace TRTR
                     if (raw.BigFileIndex == next.BigFileIndex)
                         raw.MaxLength = next.Address - raw.Address;
                     else
-                        raw.MaxLength = BigFileV3.Boundary - raw.Address;
+                        raw.MaxLength = BigFileV2.Boundary - raw.Address;
                 }
                 if (itemsByLocation.Count > 0)
                 {
                     // calculate last entry's virtual size
                     FATEntry lastEntry = itemsByLocation[itemsByLocation.Count - 1];
-                    lastEntry.MaxLength = BigFileV3.Boundary - lastEntry.Address;
+                    lastEntry.MaxLength = BigFileV2.Boundary - lastEntry.Address;
                 }
             }
             finally
@@ -429,7 +486,7 @@ namespace TRTR
             FileStream fs = new FileStream(fileName, FileMode.Open);
             byte[] buf = new byte[headerSize + entryCount * 0x10];
             fs.Read(buf, 0, buf.Length);
-            this.Parent.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", this.name + ".fat_raw_src.txt"), buf);
+            //IBigFileList.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", this.name + ".fat_raw_src.txt"), buf);
             fs.Position = 0;
 
             BinaryWriter bw = new BinaryWriter(fs);
@@ -455,7 +512,7 @@ namespace TRTR
                 buf = new byte[headerSize + entryCount * 0x10];
                 fs.Position = 0;
                 fs.Read(buf, 0, buf.Length);
-                //BigFileList.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", this.name + ".fat_raw_mod.txt"), buf);
+                //IBigFileList.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", this.name + ".fat_raw_mod.txt"), buf);
             }
             finally
             {
@@ -465,7 +522,7 @@ namespace TRTR
 
         private int compareByLocation(FATEntry item1, FATEntry item2)
         {
-            // compare by bigfile
+            // compare by IBigFile
             int cmp = item1.BigFileIndex.CompareTo(item2.BigFileIndex);
             if (cmp != 0)
                 return cmp;
@@ -491,7 +548,7 @@ namespace TRTR
             Log.LogDebugMsg(string.Format("{0} UpdateEntryList()", this.name));
             for (int i = 0; i < entryCount; i++)
             {
-                IFileEntry entry = new FileEntryV3(itemsByIndex[i], this.EntryList, this);
+                IFileEntry entry = new FileEntryV2(itemsByIndex[i], this.EntryList, this);
                 EntryList.Add(entry);
             }
 
@@ -520,14 +577,14 @@ namespace TRTR
                 }
                 else
                 {
-                    thisEntry.VirtualSize = (BigFileV3.Boundary - thisEntry.Raw.Address);
+                    thisEntry.VirtualSize = (BigFileV2.Boundary - thisEntry.Raw.Address);
                 }
 
                 //if (thisEntry.VirtualSize == 0)
                 //    if (entryList.Count > i + 2)
                 //        thisEntry.VirtualSize = (EntryList[i + 2].Raw.Location - thisEntry.Raw.Location) * 0x800;
                 //    else
-                //        thisEntry.VirtualSize = (BigFileV3.Boundary - thisEntry.Raw.Location) * 0x800;
+                //        thisEntry.VirtualSize = (BigFileV2.Boundary - thisEntry.Raw.Location) * 0x800;
             }
             // ... for last item, too
             if (entryCount > 0)
@@ -546,7 +603,7 @@ namespace TRTR
                 0x0A7B8340u, // ??
             });
 
-            foreach (FileEntryV3 entry in EntryList)
+            foreach (FileEntryV2 entry in EntryList)
             {
 
                 #region Filetype detection
@@ -556,7 +613,6 @@ namespace TRTR
                 {
                     entry.FileType = FileTypeEnum.Special;
                     Directory.CreateDirectory(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name));
-
                     entry.BigFile.Parent.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name, entry.Extra.FileNameOnlyForced), entry);
                 }
                 else
@@ -652,7 +708,7 @@ namespace TRTR
 
                 TextWriter twEntriesByOrigOrder = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT", this.Name + "__fat_entries_raw.txt"));
                 twEntriesByOrigOrder.WriteLine(string.Format("{0,-8} {1,-8} {2,-8} {3,-8}", "hash", "lang", "length", "location"));
-                foreach (FileEntryV3 entry in this.EntryList)
+                foreach (FileEntryV2 entry in this.EntryList)
                     twEntriesByOrigOrder.WriteLine(string.Format("{0:X8} {1} {2:X8} {3:X8}", entry.Raw.Hash, entry.Raw.LocaleText, entry.Raw.Length, entry.Raw.Location));
                 twEntriesByOrigOrder.Close();
             }
@@ -670,7 +726,7 @@ namespace TRTR
 
                 List<FileLocale> locales = new List<FileLocale>();
 
-                foreach (FileEntryV3 entry in EntryList)
+                foreach (FileEntryV2 entry in EntryList)
                 {
                     twEntries.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8} | {4,-8} {5} {6:X8} {7:D6} {8}",
                         entry.Raw.Hash,
@@ -708,7 +764,7 @@ namespace TRTR
             if (other == null)
                 return 1;
 
-            BigFileV3 otherBigFile = other as BigFileV3;
+            BigFileV2 otherBigFile = other as BigFileV2;
             if (otherBigFile == null)
                 throw new ArgumentException("Object is not a " + this.GetType().ToString());
 
@@ -719,7 +775,7 @@ namespace TRTR
         }
     }
 
-    class BigFileListV3 : List<BigFileV3>, IBigFileList
+    class BigFileListV2 : List<BigFileV2>, IBigFileList
     {
         #region private declarations
         private string folder;
@@ -736,7 +792,7 @@ namespace TRTR
         internal Dictionary<FatEntryKey, IFileEntry> TransEntries { get { return transEntries; } }
 
         // ctor
-        internal BigFileListV3(string folder)
+        internal BigFileListV2(string folder)
         {
             this.folder = folder;
             transEntries = new Dictionary<FatEntryKey, IFileEntry>();
@@ -779,22 +835,22 @@ namespace TRTR
                 if (!dupeFilter.Contains(fileNameOnly))
                 {
                     dupeFilter.Add(fileNameOnly);
-                    BigFileV3 bigFile = new BigFileV3(file, this, false);
-                    this.Add(bigFile);
-                    ItemsByName.Add(bigFile.Name, bigFile);
-                    if (bigFile.Locale != FileLocale.Default)
+                    BigFileV2 IBigFile = new BigFileV2(file, this, false);
+                    this.Add(IBigFile);
+                    ItemsByName.Add(IBigFile.Name, IBigFile);
+                    if (IBigFile.Locale != FileLocale.Default)
                     {
                         if (locale == FileLocale.Default)
-                            locale = bigFile.Locale;
+                            locale = IBigFile.Locale;
                         else
-                            if (locale != bigFile.Locale)
+                            if (locale != IBigFile.Locale)
                                 throw new Exception("Locale of game can not be determined: there are more bigfiles with different locales.");
                     }
                 }
             }
 
             TRGameInfo.TransVoiceLang = locale;
-            // bigfile list by items' priority (desc) then its name (name)
+            // IBigFile list by items' priority (desc) then its name (name)
             Sort((bf1, bf2) =>
             {
                 int i = (bf1.Priority.CompareTo(bf2.Priority));
@@ -803,25 +859,25 @@ namespace TRTR
                 return bf1.Name.CompareTo(bf2.Name);
             });
 
-            foreach (BigFileV3 bf in this)
+            foreach (BigFileV2 bf in this)
                 Log.LogMsg(LogEntryType.Debug, string.Format("{0,-20}  entries: {1,5:d}  files: {2}  priority: {3,2} (0x{4:X2})", bf.Name, bf.EntryCount, bf.FileCount, bf.Priority, bf.Priority));
 
         }
 
         private void UpdateBigFiles()
         {
-            foreach (BigFileV3 bigFile in this)
-                if (!bigFile.LoadedCompletely)
-                    bigFile.UpdateEntryList();
+            foreach (BigFileV2 IBigFile in this)
+                if (!IBigFile.LoadedCompletely)
+                    IBigFile.UpdateEntryList();
 
             #region debug dump file
-            foreach (FileEntryV3 entry in transEntries.Values)
+            foreach (FileEntryV2 entry in transEntries.Values)
             {
                 bool debugDumpIt = false;
                 // debugDumpIt = entry.FileType == FileTypeEnum.DRM && entry.Raw.Length < 1024;
                 // debugDumpIt = entry.FileType == FileTypeEnum.BIN_MNU && entry.Extra.Language == FileLanguage.English;
-                // debugDumpIt = fileEntry.Raw.Language == FileLanguage.NoLang || fileEntry.Raw.Language == FileLanguage.Unknown || fileEntry.Raw.Language == FileLanguage.English;
-                // debugDumpIt = fileEntry.FileType == FileTypeEnum.MUL_CIN;
+                // debugDumpIt = IFileEntry.Raw.Language == FileLanguage.NoLang || IFileEntry.Raw.Language == FileLanguage.Unknown || IFileEntry.Raw.Language == FileLanguage.English;
+                // debugDumpIt = IFileEntry.FileType == FileTypeEnum.MUL_CIN;
                 // debugDumpIt = (entry.FileType == FileTypeEnum.BIN_MNU && entry.Extra.Language == FileLanguage.English) || entry.FileType == FileTypeEnum.Unknown; 
                 // debugDumpIt = entry.Status == TranslationStatus.Translatable;
                 // debugDumpIt = entry.FileType == FileTypeEnum.DRM && entry.Raw.Length < 1024;
@@ -860,7 +916,7 @@ namespace TRTR
 
         public IBigFile GetBigFileByPriority(uint priority, bool localized = false)
         {
-            foreach (BigFileV3 bf in this)
+            foreach (BigFileV2 bf in this)
             {
                 if (bf.Priority == priority && (localized ^ (bf.Locale == FileLocale.Default)))
                     return bf;
@@ -905,10 +961,10 @@ namespace TRTR
         void IBigFileList.Extract(string destFolder, bool useDict)
         {
             UpdateBigFiles();
-            List<FileEntryV3> transEntries = new List<FileEntryV3>();
-            foreach (BigFileV3 bigFile in this)
+            List<FileEntryV2> transEntries = new List<FileEntryV2>();
+            foreach (BigFileV2 IBigFile in this)
             {
-                foreach (FileEntryV3 entry in bigFile.EntryList)
+                foreach (FileEntryV2 entry in IBigFile.EntryList)
                 {
                     switch (entry.FileType)
                     {
@@ -991,7 +1047,7 @@ namespace TRTR
 
             for (int i = 0; i < transEntries.Count; i++)
             {
-                FileEntryV3 entry = transEntries[i];
+                FileEntryV2 entry = transEntries[i];
 
                 switch (entry.FileType)
                 {
@@ -1012,7 +1068,7 @@ namespace TRTR
                         }
                     case FileTypeEnum.DRM:
                         {
-                            FontV3.Process(entry, Stream.Null, tp);
+                            //FontV3.Process(entry, Stream.Null, tp);
                             break;
                         }
                 }
@@ -1027,7 +1083,7 @@ namespace TRTR
             //tpTransSrc.Close();
         }
 
-        public void Translate(bool simulated)
+        void IBigFileList.Translate(bool simulated)
         {
             Int32 lastReported = 0;
             Log.LogProgress(StaticTexts.translating, 0);
@@ -1049,7 +1105,7 @@ namespace TRTR
                 return e1.Raw.Location.CompareTo(e2.Raw.Location);
             });
 
-            foreach (FileEntryV3 entry in transEntryList)
+            foreach (FileEntryV2 entry in transEntryList)
             {
                 if (entry.Status == TranslationStatus.Translatable)
                 {
@@ -1078,7 +1134,7 @@ namespace TRTR
             TranslationProvider tp = new TMXProvider();
             tp.Open();
 
-            foreach (FileEntryV3 entry in transEntryList)
+            foreach (FileEntryV2 entry in transEntryList)
             {
                 if (entry.Status == TranslationStatus.Translatable)
                 {
@@ -1090,7 +1146,7 @@ namespace TRTR
                                 {
                                     //string fileName;
 
-                                    //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "orig", entry.BigFileV3.Name, entry.Extra.FileNameForced });
+                                    //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "orig", entry.BigFileV2.Name, entry.Extra.FileNameForced });
                                     //if (!Directory.Exists(Path.GetDirectoryName(fileName)))
                                     //    Directory.CreateDirectory(Path.GetDirectoryName(fileName));
                                     //DumpToFile(fileName, entry);
@@ -1101,7 +1157,7 @@ namespace TRTR
                                     {
                                         if (CineFile.Process(entry, ms, tp))
                                         {
-                                            //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV3.Name, entry.Extra.FileNameForced });
+                                            //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV2.Name, entry.Extra.FileNameForced });
                                             //DumpToFile(fileName, ms.ToArray());
                                             entry.BigFile.Parent.WriteFile(entry.BigFile, entry, ms.ToArray(), simulated);
                                         }
@@ -1120,7 +1176,7 @@ namespace TRTR
                                 {
                                     if (MenuFile.Process(entry, ms, tp))
                                     {
-                                        //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV3.Name, entry.Extra.FileNameForced });
+                                        //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV2.Name, entry.Extra.FileNameForced });
                                         //DumpToFile(fileName, ms.ToArray());
                                         entry.BigFile.Parent.WriteFile(entry.BigFile, entry, ms.ToArray(), simulated);
                                     }
@@ -1138,7 +1194,7 @@ namespace TRTR
                                 {
                                     if (MovieFile.Process(entry, ms, tp))
                                     {
-                                        //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV3.Name, entry.Extra.FileNameForced });
+                                        //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV2.Name, entry.Extra.FileNameForced });
                                         //DumpToFile(fileName, ms.ToArray());
                                         entry.BigFile.Parent.WriteFile(entry.BigFile, entry, ms.ToArray(), simulated);
                                     }
@@ -1170,19 +1226,19 @@ namespace TRTR
             Log.LogProgress(StaticTexts.translationDone, 100);
             if (!simulated)
             {
-                foreach (BigFileV3 bigFile in this)
+                foreach (BigFileV2 IBigFile in this)
                 {
-                    if (bigFile.HeaderChanged)
-                        bigFile.WriteFAT();
+                    if (IBigFile.HeaderChanged)
+                        IBigFile.WriteFAT();
                 }
             }
             TRGameInfo.FilePool.CloseAll();
         }
 
-        public void GenerateFilesTxt()
+        void IBigFileList.GenerateFilesTxt()
         {
             UpdateBigFiles();
-            foreach (BigFileV3 bigFile in this)
+            foreach (BigFileV2 IBigFile in this)
             {
                 Int32 lastReported = 0;
                 Log.LogProgress(StaticTexts.creatingFilesTxt, lastReported);
@@ -1195,16 +1251,16 @@ namespace TRTR
 
                     TextWriter twEntries = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT", "fat.entries.txt"));
                     twEntries.WriteLine("hash  location  length  Offset  lang");
-                    foreach (FileEntryV3 entry in bigFile.EntryList)
+                    foreach (FileEntryV2 entry in IBigFile.EntryList)
                     {
                         twEntries.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8} {4}", entry.Hash, entry.Raw.Location, entry.Raw.Length, entry.Raw.Address, entry.Raw.LocaleText));
                     }
                     twEntries.Close();
 
-                    bigFile.EntryList.SortBy(FileEntryCompareField.Location);
+                    IBigFile.EntryList.SortBy(FileEntryCompareField.Location);
 
                     TextWriter tw = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT", "custom.files.txt"));
-                    foreach (FileEntryV3 entry in bigFile.EntryList)
+                    foreach (FileEntryV2 entry in IBigFile.EntryList)
                     {
                         string magic = string.Empty;
                         bool writeIt = false;
@@ -1223,25 +1279,6 @@ namespace TRTR
 
         static Int64 ofs = 0;
 
-        public void DumpToFile(string fileName, byte[] content)
-        {
-            Directory.CreateDirectory(Path.GetDirectoryName(fileName));
-            FileStream fs = new FileStream(fileName, FileMode.Create);
-            try
-            {
-                fs.Write(content, 0, content.Length);
-            }
-            finally
-            {
-                fs.Close();
-            }
-        }
-
-        public void DumpToFile(string fileName, IFileEntry entry)
-        {
-            DumpToFile(fileName, entry.ReadContent());
-        }
-
         public void WriteFile(IBigFile bigFile, IFileEntry entry, byte[] content, bool simulate)
         {
             if (simulate)
@@ -1251,6 +1288,8 @@ namespace TRTR
 
             #region prepare file write
             // try to find entry
+            List<string> x = new List<string>();
+
             IFileEntry foundEntry = bigFile.EntryList.Find(
                 bk => bk.Hash == entry.Hash &&
                     bk.Raw.Locale == entry.Raw.Locale);
@@ -1258,7 +1297,7 @@ namespace TRTR
             Log.LogDebugMsg(string.Format("WriteFile: {0:X8} old len: {1:X8} old vlen: {2:X8} clen: {3:X8} vclen {4:X8}",
                 entry.Hash, entry.Raw.Length, entry.Raw.Length.ExtendToBoundary(0x800), content.Length, content.Length.ExtendToBoundary(0x800)));
 
-            // Determine whether bigfile contains entry
+            // Determine whether IBigFile contains entry
             if (foundEntry != null)
             {
                 // update fat (length)
@@ -1276,13 +1315,13 @@ namespace TRTR
                 }
                 else // not fit
                 {
-                    // determine there is free place in the end of last bigfile for content
+                    // determine there is free place in the end of last IBigFile for content
                     bool contentFits = false;
                     ContentStream = TRGameInfo.FilePool.Open(bigFile.Name, bigFile.FileCount - 1);
                     try
                     {
-                        contentFits = ContentStream.Length.ExtendToBoundary(0x800) + content.Length <= BigFileV3.Boundary;
-                        if (contentFits) // fits in the end of last bigfile
+                        contentFits = ContentStream.Length.ExtendToBoundary(0x800) + content.Length <= BigFileV2.Boundary;
+                        if (contentFits) // fits in the end of last IBigFile
                         {
                             Log.LogDebugMsg(string.Format("  existing, not fit"));
                             // update fat (location & length)
@@ -1297,10 +1336,10 @@ namespace TRTR
                     {
                         TRGameInfo.FilePool.Close(bigFile.Name, bigFile.FileCount - 1);
                     }
-                    if (!contentFits) // not fits in the end of last bigfile
+                    if (!contentFits) // not fits in the end of last IBigFile
                     {
                         Log.LogDebugMsg(string.Format("  existing, new BF"));
-                        // add a new bigfile
+                        // add a new IBigFile
                         new FileStream(string.Format(bigFile.FilePatternFull, bigFile.FileCount), FileMode.CreateNew).Close();
                         // update header (increase file count)
                         bigFile.FileCount++;
@@ -1318,13 +1357,13 @@ namespace TRTR
                 foundEntry = entry;
                 raw = foundEntry.Raw;
 
-                // determine there is free place in the end of last bigfile for content
+                // determine there is free place in the end of last IBigFile for content
                 bool contentFits = false;
                 FileStream LastBFStream = TRGameInfo.FilePool.Open(bigFile.Name, bigFile.FileCount - 1);
                 try
                 {
-                    contentFits = LastBFStream.Length.ExtendToBoundary(0x800) + content.Length <= BigFileV3.Boundary;
-                    if (contentFits) // fits in the end of last bigfile
+                    contentFits = LastBFStream.Length.ExtendToBoundary(0x800) + content.Length <= BigFileV2.Boundary;
+                    if (contentFits) // fits in the end of last IBigFile
                     {
                         Log.LogDebugMsg(string.Format("  new, fit BF"));
                         // update header (increase entry count)
@@ -1343,10 +1382,10 @@ namespace TRTR
                 {
                     TRGameInfo.FilePool.Close(bigFile.Name, bigFile.FileCount - 1);
                 }
-                if (!contentFits) // not fits in the end of last bigfile
+                if (!contentFits) // not fits in the end of last IBigFile
                 {
                     Log.LogDebugMsg(string.Format("  new, not fit BF"));
-                    // add a new bigfile
+                    // add a new IBigFile
                     new FileStream(string.Format(bigFile.FilePatternFull, bigFile.FileCount), FileMode.CreateNew).Close();
                     // update header (increase file count)
                     bigFile.FileCount++;
@@ -1393,7 +1432,7 @@ namespace TRTR
                 // if file smallert than entry's start address, expand file
                 if (ContentStream.Length < foundEntry.Raw.Address)
                 {
-                    // fill bigfile to its next file boundary
+                    // fill IBigFile to its next file boundary
                     UInt32 newLength = (UInt32)ContentStream.Length.ExtendToBoundary(0x800);
                     byte[] PaddingBuffer = new byte[2000];
                     Array.Clear(PaddingBuffer, 0, PaddingBuffer.Length);
@@ -1447,6 +1486,26 @@ namespace TRTR
             }
             #endregion
         }
+
+        public void DumpToFile(string fileName, byte[] content)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            try
+            {
+                fs.Write(content, 0, content.Length);
+            }
+            finally
+            {
+                fs.Close();
+            }
+        }
+
+        public void DumpToFile(string fileName, IFileEntry entry)
+        {
+            DumpToFile(fileName, entry.ReadContent());
+        }
+
 
     }
 }

@@ -132,11 +132,11 @@ namespace ExtensionMethods
         {
             byte[] buf = new byte[8];
             buf[0] = (byte)value;
-            buf[1] = (byte)(value >> 8);
+            buf[1] = (byte)(value >> 0x08);
             buf[2] = (byte)(value >> 0x10);
             buf[3] = (byte)(value >> 0x18);
             buf[4] = (byte)(value >> 0x20);
-            buf[5] = (byte)(value >> 40);
+            buf[5] = (byte)(value >> 0x28);
             buf[6] = (byte)(value >> 0x30);
             buf[7] = (byte)(value >> 0x38);
             me.Write(buf, 0, buf.Length);
@@ -146,11 +146,11 @@ namespace ExtensionMethods
         {
             byte[] buf = new byte[8];
             buf[0] = (byte)value;
-            buf[1] = (byte)(value >> 8);
+            buf[1] = (byte)(value >> 0x08);
             buf[2] = (byte)(value >> 0x10);
             buf[3] = (byte)(value >> 0x18);
             buf[4] = (byte)(value >> 0x20);
-            buf[5] = (byte)(value >> 40);
+            buf[5] = (byte)(value >> 0x28);
             buf[6] = (byte)(value >> 0x30);
             buf[7] = (byte)(value >> 0x38);
             me.Write(buf, 0, buf.Length);
@@ -160,7 +160,7 @@ namespace ExtensionMethods
         {
             byte[] buf = new byte[4];
             buf[0] = (byte)value;
-            buf[1] = (byte)(value >> 8);
+            buf[1] = (byte)(value >> 0x08);
             buf[2] = (byte)(value >> 0x10);
             buf[3] = (byte)(value >> 0x18);
             me.Write(buf, 0, buf.Length);
@@ -170,7 +170,7 @@ namespace ExtensionMethods
         {
             byte[] buf = new byte[4];
             buf[0] = (byte)value;
-            buf[1] = (byte)(value >> 8);
+            buf[1] = (byte)(value >> 0x08);
             buf[2] = (byte)(value >> 0x10);
             buf[3] = (byte)(value >> 0x18);
             me.Write(buf, 0, buf.Length);
@@ -180,7 +180,7 @@ namespace ExtensionMethods
         {
             byte[] buf = new byte[2];
             buf[0] = (byte)value;
-            buf[1] = (byte)(value >> 8);
+            buf[1] = (byte)(value >> 0x08);
             me.Write(buf, 0, buf.Length);
         }
 
@@ -188,7 +188,7 @@ namespace ExtensionMethods
         {
             byte[] buf = new byte[2];
             buf[0] = (byte)value;
-            buf[1] = (byte)(value >> 8);
+            buf[1] = (byte)(value >> 0x08);
             me.Write(buf, 0, buf.Length);
         }
 
@@ -208,5 +208,4 @@ namespace ExtensionMethods
             };
         }
     }
-
 }

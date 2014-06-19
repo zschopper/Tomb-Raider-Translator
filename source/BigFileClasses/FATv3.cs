@@ -45,7 +45,7 @@ namespace TRTR
        //                                             
     }
 
-    internal struct FATEntry
+    public struct FATEntry
     {
         internal UInt32 Hash;
         //private UInt32 LangCode;
@@ -58,7 +58,7 @@ namespace TRTR
         //internal FileLanguage Language { get { return getLanguage(LangCode); } }
         internal UInt32 BigFileIndex { get { return Location & 0x0F; } }
         internal UInt32 Address { get { return Location.ShrinkToBoundary(0x800); } }
-        internal BigFileV3 BigFile { get; set; }
+        internal IBigFile BigFile { get; set; }
         internal string LocaleText { get { return getLocaleText(); } }
 
         internal bool IsLocale(FileLocale locale) 

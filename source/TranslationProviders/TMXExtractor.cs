@@ -140,7 +140,7 @@ namespace TRTR
             return compareRes;
         }
 
-        internal override string GetTranslation(string text, FileEntry entry, Dictionary<string, string> context)
+        internal override string GetTranslation(string text, IFileEntry entry, Dictionary<string, string> context)
         {
             if (text.Trim() == "")
                 return text;
@@ -178,7 +178,7 @@ namespace TRTR
                         foreach (string key in context.Keys)
                         {
                             string value = context[key];
-                            if (key == "bigfile")
+                            if (key == "IBigFile")
                             {
                                 for (int j = 0; j < bigfile_locals.Length; j++)
                                     if (value.ToUpper().EndsWith(bigfile_locals[j]))

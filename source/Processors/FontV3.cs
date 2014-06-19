@@ -11,7 +11,7 @@ namespace TRTR
 
     class FontV3
     {
-        internal static bool Process(FileEntry entry, Stream outStream, TranslationProvider tran)
+        internal static bool Process(IFileEntry entry, Stream outStream, TranslationProvider tran)
         {
             bool ret = false;
             FileStream fs = TRGameInfo.FilePool.Open(entry);
@@ -27,11 +27,11 @@ namespace TRTR
             return ret;
         }
 
-        internal static bool Process(FileEntry entry, Stream inStream, long contentLength, Stream outStream, TranslationProvider tp)
+        internal static bool Process(IFileEntry entry, Stream inStream, long contentLength, Stream outStream, TranslationProvider tp)
         {
             byte[] buf = entry.ReadContent();
             Directory.CreateDirectory(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name));
-            BigFileList.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name, entry.Extra.FileNameOnlyForced), entry);
+            entry.BigFile.Parent.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name, entry.Extra.FileNameOnlyForced), entry);
             inStream.Position = entry.Raw.Address;
             DRMFile drm = new DRMFile(entry);
             drm.Parse(inStream, contentLength, outStream);

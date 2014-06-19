@@ -13,7 +13,7 @@ namespace TRTR
 
         protected override bool getUseContext() { return false; }
 
-        internal override string GetTranslation(string text, FileEntry entry, Dictionary<string, string> context)
+        internal override string GetTranslation(string text, IFileEntry entry, Dictionary<string, string> context)
         {
             return text;
         }

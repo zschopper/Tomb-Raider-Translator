@@ -11,9 +11,9 @@ namespace TRTR
         //internal byte[] Original;
         //internal byte[] Translation;
         internal byte[] Current;
-        private FileEntry entry;
+        private IFileEntry entry;
 
-        internal FontFile(FileEntry entry)
+        internal FontFile(IFileEntry entry)
         {
             this.entry = entry;
             ParseFile();

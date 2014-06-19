@@ -33,6 +33,7 @@ namespace TRTR
 
     class GameInstance
     {
+        internal KnownGame Game;
 
         internal class Settings
         {
@@ -358,6 +359,7 @@ namespace TRTR
                     {
                         items.Add(new GameInstance
                         {
+                            Game = knownGame,
                             Name = knownGame.Name,
                             InstallType = InstallTypeEnum.Standalone,
                             InstallFolder = reg.GetValue("InstallPath").ToString(),

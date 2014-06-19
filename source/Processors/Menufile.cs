@@ -24,7 +24,7 @@ namespace TRTR
         //private static TextConv textConv = new TextConv(new char[] { }, new char[] { }, Encoding.UTF8); // null;
         #endregion
 
-        internal static bool Process(FileEntry entry, Stream outStream, TranslationProvider tran)
+        internal static bool Process(IFileEntry entry, Stream outStream, TranslationProvider tran)
         {
             bool ret = false;
             FileStream fs = TRGameInfo.FilePool.Open(entry);
@@ -101,7 +101,7 @@ namespace TRTR
         }
 
 
-        internal static bool Process(FileEntry entry, Stream inStream, long contentLength, Stream outStream, TranslationProvider tp)
+        internal static bool Process(IFileEntry entry, Stream inStream, long contentLength, Stream outStream, TranslationProvider tp)
         {
             Int64 startInPos = inStream.Position;
             Int64 startOutPos = outStream.Position;

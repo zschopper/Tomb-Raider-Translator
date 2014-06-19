@@ -8,7 +8,7 @@ namespace TRTR
 {
     internal class MovieFile
     {
-        internal static bool Process(FileEntry entry, Stream outStream, TranslationProvider tran)
+        internal static bool Process(IFileEntry entry, Stream outStream, TranslationProvider tran)
         {
             bool ret = false;
             FileStream fs = TRGameInfo.FilePool.Open(entry);
@@ -24,7 +24,7 @@ namespace TRTR
             return ret;
         }
 
-        internal static bool Process(FileEntry entry, Stream inStream, long contentLength, Stream outStream, TranslationProvider tp)
+        internal static bool Process(IFileEntry entry, Stream inStream, long contentLength, Stream outStream, TranslationProvider tp)
         {
             StringBuilder sb = new StringBuilder();
             bool write = outStream != Stream.Null;

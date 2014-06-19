@@ -28,7 +28,7 @@ namespace TRTR
         private static GameInstance game = null;
 
         private static BigFilePool filePool = null;
-        private static BigFileList bigFiles = null;
+        private static IBigFileList bigFiles = null;
         #endregion
 
         internal static TextConv Conv = new TextConv(new char[] { (char)0x0150, (char)0x0151, (char)0x0170, (char)0x0171 }, new char[] { (char)0x00D4, (char)0x00F4, (char)0x00DB, (char)0x00FB }, Encoding.UTF8);
@@ -38,7 +38,7 @@ namespace TRTR
         internal static GameInstance Game { get { return game; } set { game = value; } }
 
         internal static BigFilePool FilePool { get { return filePool; } }
-        internal static BigFileList BigFiles { get { return bigFiles; } }
+        internal static IBigFileList BigFiles { get { return bigFiles; } }
         internal static FileLocale TransTextLang { get { return FileLocale.English; } }
         internal static FileLocale TransVoiceLang { get; set; }
 
@@ -65,7 +65,19 @@ namespace TRTR
             gameStatus = game.Load();
             Log.LogDebugMsg("Game loaded.");
             Log.LogDebugMsg("Parsing files...");
-            bigFiles = new BigFileList(game.InstallFolder);
+
+            switch (game.Game.BigfileVersion)
+            {
+                case "2":
+                    bigFiles = new BigFileListV2(game.InstallFolder);
+                    break;
+                case "3":
+                    bigFiles = new BigFileListV3(game.InstallFolder);
+                    break;
+            }
+
+
+            //bigFiles = new (game.BigFileClass);// IBigFileList(game.InstallFolder);
             Log.LogDebugMsg("Parsing files finished.");
             if (filePool != null)
                 filePool.CloseAll();

@@ -7,7 +7,7 @@ namespace TRTR
 {
     static class ContainedFileProcessor
     {
-        internal static bool Process(FileEntry entry, Stream outStream, TranslationProvider tran) { return false; }
+        internal static bool Process(IFileEntry entry, Stream outStream, TranslationProvider tran) { return false; }
 
 
     }

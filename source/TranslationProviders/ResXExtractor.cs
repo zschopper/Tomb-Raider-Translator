@@ -142,7 +142,7 @@ namespace TRTR
             return compareRes;
         }
 
-        internal override string GetTranslation(string text, FileEntry entry, Dictionary<string, string> context)
+        internal override string GetTranslation(string text, IFileEntry entry, Dictionary<string, string> context)
         {
             if (text == "")
                 return "";
@@ -215,7 +215,7 @@ namespace TRTR
                     StringBuilder sb = new StringBuilder();
                     foreach (string key in context.Keys)
                     {
-                        discardValue = (key != "bigfile");
+                        discardValue = (key != "bigFile");
 
                         if(!discardValue)
                             sb.Append(string.Format("{0}: {1}\r\n", key, context[key]));

@@ -66,10 +66,10 @@ namespace TRTR
     {
         #region private declarations
         private Dictionary<string, FilePoolEntry> pool = new Dictionary<string, FilePoolEntry>();
-        private BigFileList bigFiles;
+        private IBigFileList bigFiles;
         #endregion
 
-        internal BigFilePool(BigFileList bigFiles)
+        internal BigFilePool(IBigFileList bigFiles)
         {
             this.bigFiles = bigFiles;
         }
@@ -79,12 +79,12 @@ namespace TRTR
             return string.Format("{0}.{1:D3}", name, index);
         }
 
-        internal static string CreateKey(FileEntry entry)
+        internal static string CreateKey(IFileEntry entry)
         {
             return CreateKey(entry.BigFile.Name, entry.Raw.BigFileIndex);
         }
 
-        internal FileStream Open(FileEntry entry)
+        internal FileStream Open(IFileEntry entry)
         {
             return Open(entry.BigFile.Name, entry.Raw.BigFileIndex);
         }
@@ -97,7 +97,7 @@ namespace TRTR
 
             if (!pool.ContainsKey(key))
             {
-                BigFileV3 bigFile = null;
+                IBigFile bigFile = null;
                 if (!bigFiles.ItemsByName.TryGetValue(name, out bigFile))
                 {
                     bigFile = null;
@@ -124,7 +124,7 @@ namespace TRTR
             Close(CreateKey(name, index));
         }
 
-        internal void Close(FileEntry entry)
+        internal void Close(IFileEntry entry)
         {
             Close(CreateKey(entry));
         }
@@ -140,10 +140,10 @@ namespace TRTR
     {
         #region private declarations
         private static Dictionary<string, FilePoolEntry> pool = new Dictionary<string, FilePoolEntry>();
-        private static BigFileList bigFiles;
+        private static IBigFileList bigFiles;
         #endregion
 
-        internal static void SetBigFiles(BigFileList bigFiles)
+        internal static void SetBigFiles(IBigFileList bigFiles)
         {
             BigFilePoolSingleton.bigFiles = bigFiles;
         }
@@ -153,12 +153,12 @@ namespace TRTR
             return string.Format("{0}.{1:D3}", name, index);
         }
 
-        internal static string CreateKey(FileEntry entry)
+        internal static string CreateKey(IFileEntry entry)
         {
             return CreateKey(entry.BigFile.Name, entry.Raw.BigFileIndex);
         }
 
-        internal static FileStream Open(FileEntry entry)
+        internal static FileStream Open(IFileEntry entry)
         {
             return Open(entry.BigFile.Name, entry.Raw.BigFileIndex);
         }
@@ -171,7 +171,7 @@ namespace TRTR
 
             if (!pool.ContainsKey(key))
             {
-                BigFileV3 bigFile = null;
+                IBigFile bigFile = null;
                 if (!bigFiles.ItemsByName.TryGetValue(name, out bigFile))
                 {
                     bigFile = null;
@@ -198,7 +198,7 @@ namespace TRTR
             Close(CreateKey(name, index));
         }
 
-        internal static void Close(FileEntry entry)
+        internal static void Close(IFileEntry entry)
         {
             Close(CreateKey(entry));
         }

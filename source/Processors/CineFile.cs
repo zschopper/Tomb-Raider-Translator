@@ -28,7 +28,7 @@ namespace TRTR
 
     static class CineFile
     {
-        internal static bool Process(FileEntry entry, Stream outStream, TranslationProvider tran)
+        internal static bool Process(IFileEntry entry, Stream outStream, TranslationProvider tran)
         {
             bool ret = false;
             FileStream fs = TRGameInfo.FilePool.Open(entry);
@@ -44,7 +44,7 @@ namespace TRTR
             return ret;
         }
 
-        internal static bool Process(FileEntry entry, Stream inStream, long contentLength, Stream outStream, TranslationProvider tp)
+        internal static bool Process(IFileEntry entry, Stream inStream, long contentLength, Stream outStream, TranslationProvider tp)
         {
             bool ret = false;
             //if (entry.Hash != 0x3E2465ECu)
@@ -54,7 +54,7 @@ namespace TRTR
             Int64 startOutPos = outStream.Position;
 
             // dump
-            //BigFileList.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, entry.Extra.FileNameOnlyForced), entry); // "cine_tmp.dump"
+            //entry.Parent.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, entry.Extra.FileNameOnlyForced), entry); // "cine_tmp.dump"
             //inStream.Position = startPos;
 
             // write _file_ header to output
@@ -131,7 +131,7 @@ namespace TRTR
             return ret;
         }
 
-        private static bool processType1Block(Stream inStream, Stream outStream, FileEntry entry, UInt32 blockNo, TranslationProvider tran)
+        private static bool processType1Block(Stream inStream, Stream outStream, IFileEntry entry, UInt32 blockNo, TranslationProvider tran)
         {
             //if (entry.Hash == 0x049164d5 && blockNo == 0x00000079)
             //    Noop.DoIt();
@@ -333,7 +333,7 @@ namespace TRTR
 
         private static Regex rx = new Regex(@"^(\[[0-9a-z\.]+\]|)(.*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        private static byte[] TranslateTextBlock(string textBlock, FileEntry entry, UInt32 blockNo, TranslationProvider tp)
+        private static byte[] TranslateTextBlock(string textBlock, IFileEntry entry, UInt32 blockNo, TranslationProvider tp)
         {
 
             StringBuilder ret = new StringBuilder();

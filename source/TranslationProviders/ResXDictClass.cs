@@ -86,7 +86,7 @@ namespace TRTR
             dict = new Dictionary<int, ResXDictEntryList>();
         }
 
-        internal override string GetTranslation(string text, FileEntry entry, Dictionary<string, string> context)
+        internal override string GetTranslation(string text, IFileEntry entry, Dictionary<string, string> context)
         {
             if (text.Trim().Length == 0)
                 return text;

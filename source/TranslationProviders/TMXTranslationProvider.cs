@@ -116,7 +116,9 @@ namespace TRTR
                 throw new Exception("No translation files found.");
             }
         }
-        internal override void Close() {
+
+        internal override void Close()
+        {
             if (tpRUS != null)
                 tpRUS.Close();
             DoStat(); 
@@ -156,7 +158,7 @@ namespace TRTR
                 tpRUS.Clear();
         }
 
-        internal override string GetTranslation(string text, FileEntry entry, Dictionary<string, string> context)
+        internal override string GetTranslation(string text, IFileEntry entry, Dictionary<string, string> context)
         {
             string textSrcLang;
             if (context.TryGetValue("SrcLang", out textSrcLang))

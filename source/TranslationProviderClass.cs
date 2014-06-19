@@ -11,7 +11,7 @@ namespace TRTR
 
         internal abstract void Open();
         internal abstract void Clear();
-        internal abstract string GetTranslation(string text, FileEntry entry, Dictionary<string, string> context = null);
+        internal abstract string GetTranslation(string text, IFileEntry entry, Dictionary<string, string> context = null);
         internal abstract void Close();
 
         protected abstract bool getUseContext();

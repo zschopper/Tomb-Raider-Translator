@@ -46,7 +46,7 @@ namespace TRTR
             public uint Address;
             public uint Length;
             public uint U4;
-            public BigFileV3 BigFile;
+            public IBigFile BigFile;
             public uint BigFileIdx;
             public uint BigFilePriority;
             public uint Offset;
@@ -56,12 +56,12 @@ namespace TRTR
     partial class DRMFile
     {
         #region private declarations
-        FileEntry entry = null;
+        IFileEntry entry = null;
         #endregion
 
-        FileEntry Entry { get { return entry; } }
+        IFileEntry Entry { get { return entry; } }
 
-        internal DRMFile(FileEntry entry)
+        internal DRMFile(IFileEntry entry)
         {
             this.entry = entry;
         }

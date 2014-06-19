@@ -116,6 +116,7 @@ namespace TRTR
                 throw new Exception("No translation files found.");
             }
         }
+
         internal override void Close() { DoStat(); Clear(); }
 
         private void DoStat()
@@ -150,7 +151,7 @@ namespace TRTR
             dict.Clear();
         }
 
-        internal override string GetTranslation(string text, FileEntry entry, Dictionary<string, string> context)
+        internal override string GetTranslation(string text, IFileEntry entry, Dictionary<string, string> context)
         {
             RUTMXDictEntry dictEntry = null;
             int hash = normalizedTextHash(text);
