@@ -393,7 +393,10 @@ namespace TRTR
                     raw.Locale = (FileLocale)br.ReadUInt32();
                     raw.Length = br.ReadUInt32();
                     raw.Location = br.ReadUInt32();
+                    raw.BigFileIndex = raw.Location & 0x0F;
                     raw.Index = i;
+                    raw.Address = raw.Location.ShrinkToBoundary(0x800);
+
                     itemsByIndex.Add(raw);
                     itemsByLocation.Add(raw);
                 }
@@ -688,7 +691,7 @@ namespace TRTR
                 }
 
                 twEntries.WriteLine("USED LOCALES:");
-                FileLocale mask = (FileLocale.English | FileLocale.French | FileLocale.German | FileLocale.Italian | FileLocale.Spanish | FileLocale.Japanese | FileLocale.Portugese | FileLocale.Polish | /*FileLocale.EnglishUK | */ FileLocale.Russian | FileLocale.Czech | FileLocale.Dutch | /*FileLocale.Hungarian | FileLocale.Croatian | /**/ FileLocale.Arabic | FileLocale.Korean | FileLocale.Chinese);
+                FileLocale mask = (FileLocale.English | FileLocale.French | FileLocale.German | FileLocale.Italian | FileLocale.Spanish | FileLocale.Japanese | FileLocale.Portuguese | FileLocale.Polish | /*FileLocale.EnglishUK | */ FileLocale.Russian | FileLocale.Czech | FileLocale.Dutch | /*FileLocale.Hungarian | FileLocale.Croatian | /**/ FileLocale.Arabic | FileLocale.Korean | FileLocale.Chinese);
 
                 mask = mask | /*FileLocale.UnusedFlags | */FileLocale.UnusedFlags2 | FileLocale.UpperWord;
 

@@ -16,6 +16,31 @@ namespace TRTR
 
     #region Primitives
 
+    [Flags]
+    public enum FileLocale : uint
+    {
+        Default = 0xFFFFFFFF,
+        UpperWord = 0xFFFF0000,
+        UnusedFlags2 = 0x00001100,//     0x1100  0001000100000000
+        English = 1 << 0,       //      1 0x0001  0001000100000001
+        French = 1 << 1,        //      2 0x0002  0001000100000010
+        German = 1 << 2,        //      4 0x0004  0001000100000100
+        Italian = 1 << 3,       //      8 0x0008  0001000100001000
+        Spanish = 1 << 4,       //     16 0x0010  0001000100010000
+        Japanese = 1 << 5,      //     32 0x0020  0001000100100000
+        Portuguese = 1 << 6,    //     64 0x0040  0001000101000000
+        Polish = 1 << 7,        //    128 0x0080  0001000110000000
+        //EnglishUK = 1 << 8,   //    256 0x0100         1        
+        Russian = 1 << 9,       //    512 0x0200  0001001100000000
+        Czech = 1 << 10,        //   1024 0x0400  0001010100000000
+        Dutch = 1 << 11,        //   2048 0x0800  0001100100000000
+        //Hungarian = 1 << 12,  //   4096 0x1000     1            
+        Arabic = 1 << 13,       //   8192 0x2000  0011000100000000
+        Korean = 1 << 14,       //  32768 0x4000  0101000100000000
+        Chinese = 1 << 15,      //  65536 0x8000  1001000100000000
+        //                                             
+    }
+
     public enum FileEntryCompareField
     {
         OriginalIndex = 0,

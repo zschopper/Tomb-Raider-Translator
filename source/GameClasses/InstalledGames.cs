@@ -33,8 +33,6 @@ namespace TRTR
 
     class GameInstance
     {
-        internal KnownGame Game;
-
         internal class Settings
         {
             internal int LangCode = -1;
@@ -167,9 +165,46 @@ namespace TRTR
 
             //\\\Registry\HKEY_LOCAL_MACHINE\SOFTWARE\Valve\Steam\InstallPath 
             SteamVDFDoc configVDF = new SteamVDFDoc(Path.Combine(steamInstallFolder, "config", "config.vdf"));
-            VDFNode gameNode = configVDF.ItemByPath(@"InstallConfigStore\Software\Valve\Steam\apps\" + GameDefaults.AppId);
 
-            installFolder = gameNode.ChildItemByName("installdir").Value;
+            VDFNode gameNode = configVDF.ItemByPath(@"InstallConfigStore\Software\Valve\Steam\apps\" + GameDefaults.SteamAppId);
+
+            VDFNode installFolderNode = gameNode.ChildItemByName("installdir");
+            if (installFolderNode != null)
+            {
+                installFolder = installFolderNode.Value;
+
+            }
+            else
+            {
+                VDFNode steamNode = configVDF.ItemByPath(@"InstallConfigStore\Software\Valve\Steam");
+                VDFNode baseInstallFolderNode = null;
+                int installFolderIdx = 0;
+                installFolder = string.Empty;
+                do
+                {
+                    installFolderIdx++;
+                    baseInstallFolderNode = steamNode.ChildItemByName("BaseInstallFolder_" + installFolderIdx);
+                    if (baseInstallFolderNode != null)
+                    {
+                        string steamFolder = baseInstallFolderNode.Value;
+                        string appManifestFileName = Path.Combine(steamFolder, "steamapps", "appmanifest_" + GameDefaults.SteamAppId + ".acf");
+                        if (File.Exists(appManifestFileName))
+                        {
+                            SteamVDFDoc appManifest = new SteamVDFDoc(appManifestFileName);
+                            VDFNode appStateNode = appManifest.ItemByPath(@"AppState");
+                            VDFNode installDirNode = appStateNode.ChildItemByName("installdir");
+                            if (installDirNode != null)
+                            {
+                                installFolder = Path.Combine(steamFolder, "steamapps", "common", installDirNode.Value);
+                                if (!Directory.Exists(installFolder))
+                                    installFolder = string.Empty;
+                            }
+                        }
+
+                    }
+                } while (installFolder == string.Empty && baseInstallFolderNode != null);
+
+            }
             try
             {
                 VersionString = FileVersionInfo.GetVersionInfo(Path.Combine(installFolder, GameDefaults.ExeName)).FileVersion;
@@ -359,7 +394,6 @@ namespace TRTR
                     {
                         items.Add(new GameInstance
                         {
-                            Game = knownGame,
                             Name = knownGame.Name,
                             InstallType = InstallTypeEnum.Standalone,
                             InstallFolder = reg.GetValue("InstallPath").ToString(),
@@ -374,9 +408,9 @@ namespace TRTR
         {
             foreach (KnownGame knownGame in KnownGames.Items)
             {
-                RegistryKey reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App " + knownGame.AppId);
+                RegistryKey reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App " + knownGame.SteamAppId);
                 if (reg == null)
-                    reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App " + knownGame.AppId);
+                    reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App " + knownGame.SteamAppId);
                 if (reg != null)
                 {
                     items.Add(new GameInstance

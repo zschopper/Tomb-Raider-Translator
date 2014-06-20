@@ -66,7 +66,7 @@ namespace TRTR
             Log.LogDebugMsg("Game loaded.");
             Log.LogDebugMsg("Parsing files...");
 
-            switch (game.Game.BigfileVersion)
+            switch (game.GameDefaults.BigfileVersion)
             {
                 case "2":
                     bigFiles = new BigFileListV2(game.InstallFolder);

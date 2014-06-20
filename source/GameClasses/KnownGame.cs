@@ -20,16 +20,19 @@ namespace TRTR
     {
         internal class KnownBigfileData
         {
-            internal string name = string.Empty;
-            internal string pattern = string.Empty;
-            internal Int32 entryOfs = 0;
+            internal string Name = string.Empty;
+            internal string Pattern = string.Empty;
+            internal Int32 EntryOfs = 0;
+            public int Priority = -1;
         }
 
-        public string AppId;
+        public string SteamAppId;
         public string BigfileVersion;
         public string ExeName;
         public string Name;
         public KnownBigfileData[] BigFiles;
+        public Dictionary<FileLanguage, Int32> Langs;
+        public FileLocale Locales;
     }
 
     internal static class KnownGames
@@ -42,63 +45,62 @@ namespace TRTR
             Items.Add(new KnownGame
             {
                 Name = "Tomb Raider: Legend demo",
-                AppId = "7000",
+                SteamAppId = "7000",
                 ExeName = "TRL.exe",
                 BigfileVersion = "1",
-                //BigFileClass = 
                 BigFiles = new KnownGame.KnownBigfileData[] { 
-                    new KnownGame.KnownBigfileData{ name = "bigfile", pattern = "bigfile.{D3}", entryOfs = 0 }
+                    new KnownGame.KnownBigfileData{ Name = "bigfile", Pattern = "bigfile.{D3}", EntryOfs = 0 }
                 },
 
             });
             Items.Add(new KnownGame
             {
                 Name = "Tomb Raider: Legend",
-                AppId = "7000",
+                SteamAppId = "7000",
                 ExeName = "TRL.exe",
                 BigfileVersion = "1",
                 BigFiles = new KnownGame.KnownBigfileData[] { 
-                    new KnownGame.KnownBigfileData{ name = "bigfile", pattern = "bigfile.{D3}", entryOfs = 0 }
+                    new KnownGame.KnownBigfileData{ Name = "bigfile", Pattern = "bigfile.{D3}", EntryOfs = 0 }
                 },
             });
             Items.Add(new KnownGame
             {
                 Name = "Tomb Raider: Anniversary demo",
-                AppId = "8000",
+                SteamAppId = "8000",
                 ExeName = "TRA.exe",
                 BigfileVersion = "1",
                 BigFiles = new KnownGame.KnownBigfileData[] { 
-                    new KnownGame.KnownBigfileData{ name = "bigfile", pattern = "bigfile.{D3}", entryOfs = 0 }
+                    new KnownGame.KnownBigfileData{ Name = "bigfile", Pattern = "bigfile.{D3}", EntryOfs = 0 }
                 },
             });
             Items.Add(new KnownGame
             {
                 Name = "Tomb Raider: Anniversary",
-                AppId = "8000",
+                SteamAppId = "8000",
                 ExeName = "TRA.exe",
                 BigfileVersion = "1",
                 BigFiles = new KnownGame.KnownBigfileData[] { 
-                    new KnownGame.KnownBigfileData{ name = "bigfile", pattern = "bigfile.{D3}", entryOfs = 0 }
+                    new KnownGame.KnownBigfileData{ Name = "bigfile", Pattern = "bigfile.{D3}", EntryOfs = 0 }
                 },
             });
             Items.Add(new KnownGame
             {
                 Name = "Tomb Raider: Underworld demo",
-                AppId = "8140",
+                SteamAppId = "8140",
                 ExeName = "TRU.exe",
                 BigfileVersion = "1",
                 BigFiles = new KnownGame.KnownBigfileData[] { 
-                    new KnownGame.KnownBigfileData{ name = "bigfile", pattern = "bigfile.{D3}", entryOfs = 0 }
+                    new KnownGame.KnownBigfileData{ Name = "bigfile", Pattern = "bigfile.{D3}", EntryOfs = 0 }
                 },
             });
             Items.Add(new KnownGame
             {
                 Name = "Tomb Raider: Underworld",
-                AppId = "8140",
+                SteamAppId = "8140",
                 ExeName = "TRU.exe",
                 BigfileVersion = "2",
                 BigFiles = new KnownGame.KnownBigfileData[] { 
-                    new KnownGame.KnownBigfileData{ name = "bigfile", pattern = "bigfile.{D3}", entryOfs = 0 }
+                    new KnownGame.KnownBigfileData{ Name = "bigfile", Pattern = "bigfile.{D3}", EntryOfs = 0 }
                 },
             });
 
@@ -108,20 +110,58 @@ namespace TRTR
             Items.Add(new KnownGame
             {
                 Name = "Lara Croft and the Guardian of Light",
-                AppId = "35130",
+                SteamAppId = "35130",
                 ExeName = "LCGOL.exe",
                 BigfileVersion = "2",
                 BigFiles = new KnownGame.KnownBigfileData[] { 
-                    new KnownGame.KnownBigfileData{ name = "bigfile", pattern = "bigfile.{D3}", entryOfs = 0 }
+                    new KnownGame.KnownBigfileData{ Name = "bigfile", Pattern = "bigfile.{D3}", EntryOfs = 0, Priority = 1 },
+                    new KnownGame.KnownBigfileData{ Name = "patch", Pattern = "patch.{D3}", EntryOfs = 0, Priority = 2 },
+                    new KnownGame.KnownBigfileData{ Name = "pack1", Pattern = "pack1.{D3}", EntryOfs = 0, Priority = 1 },
+                    new KnownGame.KnownBigfileData{ Name = "pack2", Pattern = "pack2.{D3}", EntryOfs = 0, Priority = 1 },
+                    new KnownGame.KnownBigfileData{ Name = "pack3", Pattern = "pack3.{D3}", EntryOfs = 0, Priority = 1 },
+                    new KnownGame.KnownBigfileData{ Name = "pack4", Pattern = "pack4.{D3}", EntryOfs = 0, Priority = 1 },
+                    new KnownGame.KnownBigfileData{ Name = "pack5", Pattern = "pack5.{D3}", EntryOfs = 0, Priority = 1 },
                 },
+                Langs = new Dictionary<FileLanguage, Int32>() {
+                    { FileLanguage.Default, -1 },
+                    { FileLanguage.English, 1 << 0 },       //      1 0x0001  0001000100000001
+                    { FileLanguage.French, 1 << 1 },        //      2 0x0002  0001000100000010
+                    { FileLanguage.German, 1 << 2 },        //      4 0x0004  0001000100000100
+                    { FileLanguage.Italian, 1 << 3 },       //      8 0x0008  0001000100001000
+                    { FileLanguage.Spanish, 1 << 4 },       //      0 0x0000  0001000100010000
+                },
+                Locales = FileLocale.English | FileLocale.French | FileLocale.German | FileLocale.Italian | FileLocale.Spanish,
             });
 
             Items.Add(new KnownGame
             {
                 Name = "Tomb Raider",
-                AppId = "203160", //203178 - dlc VIDEO
+                SteamAppId = "203160", //203178 - dlc VIDEO
                 ExeName = "TombRaider.exe",
                 BigfileVersion = "3",
+                Langs = new Dictionary<FileLanguage, Int32>() {
+                    { FileLanguage.Default, -1 },
+                    { FileLanguage.English, 1 << 0 },       //      1 0x0001  0001000100000001
+                    { FileLanguage.French, 1 << 1 },        //      2 0x0002  0001000100000010
+                    { FileLanguage.German, 1 << 2 },        //      4 0x0004  0001000100000100
+                    { FileLanguage.Italian, 1 << 3 },       //      8 0x0008  0001000100001000
+                    { FileLanguage.Spanish, 1 << 4 },       //     16 0x0010  0001000100010000
+                    { FileLanguage.Japanese, 1 << 5 },      //     32 0x0020  0001000100100000
+                    { FileLanguage.Portuguese, 1 << 6 },    //     64 0x0040  0001000101000000
+                    { FileLanguage.Polish, 1 << 7 },        //    128 0x0080  0001000110000000
+                  //{ FileLanguage.EnglishUK, 1 << 8 },     //    256 0x0100         1        
+                    { FileLanguage.Russian, 1 << 9 },       //    512 0x0200  0001001100000000
+                    { FileLanguage.Czech, 1 << 10 },        //   1024 0x0400  0001010100000000
+                    { FileLanguage.Dutch, 1 << 11 },        //   2048 0x0800  0001100100000000
+                  //{ FileLanguage.Hungarian, 1 << 12 },    //   4096 0x1000     1            
+                    { FileLanguage.Arabic, 1 << 13 },       //   8192 0x2000  0011000100000000
+                    { FileLanguage.Korean, 1 << 14 },       //  32768 0x4000  0101000100000000
+                    { FileLanguage.Chinese, 1 << 15 },      //  65536 0x8000  1001000100000000
+                },
+                Locales = FileLocale.English | FileLocale.French | FileLocale.German | FileLocale.Italian | FileLocale.Spanish | 
+                    FileLocale.Japanese | FileLocale.Portuguese | FileLocale.Polish | FileLocale.Russian | FileLocale.Czech | 
+                    FileLocale.Dutch | FileLocale.Arabic | FileLocale.Korean | FileLocale.Chinese,
+
                 //BigFiles = new KnownGame.KnownBigfileData[] { 
                 //    new KnownGame.KnownBigfileData{ name = "bigfile",     pattern = "bigfile.{0:D3}.tiger", entryOfs = 0 },
                 //    new KnownGame.KnownBigfileData{ name = "bigfile_loc", pattern = "bigfile_ENGLISH.{0:D3}.tiger", entryOfs = 0 },

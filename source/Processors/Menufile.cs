@@ -103,6 +103,8 @@ namespace TRTR
 
         internal static bool Process(IFileEntry entry, Stream inStream, long contentLength, Stream outStream, TranslationProvider tp)
         {
+            if (entry.FileType == FileTypeEnum.BIN_MNU)
+                inStream.Position += 0;
             Int64 startInPos = inStream.Position;
             Int64 startOutPos = outStream.Position;
             MemoryStream textBlockStream = new MemoryStream();
@@ -182,6 +184,9 @@ namespace TRTR
                         inStream.Read(textBuf, 0, (int)(tableEntry.Length));
 
                         string[] keyPlaceHolders;
+                        //debug
+                        if (textBuf.Length > 20000)
+                            inStream.Position += 0;
                         string text = CharToKeyPlaceholders(TRGameInfo.Conv.Enc.GetString(textBuf, 0, (int)(tableEntry.Length)).Trim(new char[] { '\0' }), out keyPlaceHolders);
 
                         Dictionary<string, string> context = null;
