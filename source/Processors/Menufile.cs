@@ -7,6 +7,7 @@ using System.IO;
 using System.Resources; //resource writer
 using ExtensionMethods;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace TRTR
 {
@@ -45,11 +46,15 @@ namespace TRTR
             chars = null;
             //return text;
 
+            if (text.Contains("to select between your equipped weapons"))
+                Debug.Flush();
             List<string> charsFind = new List<string>();
             List<int> pos = new List<int>();
             for (int i = 0; i < text.Length; i++)
             {
                 char c = text[i];
+
+                //Debug.WriteLine(string.Format("unicodeinfo: {0} {1}", c, System.Globalization.CharUnicodeInfo.GetUnicodeCategory(text, i)));
                 if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(text, i) == UnicodeCategory.PrivateUse)
                 {
                     charsFind.Add(c.ToString());
@@ -103,10 +108,11 @@ namespace TRTR
 
         internal static bool Process(IFileEntry entry, Stream inStream, long contentLength, Stream outStream, TranslationProvider tp)
         {
-            if (entry.FileType == FileTypeEnum.BIN_MNU)
-                inStream.Position += 0;
+            if (outStream == null)
+                outStream = Stream.Null;
+//            entry.BigFile.Parent.DumpToFile(@"c:\tmp\menu", entry.ReadContent());
             Int64 startInPos = inStream.Position;
-            Int64 startOutPos = outStream.Position;
+            //Int64 startOutPos = -1;
             MemoryStream textBlockStream = new MemoryStream();
 
 
@@ -116,12 +122,13 @@ namespace TRTR
             // entries
             UInt32 langCode = inStream.ReadUInt32();
             UInt32 entryCount1 = inStream.ReadUInt32();
-            UInt32 entryCount2 = inStream.ReadUInt32();
+            UInt32 entryCount2 = inStream.ReadUInt32() - 1;
             UInt32 entryCount = entryCount1 + entryCount2;
             UInt32 textBlockStartOfs = (entryCount + 3) * sizeof(UInt32);
 
             if (outStream != Stream.Null)
             {
+                //startOutPos = outStream.Position;
                 outStream.WriteUInt32(langCode);
                 outStream.WriteUInt32(entryCount1);
                 outStream.WriteUInt32(entryCount2);
@@ -130,9 +137,12 @@ namespace TRTR
             MenuTable[] table = new MenuTable[entryCount];
             MenuTable lastValidEntry = null;
 
+            UInt32 startOffs = 0;
             for (int i = 0; i < entryCount; i++)
             {
-                UInt32 startOffs = inStream.ReadUInt32();
+                if (i == 0x1413)
+                    entryCount += 0;
+                startOffs = inStream.ReadUInt32();
                 bool placeHolder = startOffs <= entryCount * 4;
                 table[i] = new MenuTable
                 {
@@ -148,7 +158,8 @@ namespace TRTR
                 if (!placeHolder)
                     lastValidEntry = table[i];
             }
-            table[table.Length - 1].EndOffs = (UInt32)contentLength;
+            table[table.Length - 1].EndOffs = (UInt32)(contentLength);
+            lastValidEntry.EndOffs = (UInt32)(contentLength);
 
             int debugPlaceHolderCount = 0;
             int debugValidEntryCount = 0;
@@ -184,9 +195,6 @@ namespace TRTR
                         inStream.Read(textBuf, 0, (int)(tableEntry.Length));
 
                         string[] keyPlaceHolders;
-                        //debug
-                        if (textBuf.Length > 20000)
-                            inStream.Position += 0;
                         string text = CharToKeyPlaceholders(TRGameInfo.Conv.Enc.GetString(textBuf, 0, (int)(tableEntry.Length)).Trim(new char[] { '\0' }), out keyPlaceHolders);
 
                         Dictionary<string, string> context = null;

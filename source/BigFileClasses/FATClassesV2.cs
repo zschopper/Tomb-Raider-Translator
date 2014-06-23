@@ -114,19 +114,18 @@ namespace TRTR
 
         public UInt32 Hash { get { return raw.Hash; } }
         public string HashText { get { return hashText; } }
-
         public FATEntry Raw { get { return raw; } set { raw = value; } }
         public IFileExtraInfo Extra { get { return getExtra(); } }
         public FileTypeEnum FileType { get { return fileType; } set { fileType = value; } }
 
         public IFileEntryList Parent { get { return parent; } }
         public UInt32 OriginalIndex { get { return raw.Index; } }
+        public UInt32 VirtualSize { get { return virtualSize; } set { virtualSize = value; } }
 
         public Int64 Offset { get { return raw.Address; } }
         public TranslationStatus Status { get { return status; } set { status = value; } }
         public IBigFile BigFile { get { return bigFile; } }
-        
-        public UInt32 VirtualSize { get { return virtualSize; } set { virtualSize = value; } }
+
 
         // ctor
         internal FileEntryV2(FATEntry raw, IFileEntryList parent, IBigFile bigFile)
@@ -134,7 +133,7 @@ namespace TRTR
             this.raw = raw;
             this.parent = parent;
             this.bigFile = bigFile;
-            this.extra = null;// new IFileExtraInfo(this);
+            this.extra = null;
             this.hashText = raw.Hash.ToString("X8");
         }
 
@@ -281,7 +280,7 @@ namespace TRTR
 
     }
 
-    // IBigFile's file entry list
+    // bigfile's file entry list
     class FileEntryListV2 : List<IFileEntry>, IFileEntryList
     {
         #region private declarations
@@ -335,7 +334,7 @@ namespace TRTR
 
     }
 
-    // data for a IBigFile
+    // data for a bigfile
     class BigFileV2 : IBigFile
     {
         internal static readonly UInt32 Boundary = 0x7FF00000;
@@ -435,7 +434,6 @@ namespace TRTR
                 // read FAT into RawFileInfo
                 itemsByIndex = new List<FATEntry>(entryCount);
                 itemsByLocation = new List<FATEntry>(entryCount);
-
                 //itemsByHash = new Dictionary<UInt32, RawFileInfo>(entryCount);
 
                 entryList = new FileEntryListV2(this);
@@ -446,8 +444,7 @@ namespace TRTR
                 {
                     FATEntry raw = new FATEntry();
                     raw.BigFile = this;
-                    raw.Hash = BitConverter.ToUInt32(buf, (int)i * 4);
-                    
+                    raw.Hash = BitConverter.ToUInt32(buf, (int)i * 4);                  
                     raw.Length = BitConverter.ToUInt32(buf, (int)(hashBlockSize + i * 16 + 0x00));
                     raw.Location = BitConverter.ToUInt32(buf, (int)(hashBlockSize + i * 16 + 0x04));
                     raw.Locale = (FileLocale)(BitConverter.ToUInt32(buf, (int)(hashBlockSize + i * 16 + 0x08)));
@@ -498,7 +495,7 @@ namespace TRTR
             FileStream fs = new FileStream(fileName, FileMode.Open);
             byte[] buf = new byte[headerSize + entryCount * 0x10];
             fs.Read(buf, 0, buf.Length);
-            //IBigFileList.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", this.name + ".fat_raw_src.txt"), buf);
+            this.Parent.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", this.name + ".fat_raw_src.txt"), buf);
             fs.Position = 0;
 
             BinaryWriter bw = new BinaryWriter(fs);
@@ -524,7 +521,7 @@ namespace TRTR
                 buf = new byte[headerSize + entryCount * 0x10];
                 fs.Position = 0;
                 fs.Read(buf, 0, buf.Length);
-                //IBigFileList.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", this.name + ".fat_raw_mod.txt"), buf);
+                //BigFileList.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", this.name + ".fat_raw_mod.txt"), buf);
             }
             finally
             {
@@ -534,7 +531,7 @@ namespace TRTR
 
         private int compareByLocation(FATEntry item1, FATEntry item2)
         {
-            // compare by IBigFile
+            // compare by bigfile
             int cmp = item1.BigFileIndex.CompareTo(item2.BigFileIndex);
             if (cmp != 0)
                 return cmp;
@@ -625,6 +622,7 @@ namespace TRTR
                 {
                     entry.FileType = FileTypeEnum.Special;
                     Directory.CreateDirectory(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name));
+
                     entry.BigFile.Parent.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name, entry.Extra.FileNameOnlyForced), entry);
                 }
                 else
@@ -693,7 +691,9 @@ namespace TRTR
                                     Debug.WriteLine(string.Format("Unknown file type for: {0}", entry.Extra.FileNameForced));
                                 break;
                         }
-                        if (entry.FileType == FileTypeEnum.MUL_CIN || entry.FileType == FileTypeEnum.RAW_FNT || entry.FileType == FileTypeEnum.SCH)
+                        if (entry.FileType == FileTypeEnum.RAW_FNT || entry.FileType == FileTypeEnum.SCH)
+                            entry.Status = TranslationStatus.Translatable;
+                        if (entry.FileType == FileTypeEnum.MUL_CIN && !entry.Raw.IsLocale(FileLocale.Default))
                             entry.Status = TranslationStatus.Translatable;
                     }
 
@@ -818,7 +818,13 @@ namespace TRTR
             LoadFileNamesFile(Path.Combine(TRGameInfo.Game.WorkFolder, "filelist.txt"), out fileNameHashDict);
 
             List<string> files = new List<string>();
-            //xx            //files.AddRange(Directory.GetFiles(folder, "*.000.tiger", SearchOption.TopDirectoryOnly));
+            foreach (KnownGame.KnownBigfileData bfData in TRGameInfo.Game.GameDefaults.BigFiles)
+            {
+                //xx todo: initalize files, priority based on knownbigfiledata
+                if (bfData.Priority != KnownGame.KnownBigfileData.DefaultPriority)
+                    ;
+
+            }
             files.AddRange(Directory.GetFiles(folder, "*.000", SearchOption.TopDirectoryOnly));
             string dlcFolder = Path.Combine(folder, "Dlc");
             if (Directory.Exists(dlcFolder))
@@ -838,22 +844,22 @@ namespace TRTR
                 if (!dupeFilter.Contains(fileNameOnly))
                 {
                     dupeFilter.Add(fileNameOnly);
-                    BigFileV2 IBigFile = new BigFileV2(file, this, false);
-                    this.Add(IBigFile);
-                    ItemsByName.Add(IBigFile.Name, IBigFile);
-                    if (IBigFile.Locale != FileLocale.Default)
+                    BigFileV2 bigFile = new BigFileV2(file, this, false);
+                    this.Add(bigFile);
+                    ItemsByName.Add(bigFile.Name, bigFile);
+                    if (bigFile.Locale != FileLocale.Default)
                     {
                         if (locale == FileLocale.Default)
-                            locale = IBigFile.Locale;
+                            locale = bigFile.Locale;
                         else
-                            if (locale != IBigFile.Locale)
+                            if (locale != bigFile.Locale)
                                 throw new Exception("Locale of game can not be determined: there are more bigfiles with different locales.");
                     }
                 }
             }
 
             TRGameInfo.TransVoiceLang = locale;
-            // IBigFile list by items' priority (desc) then its name (name)
+            // bigfile list by items' priority (desc) then its name (name)
             Sort((bf1, bf2) =>
             {
                 int i = (bf1.Priority.CompareTo(bf2.Priority));
@@ -869,9 +875,9 @@ namespace TRTR
 
         private void UpdateBigFiles()
         {
-            foreach (BigFileV2 IBigFile in this)
-                if (!IBigFile.LoadedCompletely)
-                    IBigFile.UpdateEntryList();
+            foreach (BigFileV2 bigFile in this)
+                if (!bigFile.LoadedCompletely)
+                    bigFile.UpdateEntryList();
 
             #region debug dump file
             foreach (FileEntryV2 entry in transEntries.Values)
@@ -879,8 +885,8 @@ namespace TRTR
                 bool debugDumpIt = false;
                 // debugDumpIt = entry.FileType == FileTypeEnum.DRM && entry.Raw.Length < 1024;
                 // debugDumpIt = entry.FileType == FileTypeEnum.BIN_MNU && entry.Extra.Language == FileLanguage.English;
-                // debugDumpIt = IFileEntry.Raw.Language == FileLanguage.NoLang || IFileEntry.Raw.Language == FileLanguage.Unknown || IFileEntry.Raw.Language == FileLanguage.English;
-                // debugDumpIt = IFileEntry.FileType == FileTypeEnum.MUL_CIN;
+                // debugDumpIt = fileEntry.Raw.Language == FileLanguage.NoLang || fileEntry.Raw.Language == FileLanguage.Unknown || fileEntry.Raw.Language == FileLanguage.English;
+                // debugDumpIt = fileEntry.FileType == FileTypeEnum.MUL_CIN;
                 // debugDumpIt = (entry.FileType == FileTypeEnum.BIN_MNU && entry.Extra.Language == FileLanguage.English) || entry.FileType == FileTypeEnum.Unknown; 
                 // debugDumpIt = entry.Status == TranslationStatus.Translatable;
                 // debugDumpIt = entry.FileType == FileTypeEnum.DRM && entry.Raw.Length < 1024;
@@ -1044,7 +1050,7 @@ namespace TRTR
                                     MemoryStream ms = new MemoryStream();
                                     try
                                     {
-                                        if (CineFile.Process(entry, ms, tp))
+                                        if (CineFile.Process(entry, Stream.Null, tp))
                                         {
                                             //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV2.Name, entry.Extra.FileNameForced });
                                             //DumpToFile(fileName, ms.ToArray());
@@ -1063,7 +1069,7 @@ namespace TRTR
                                 MemoryStream ms = new MemoryStream();
                                 try
                                 {
-                                    if (MenuFile.Process(entry, ms, tp))
+                                    if (MenuFile.Process(entry, Stream.Null, tp))
                                     {
                                         //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV2.Name, entry.Extra.FileNameForced });
                                         //DumpToFile(fileName, ms.ToArray());
@@ -1081,7 +1087,7 @@ namespace TRTR
                                 MemoryStream ms = new MemoryStream();
                                 try
                                 {
-                                    if (MovieFile.Process(entry, ms, tp))
+                                    if (MovieFile.Process(entry, Stream.Null, tp))
                                     {
                                         //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV2.Name, entry.Extra.FileNameForced });
                                         //DumpToFile(fileName, ms.ToArray());
@@ -1111,21 +1117,21 @@ namespace TRTR
                 }
                 i++;
             }
+            tpTransSrc.Close();
             tp.Close();
             Log.LogProgress(StaticTexts.translationDone, 100);
             //if (!true)
             //{
-            //    foreach (BigFileV2 IBigFile in this)
+            //    foreach (BigFileV2 bigFile in this)
             //    {
-            //        if (IBigFile.HeaderChanged)
-            //            IBigFile.WriteFAT();
+            //        if (bigFile.HeaderChanged)
+            //            bigFile.WriteFAT();
             //    }
             //}
             TRGameInfo.FilePool.CloseAll();
         }
 
-
-        void IBigFileList.Translate(bool simulated)
+        public void Translate(bool simulated)
         {
             Int32 lastReported = 0;
             Log.LogProgress(StaticTexts.translating, 0);
@@ -1188,7 +1194,7 @@ namespace TRTR
                                 {
                                     //string fileName;
 
-                                    //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "orig", entry.BigFileV2.Name, entry.Extra.FileNameForced });
+                                    //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "orig", entry.BigFile.Name, entry.Extra.FileNameForced });
                                     //if (!Directory.Exists(Path.GetDirectoryName(fileName)))
                                     //    Directory.CreateDirectory(Path.GetDirectoryName(fileName));
                                     //DumpToFile(fileName, entry);
@@ -1199,7 +1205,7 @@ namespace TRTR
                                     {
                                         if (CineFile.Process(entry, ms, tp))
                                         {
-                                            //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV2.Name, entry.Extra.FileNameForced });
+                                            //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFile.Name, entry.Extra.FileNameForced });
                                             //DumpToFile(fileName, ms.ToArray());
                                             entry.BigFile.Parent.WriteFile(entry.BigFile, entry, ms.ToArray(), simulated);
                                         }
@@ -1218,7 +1224,7 @@ namespace TRTR
                                 {
                                     if (MenuFile.Process(entry, ms, tp))
                                     {
-                                        //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV2.Name, entry.Extra.FileNameForced });
+                                        //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFile.Name, entry.Extra.FileNameForced });
                                         //DumpToFile(fileName, ms.ToArray());
                                         entry.BigFile.Parent.WriteFile(entry.BigFile, entry, ms.ToArray(), simulated);
                                     }
@@ -1236,7 +1242,7 @@ namespace TRTR
                                 {
                                     if (MovieFile.Process(entry, ms, tp))
                                     {
-                                        //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV2.Name, entry.Extra.FileNameForced });
+                                        //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFile.Name, entry.Extra.FileNameForced });
                                         //DumpToFile(fileName, ms.ToArray());
                                         entry.BigFile.Parent.WriteFile(entry.BigFile, entry, ms.ToArray(), simulated);
                                     }
@@ -1268,19 +1274,19 @@ namespace TRTR
             Log.LogProgress(StaticTexts.translationDone, 100);
             if (!simulated)
             {
-                foreach (BigFileV2 IBigFile in this)
+                foreach (BigFileV2 bigFile in this)
                 {
-                    if (IBigFile.HeaderChanged)
-                        IBigFile.WriteFAT();
+                    if (bigFile.HeaderChanged)
+                        bigFile.WriteFAT();
                 }
             }
             TRGameInfo.FilePool.CloseAll();
         }
 
-        void IBigFileList.GenerateFilesTxt()
+        public void GenerateFilesTxt()
         {
             UpdateBigFiles();
-            foreach (BigFileV2 IBigFile in this)
+            foreach (BigFileV2 bigFile in this)
             {
                 Int32 lastReported = 0;
                 Log.LogProgress(StaticTexts.creatingFilesTxt, lastReported);
@@ -1293,16 +1299,16 @@ namespace TRTR
 
                     TextWriter twEntries = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT", "fat.entries.txt"));
                     twEntries.WriteLine("hash  location  length  Offset  lang");
-                    foreach (FileEntryV2 entry in IBigFile.EntryList)
+                    foreach (FileEntryV2 entry in bigFile.EntryList)
                     {
                         twEntries.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8} {4}", entry.Hash, entry.Raw.Location, entry.Raw.Length, entry.Raw.Address, entry.Raw.LocaleText));
                     }
                     twEntries.Close();
 
-                    IBigFile.EntryList.SortBy(FileEntryCompareField.Location);
+                    bigFile.EntryList.SortBy(FileEntryCompareField.Location);
 
                     TextWriter tw = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT", "custom.files.txt"));
-                    foreach (FileEntryV2 entry in IBigFile.EntryList)
+                    foreach (FileEntryV2 entry in bigFile.EntryList)
                     {
                         string magic = string.Empty;
                         bool writeIt = false;
@@ -1330,8 +1336,6 @@ namespace TRTR
 
             #region prepare file write
             // try to find entry
-            List<string> x = new List<string>();
-
             IFileEntry foundEntry = bigFile.EntryList.Find(
                 bk => bk.Hash == entry.Hash &&
                     bk.Raw.Locale == entry.Raw.Locale);
@@ -1339,7 +1343,7 @@ namespace TRTR
             Log.LogDebugMsg(string.Format("WriteFile: {0:X8} old len: {1:X8} old vlen: {2:X8} clen: {3:X8} vclen {4:X8}",
                 entry.Hash, entry.Raw.Length, entry.Raw.Length.ExtendToBoundary(0x800), content.Length, content.Length.ExtendToBoundary(0x800)));
 
-            // Determine whether IBigFile contains entry
+            // Determine whether bigfile contains entry
             if (foundEntry != null)
             {
                 // update fat (length)
@@ -1357,13 +1361,13 @@ namespace TRTR
                 }
                 else // not fit
                 {
-                    // determine there is free place in the end of last IBigFile for content
+                    // determine there is free place in the end of last bigfile for content
                     bool contentFits = false;
                     ContentStream = TRGameInfo.FilePool.Open(bigFile.Name, bigFile.FileCount - 1);
                     try
                     {
                         contentFits = ContentStream.Length.ExtendToBoundary(0x800) + content.Length <= BigFileV2.Boundary;
-                        if (contentFits) // fits in the end of last IBigFile
+                        if (contentFits) // fits in the end of last bigfile
                         {
                             Log.LogDebugMsg(string.Format("  existing, not fit"));
                             // update fat (location & length)
@@ -1378,10 +1382,10 @@ namespace TRTR
                     {
                         TRGameInfo.FilePool.Close(bigFile.Name, bigFile.FileCount - 1);
                     }
-                    if (!contentFits) // not fits in the end of last IBigFile
+                    if (!contentFits) // not fits in the end of last bigfile
                     {
                         Log.LogDebugMsg(string.Format("  existing, new BF"));
-                        // add a new IBigFile
+                        // add a new bigfile
                         new FileStream(string.Format(bigFile.FilePatternFull, bigFile.FileCount), FileMode.CreateNew).Close();
                         // update header (increase file count)
                         bigFile.FileCount++;
@@ -1399,13 +1403,13 @@ namespace TRTR
                 foundEntry = entry;
                 raw = foundEntry.Raw;
 
-                // determine there is free place in the end of last IBigFile for content
+                // determine there is free place in the end of last bigfile for content
                 bool contentFits = false;
                 FileStream LastBFStream = TRGameInfo.FilePool.Open(bigFile.Name, bigFile.FileCount - 1);
                 try
                 {
                     contentFits = LastBFStream.Length.ExtendToBoundary(0x800) + content.Length <= BigFileV2.Boundary;
-                    if (contentFits) // fits in the end of last IBigFile
+                    if (contentFits) // fits in the end of last bigfile
                     {
                         Log.LogDebugMsg(string.Format("  new, fit BF"));
                         // update header (increase entry count)
@@ -1424,10 +1428,10 @@ namespace TRTR
                 {
                     TRGameInfo.FilePool.Close(bigFile.Name, bigFile.FileCount - 1);
                 }
-                if (!contentFits) // not fits in the end of last IBigFile
+                if (!contentFits) // not fits in the end of last bigfile
                 {
                     Log.LogDebugMsg(string.Format("  new, not fit BF"));
-                    // add a new IBigFile
+                    // add a new bigfile
                     new FileStream(string.Format(bigFile.FilePatternFull, bigFile.FileCount), FileMode.CreateNew).Close();
                     // update header (increase file count)
                     bigFile.FileCount++;
@@ -1474,7 +1478,7 @@ namespace TRTR
                 // if file smallert than entry's start address, expand file
                 if (ContentStream.Length < foundEntry.Raw.Address)
                 {
-                    // fill IBigFile to its next file boundary
+                    // fill bigfile to its next file boundary
                     UInt32 newLength = (UInt32)ContentStream.Length.ExtendToBoundary(0x800);
                     byte[] PaddingBuffer = new byte[2000];
                     Array.Clear(PaddingBuffer, 0, PaddingBuffer.Length);

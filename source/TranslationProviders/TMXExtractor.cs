@@ -6,6 +6,7 @@ using System.Collections;
 using System.IO;
 using System.Resources;
 using System.Xml;
+using System.Diagnostics;
 
 namespace TRTR
 {
@@ -144,6 +145,8 @@ namespace TRTR
         {
             if (text.Trim() == "")
                 return text;
+
+            Debug.WriteLine(string.Format("TMXExtractor.GetTranslation: \"{0}\"", text));
 
             string textSrcLang = this.SrcLang;
             if (context.TryGetValue("SrcLang", out textSrcLang))

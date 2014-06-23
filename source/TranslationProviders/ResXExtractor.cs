@@ -5,6 +5,7 @@ using System.Text;
 using System.Collections;
 using System.IO;
 using System.Resources;
+using System.Diagnostics;
 
 namespace TRTR
 {
@@ -146,6 +147,8 @@ namespace TRTR
         {
             if (text == "")
                 return "";
+
+            Debug.WriteLine(string.Format("GetTranslation : \"{0}\"", text));
 
             string resXFileName = string.Empty;
             string bigFileName = string.Empty;

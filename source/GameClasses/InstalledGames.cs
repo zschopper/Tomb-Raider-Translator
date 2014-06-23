@@ -253,9 +253,9 @@ namespace TRTR
             if (transFiles.Count == 0)
                 ret = ret | TRGameStatus.TranslationDataFileNotFound;
 
-            //Log.RemoveListener("gamelog");
-            //if (Directory.Exists(workFolder))
-            //    Log.AddListener("gamelog", new FileLogListener(Path.Combine(workFolder, "trtr.log")));
+            Log.RemoveListener("gamelog");
+            if (Directory.Exists(workFolder))
+                Log.AddListener("gamelog", new FileLogListener(Path.Combine(workFolder, "trtr.log")));
 
             return ret;
         }

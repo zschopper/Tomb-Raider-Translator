@@ -54,8 +54,8 @@ namespace TRTR
             Int64 startOutPos = outStream.Position;
 
             // dump
-            //entry.Parent.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, entry.Extra.FileNameOnlyForced), entry); // "cine_tmp.dump"
-            //inStream.Position = startPos;
+            entry.Parent.ParentBigFile.Parent.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, entry.Extra.FileNameOnlyForced), entry); // "cine_tmp.dump"
+            inStream.Position = startInPos;
 
             // write _file_ header to output
             outStream.WriteFromStream(inStream, CineConsts.CineHeaderSize);
@@ -106,6 +106,8 @@ namespace TRTR
                         if (processType1Block(inStream, outStream, entry, blockNo, tp))
                             ret = true;
                         break;
+                    //case 0x3f800000:
+                    //    break;
                     default:
                         throw new Exception(Errors.ParseErrorBlockTypeError);
                 }

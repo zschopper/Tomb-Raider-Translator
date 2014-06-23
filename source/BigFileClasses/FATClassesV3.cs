@@ -73,9 +73,10 @@ namespace TRTR
         public UInt32 OriginalIndex { get { return raw.Index; } }
         public UInt32 VirtualSize { get { return virtualSize; } set { virtualSize = value; } }
 
+        public Int64 Offset { get { return raw.Address; } }
         public TranslationStatus Status { get { return status; } set { status = value; } }
         public IBigFile BigFile { get { return bigFile; } }
-        public Int64 Offset { get { return raw.Address; } }
+
 
         // ctor
         internal FileEntryV3(FATEntry raw, IFileEntryList parent, IBigFile bigFile)
@@ -281,6 +282,7 @@ namespace TRTR
         {
             return entry1.CompareTo(entry2);
         }
+
     }
 
     // data for a bigfile
@@ -653,11 +655,11 @@ namespace TRTR
                 if (!Directory.Exists(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT")))
                     Directory.CreateDirectory(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT"));
 
-                TextWriter twEntriesByOrigOrder = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT", this.Name + "__fat_entries_raw.txt"));
-                twEntriesByOrigOrder.WriteLine(string.Format("{0,-8} {1,-8} {2,-8} {3,-8}", "hash", "lang", "length", "location"));
+                TextWriter writer = new StreamWriter(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT", this.Name + "__fat_entries_raw.txt"));
+                writer.WriteLine(string.Format("{0,-8} {1,-8} {2,-8} {3,-8}", "hash", "lang", "length", "location"));
                 foreach (FileEntryV3 entry in this.EntryList)
-                    twEntriesByOrigOrder.WriteLine(string.Format("{0:X8} {1} {2:X8} {3:X8}", entry.Raw.Hash, entry.Raw.LocaleText, entry.Raw.Length, entry.Raw.Location));
-                twEntriesByOrigOrder.Close();
+                    writer.WriteLine(string.Format("{0:X8} {1} {2:X8} {3:X8}", entry.Raw.Hash, entry.Raw.LocaleText, entry.Raw.Length, entry.Raw.Location));
+                writer.Close();
             }
         }
 
@@ -673,6 +675,7 @@ namespace TRTR
 
                 List<FileLocale> locales = new List<FileLocale>();
 
+                //EntryList.SortBy(FileEntryCompareField.Location);
                 foreach (FileEntryV3 entry in EntryList)
                 {
                     twEntries.WriteLine(string.Format("{0:X8} {1:X8} {2:X8} {3:X8} | {4,-8} {5} {6:X8} {7:D6} {8}",
@@ -748,8 +751,7 @@ namespace TRTR
             LoadFileNamesFile(Path.Combine(TRGameInfo.Game.WorkFolder, "filelist.txt"), out fileNameHashDict);
 
             List<string> files = new List<string>();
-            //xx            //files.AddRange(Directory.GetFiles(folder, "*.000.tiger", SearchOption.TopDirectoryOnly));
-            files.AddRange(Directory.GetFiles(folder, "*.000", SearchOption.TopDirectoryOnly));
+            files.AddRange(Directory.GetFiles(folder, "*.000.tiger", SearchOption.TopDirectoryOnly));
             string dlcFolder = Path.Combine(folder, "Dlc");
             if (Directory.Exists(dlcFolder))
                 files.AddRange(Directory.GetFiles(dlcFolder, "*.000.tiger", SearchOption.TopDirectoryOnly));
@@ -758,7 +760,7 @@ namespace TRTR
 
             List<string> dupeFilter = new List<string>();
 
-            //dupeFilter.Add("IBigFile.000.tiger");
+            //dupeFilter.Add("bigfile.000.tiger");
             dupeFilter.Add("bigfile_english.000.tiger");
             dupeFilter.Add("patch.000.tiger");
             dupeFilter.Add("patch_english.000.tiger");
@@ -955,8 +957,8 @@ namespace TRTR
                             }
                         case FileTypeEnum.DRM:
                             {
-                                //if (entry.Extra.FileName.Contains("generalbank.drm"))
-                                //    transEntries.Add(entry);
+                                if (entry.Extra.FileName.Contains("generalbank.drm"))
+                                    transEntries.Add(entry);
 
                                 //if (entry.Extra.FileName.Contains("fontuniversal.drm"))
                                 //    transEntries.Add(entry);
@@ -1093,7 +1095,7 @@ namespace TRTR
                                 {
                                     //string fileName;
 
-                                    //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "orig", entry.BigFileV3.Name, entry.Extra.FileNameForced });
+                                    //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "orig", entry.BigFile.Name, entry.Extra.FileNameForced });
                                     //if (!Directory.Exists(Path.GetDirectoryName(fileName)))
                                     //    Directory.CreateDirectory(Path.GetDirectoryName(fileName));
                                     //DumpToFile(fileName, entry);
@@ -1104,7 +1106,7 @@ namespace TRTR
                                     {
                                         if (CineFile.Process(entry, ms, tp))
                                         {
-                                            //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV3.Name, entry.Extra.FileNameForced });
+                                            //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFile.Name, entry.Extra.FileNameForced });
                                             //DumpToFile(fileName, ms.ToArray());
                                             entry.BigFile.Parent.WriteFile(entry.BigFile, entry, ms.ToArray(), simulated);
                                         }
@@ -1123,7 +1125,7 @@ namespace TRTR
                                 {
                                     if (MenuFile.Process(entry, ms, tp))
                                     {
-                                        //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV3.Name, entry.Extra.FileNameForced });
+                                        //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFile.Name, entry.Extra.FileNameForced });
                                         //DumpToFile(fileName, ms.ToArray());
                                         entry.BigFile.Parent.WriteFile(entry.BigFile, entry, ms.ToArray(), simulated);
                                     }
@@ -1141,7 +1143,7 @@ namespace TRTR
                                 {
                                     if (MovieFile.Process(entry, ms, tp))
                                     {
-                                        //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV3.Name, entry.Extra.FileNameForced });
+                                        //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFile.Name, entry.Extra.FileNameForced });
                                         //DumpToFile(fileName, ms.ToArray());
                                         entry.BigFile.Parent.WriteFile(entry.BigFile, entry, ms.ToArray(), simulated);
                                     }
@@ -1225,25 +1227,6 @@ namespace TRTR
         }
 
         static Int64 ofs = 0;
-
-        public void DumpToFile(string fileName, byte[] content)
-        {
-            Directory.CreateDirectory(Path.GetDirectoryName(fileName));
-            FileStream fs = new FileStream(fileName, FileMode.Create);
-            try
-            {
-                fs.Write(content, 0, content.Length);
-            }
-            finally
-            {
-                fs.Close();
-            }
-        }
-
-        public void DumpToFile(string fileName, IFileEntry entry)
-        {
-            DumpToFile(fileName, entry.ReadContent());
-        }
 
         public void WriteFile(IBigFile bigFile, IFileEntry entry, byte[] content, bool simulate)
         {
@@ -1450,6 +1433,26 @@ namespace TRTR
             }
             #endregion
         }
+
+        public void DumpToFile(string fileName, byte[] content)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            try
+            {
+                fs.Write(content, 0, content.Length);
+            }
+            finally
+            {
+                fs.Close();
+            }
+        }
+
+        public void DumpToFile(string fileName, IFileEntry entry)
+        {
+            DumpToFile(fileName, entry.ReadContent());
+        }
+
 
     }
 }
