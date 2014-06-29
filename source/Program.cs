@@ -6,6 +6,7 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Principal;
 
 namespace TRTR
 {
@@ -20,6 +21,17 @@ namespace TRTR
         /// </summary>
         static void Main(string[] args)
         {
+            if (IsAdministrator() == false)
+            {
+                // Restart program and run as admin
+                var exeName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+                ProcessStartInfo startInfo = new ProcessStartInfo(exeName);
+                startInfo.Verb = "runas";
+                System.Diagnostics.Process.Start(startInfo);
+                return;
+            }
+
+
             Settings.Args = args;
             Log.AddListener("debug", new DebugLogListener());
             Log.AddListener("applog", new FileLogListener(@".\trtr.log"));
@@ -49,6 +61,13 @@ namespace TRTR
             //    //MessageBox.Show(ex.Message, StaticTexts.error, MessageBoxButtons.OK, MessageBoxIcon.Error);
             //    throw;
             //}
+        }
+
+        private static bool IsAdministrator()
+        {
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
     }
 
