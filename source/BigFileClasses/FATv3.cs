@@ -48,7 +48,7 @@ namespace TRTR
 
 //            return (Locale ^ (FileLocale.UpperWord)).ToString(); //xx for debugging!
             return (Locale & TRGameInfo.Game.GameDefaults.Locales).ToString(); //xx for debugging!
-            return (Locale ^ (FileLocale.UpperWord | FileLocale.UnusedFlags2)).ToString();
+//            return (Locale ^ (FileLocale.UpperWord | FileLocale.UnusedFlags2)).ToString();
 
         }
         

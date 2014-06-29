@@ -168,11 +168,14 @@ namespace TRTR
 
             VDFNode gameNode = configVDF.ItemByPath(@"InstallConfigStore\Software\Valve\Steam\apps\" + GameDefaults.SteamAppId);
 
-            VDFNode installFolderNode = gameNode.ChildItemByName("installdir");
-            if (installFolderNode != null)
+            if (gameNode != null)
             {
-                installFolder = installFolderNode.Value;
+                VDFNode installFolderNode = gameNode.ChildItemByName("installdir");
+                if (installFolderNode != null)
+                {
+                    installFolder = installFolderNode.Value;
 
+                }
             }
             else
             {

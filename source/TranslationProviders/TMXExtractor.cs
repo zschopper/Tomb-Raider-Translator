@@ -29,7 +29,7 @@ namespace TRTR
         internal string SrcLang { get; set; }
 
         // ctor
-        internal TMXExtractor(string path, TranslationProvider tp = null)
+        internal TMXExtractor(string path, TranslationProvider tp = null) // bool ExtractRusTexts = false
         {
             this.extractFileName = Path.Combine(TRGameInfo.Game.WorkFolder, path);
             this.tp = tp;
@@ -89,6 +89,7 @@ namespace TRTR
             doc.Save(this.extractFileName);
             if(tpRUS != null)
                 tpRUS.Close();
+            this.tp.Close();
         }
 
         protected override bool getUseContext() { return true; }

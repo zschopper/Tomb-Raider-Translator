@@ -12,7 +12,7 @@ namespace TRTR
         internal static UInt32 MinBlockSize = 7; // length indicator (4 bytes) + lang code (1-2 byte(s)) + separator (1 byte) closing separator (1 byte)
         internal static UInt32 MaxBlockSize = 0x200000; // tra/trl = 0x20000; tru = 0x200000; // v1.0.0.6
         internal static UInt32 MaxTextBlockSize = 1000;
-        internal static UInt32 CineHeaderSize = 0x2000; //800
+        internal static UInt32 CineHeaderSize = 0x800; //0x2000; //800
         internal static UInt32 CineBlockHeaderSize = 0x10;
         internal static UInt32 CineCineBlockMagicBytes = 0x43494E45;  //ENIC
         internal static List<FileLanguage> StrippedLangs = new List<FileLanguage>();
@@ -54,7 +54,8 @@ namespace TRTR
             Int64 startOutPos = outStream.Position;
 
             // dump
-            entry.Parent.ParentBigFile.Parent.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, entry.Extra.FileNameOnlyForced), entry); // "cine_tmp.dump"
+            entry.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, entry.Extra.FileNameOnlyForced));
+            //entry.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "cine_tmp.dump"));
             inStream.Position = startInPos;
 
             // write _file_ header to output
@@ -74,7 +75,7 @@ namespace TRTR
                 // parse cine block
 
                 #region dump
-                bool dump = false;
+                bool dump = true;
                 if (dump)
                 {
                     FileStream fs = new FileStream(Path.Combine(TRGameInfo.Game.WorkFolder, "tmp.dump"), FileMode.Create);

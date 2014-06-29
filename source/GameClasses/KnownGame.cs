@@ -35,6 +35,8 @@ namespace TRTR
         public KnownBigfileData[] BigFiles;
         public Dictionary<FileLanguage, Int32> Langs;
         public FileLocale Locales;
+        //public Dictionary<char, string> MenuPlaceholderChars = null;
+        public List<char> MenuPlaceholderChars = null;
     }
 
     internal static class KnownGames
@@ -133,6 +135,22 @@ namespace TRTR
                     { FileLanguage.Spanish, 1 << 4 },       //      0 0x0000  0001000100010000
                 },
                 Locales = FileLocale.English | FileLocale.French | FileLocale.German | FileLocale.Italian | FileLocale.Spanish,
+                MenuPlaceholderChars = new List<char> { 
+                    '\u1800', '\u1801', '\u1802', '\u1803', '\u1804', '\u1805', '\u1806', '\u1807', 
+                    '\u1808', '\u1809', '\u180A', '\u180B', '\u180C', '\u180D', '\u180F', 
+                    '\u1810', '\u1811',
+                    '\u1827', '\u1828',
+                    '\u182A', '\u182B', '\u182C'},
+                //MenuPlaceholderChars = new Dictionary<char, string> {
+                //    {'\u1800', "{P1}"}, 
+                //    {'\u1801', "{P2}"}, 
+                //    {'\u1803', "{P3}"}, 
+                //    {'\u1808', "{P4}"}, 
+                //    {'\u1809', "{P5}"}, 
+                //    {'\u180A', "{P6}"}, 
+                //    {'\u180B', "{P7}"}, 
+                //    {'\u182A', "{P8}"}, 
+                //     },
             });
 
             Items.Add(new KnownGame

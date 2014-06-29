@@ -147,6 +147,7 @@ namespace TRTR
 
         Int32 CompareTo(IFileEntry other);
         Int32 CompareTo(IFileEntry other, Int32 level);
+        void DumpToFile(string fileName);
 
         byte[] ReadContent();
     }
@@ -163,8 +164,23 @@ namespace TRTR
 
         IBigFile GetBigFileByPriority(uint priority, bool localized = false);
         void WriteFile(IBigFile bigFile, IFileEntry entry, byte[] content, bool simulate);
-        void DumpToFile(string fileName, byte[] content);
-        void DumpToFile(string fileName, IFileEntry entry);
+    }
+
+    public static class BigFileHelper {
+
+        public static void DumpToFile(string fileName, byte[] content)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            try
+            {
+                fs.Write(content, 0, content.Length);
+            }
+            finally
+            {
+                fs.Close();
+            }
+        }
 
     }
 

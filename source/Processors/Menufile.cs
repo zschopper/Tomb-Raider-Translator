@@ -46,20 +46,64 @@ namespace TRTR
             chars = null;
             //return text;
 
-            if (text.Contains("to select between your equipped weapons"))
-                Debug.Flush();
+            //if (text.Contains("You've unlocked a new secondary weapo"))
+            //    Debug.Flush();
             List<string> charsFind = new List<string>();
             List<int> pos = new List<int>();
-            for (int i = 0; i < text.Length; i++)
+
+            for (int i = 0 ; i < text.Length; i++)
             {
                 char c = text[i];
 
-                //Debug.WriteLine(string.Format("unicodeinfo: {0} {1}", c, System.Globalization.CharUnicodeInfo.GetUnicodeCategory(text, i)));
+                UnicodeCategory cat = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(text, i);
+                List<UnicodeCategory> ign = new List<UnicodeCategory> { 
+                    UnicodeCategory.LowercaseLetter, 
+                    UnicodeCategory.UppercaseLetter, 
+                    //UnicodeCategory.OtherPunctuation, 
+                    UnicodeCategory.DecimalDigitNumber,
+                    UnicodeCategory.SpaceSeparator
+
+                    /*
+                     * filter: Control, DashPunctuation
+                     * OtherLetter, NonSpacingMark
+                     * 
+                     * */
+                };
+
+                if (TRGameInfo.Game.GameDefaults.MenuPlaceholderChars.Contains(c))
+                {
+                    charsFind.Add(c.ToString());
+                    pos.Add(i);
+
+                }
+                else
+                {
+                    if (text.Trim().Length == 1)
+                        Debug.Flush();
+                    //if ((int)c > 0x1800 && (int)c < 1900)
+                    if ((int)c > 0xFF)
+                    {
+                        //Debug.WriteLine(string.Format("unicodeinfo: \"{0}\" ({1})", c, cat));
+                        Debug.WriteLine(" == unicodeinfo == ");
+                        //string placeHolder = "";
+                        //if (TRGameInfo.Game.GameDefaults.MenuPlaceholderChars.TryGetValue(c, placeHolder)
+
+                        Debug.WriteLine(string.Format("Char: \"{0}\" ({1:X8}) {2})", c, (int)c, cat));
+                        Debug.WriteLine(string.Format("Text: \"{0}\")", text));
+                        Debug.WriteLine(" == /unicodeinfo == ");
+                        Debug.Flush();
+                        charsFind.Add(c.ToString());
+                        pos.Add(i);
+                    }
+
+                }
+                /*
                 if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(text, i) == UnicodeCategory.PrivateUse)
                 {
                     charsFind.Add(c.ToString());
                     pos.Add(i);
                 }
+                 * */
             }
 
             chars = charsFind.ToArray();

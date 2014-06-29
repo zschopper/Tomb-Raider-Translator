@@ -160,20 +160,7 @@ namespace TRTR
 
         public byte[] ReadContent(Int32 maxLen)
         {
-            byte[] ret;
-            FileStream fs = TRGameInfo.FilePool.Open(this);
-            try
-            {
-                fs.Seek(Raw.Address, SeekOrigin.Begin);
-                Int32 readLength = (maxLen >= 0) ? maxLen : (Int32)raw.Length;
-                ret = new byte[readLength];
-                fs.Read(ret, 0, readLength);
-            }
-            finally
-            {
-                TRGameInfo.FilePool.Close(this);
-            }
-            return ret;
+            return ReadContent(0, maxLen);
         }
 
         public byte[] ReadContent(Int32 startPos, Int32 maxLen)
@@ -183,10 +170,12 @@ namespace TRTR
             FileStream fs = TRGameInfo.FilePool.Open(this);
             try
             {
+                long fsPos = fs.Position;
                 fs.Seek(Raw.Address + startPos, SeekOrigin.Begin);
                 Int32 readLength = (maxLen >= 0) ? maxLen : (Int32)raw.Length - startPos;
                 ret = new byte[readLength];
                 fs.Read(ret, 0, readLength);
+                fs.Position = fsPos;
             }
             finally
             {
@@ -226,6 +215,21 @@ namespace TRTR
             finally
             {
                 TRGameInfo.FilePool.Close(this);
+            }
+        }
+
+        public void DumpToFile(string fileName)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            try
+            {
+                byte[] content = this.ReadContent();
+                fs.Write(content, 0, content.Length);
+            }
+            finally
+            {
+                fs.Close();
             }
         }
 
@@ -420,6 +424,7 @@ namespace TRTR
                     FATEntry lastEntry = itemsByLocation[itemsByLocation.Count - 1];
                     lastEntry.MaxLength = BigFileV3.Boundary - lastEntry.Address;
                 }
+                //dumpRawFatEntries();
             }
             finally
             {
@@ -434,7 +439,7 @@ namespace TRTR
             FileStream fs = new FileStream(fileName, FileMode.Open);
             byte[] buf = new byte[headerSize + entryCount * 0x10];
             fs.Read(buf, 0, buf.Length);
-            this.Parent.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", this.name + ".fat_raw_src.txt"), buf);
+            BigFileHelper.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", this.name + ".fat_raw_src.txt"), buf);
             fs.Position = 0;
 
             BinaryWriter bw = new BinaryWriter(fs);
@@ -562,7 +567,7 @@ namespace TRTR
                     entry.FileType = FileTypeEnum.Special;
                     Directory.CreateDirectory(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name));
 
-                    entry.BigFile.Parent.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name, entry.Extra.FileNameOnlyForced), entry);
+                    entry.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name, entry.Extra.FileNameOnlyForced));
                 }
                 else
                     if (entry.Hash == 0x7CD333D3u) // pc-w\local\locals.bin
@@ -907,7 +912,7 @@ namespace TRTR
             return compareRes;
         }
 
-        void IBigFileList.Extract(string destFolder, bool useDict)
+        public void Extract(string destFolder, bool useDict)
         {
             UpdateBigFiles();
             List<FileEntryV3> transEntries = new List<FileEntryV3>();
@@ -1069,7 +1074,7 @@ namespace TRTR
                             byte[] bufRead = new byte[entry.Raw.Length];
                             ContentStream.Position = entry.Raw.Address;
                             ContentStream.Read(bufRead, 0, (int)entry.Raw.Length);
-                            DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "source1", dumpFileName), bufRead);
+                            BigFileHelper.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "source1", dumpFileName), bufRead);
                         }
                         finally
                         {
@@ -1362,10 +1367,10 @@ namespace TRTR
                     byte[] bufRead = new byte[entry.Raw.Length];
                     ContentStream.Position = entry.Raw.Address;
                     ContentStream.Read(bufRead, 0, (int)entry.Raw.Length);
-                    DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "source2", dumpFileName), bufRead);
+                    BigFileHelper.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "source2", dumpFileName), bufRead);
 
                     string extractTrnFileName = Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "translated", dumpFileName);
-                    DumpToFile(extractTrnFileName, content);
+                    BigFileHelper.DumpToFile(extractTrnFileName, content);
                 }
 
                 ContentStream.Position = entry.Raw.Address;
@@ -1422,7 +1427,7 @@ namespace TRTR
                     byte[] bufRead = new byte[entry.Raw.Length];
                     ContentStream.Position = entry.Raw.Address;
                     ContentStream.Read(bufRead, 0, (int)entry.Raw.Length);
-                    DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "source", dumpFileName), bufRead);
+                    BigFileHelper.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", "source", dumpFileName), bufRead);
                     ContentStream.Position = ofs;
                 }
                 #endregion
@@ -1433,26 +1438,6 @@ namespace TRTR
             }
             #endregion
         }
-
-        public void DumpToFile(string fileName, byte[] content)
-        {
-            Directory.CreateDirectory(Path.GetDirectoryName(fileName));
-            FileStream fs = new FileStream(fileName, FileMode.Create);
-            try
-            {
-                fs.Write(content, 0, content.Length);
-            }
-            finally
-            {
-                fs.Close();
-            }
-        }
-
-        public void DumpToFile(string fileName, IFileEntry entry)
-        {
-            DumpToFile(fileName, entry.ReadContent());
-        }
-
 
     }
 }

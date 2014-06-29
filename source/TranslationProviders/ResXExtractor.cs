@@ -148,7 +148,7 @@ namespace TRTR
             if (text == "")
                 return "";
 
-            Debug.WriteLine(string.Format("GetTranslation : \"{0}\"", text));
+            // Debug.WriteLine(string.Format("GetTranslation : \"{0}\"", text));
 
             string resXFileName = string.Empty;
             string bigFileName = string.Empty;

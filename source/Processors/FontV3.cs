@@ -31,7 +31,7 @@ namespace TRTR
         {
             byte[] buf = entry.ReadContent();
             Directory.CreateDirectory(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name));
-            entry.BigFile.Parent.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name, entry.Extra.FileNameOnlyForced), entry);
+            entry.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "extract", entry.BigFile.Name, entry.Extra.FileNameOnlyForced));
             inStream.Position = entry.Raw.Address;
             DRMFile drm = new DRMFile(entry);
             drm.Parse(inStream, contentLength, outStream);
