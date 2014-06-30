@@ -41,120 +41,11 @@ namespace TRTR
             return ret;
         }
 
-        private static string CharToKeyPlaceholders(string text, out string[] chars)
-        {
-            chars = null;
-            //return text;
-
-            //if (text.Contains("You've unlocked a new secondary weapo"))
-            //    Debug.Flush();
-            List<string> charsFind = new List<string>();
-            List<int> pos = new List<int>();
-
-            for (int i = 0 ; i < text.Length; i++)
-            {
-                char c = text[i];
-
-                UnicodeCategory cat = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(text, i);
-                List<UnicodeCategory> ign = new List<UnicodeCategory> { 
-                    UnicodeCategory.LowercaseLetter, 
-                    UnicodeCategory.UppercaseLetter, 
-                    //UnicodeCategory.OtherPunctuation, 
-                    UnicodeCategory.DecimalDigitNumber,
-                    UnicodeCategory.SpaceSeparator
-
-                    /*
-                     * filter: Control, DashPunctuation
-                     * OtherLetter, NonSpacingMark
-                     * 
-                     * */
-                };
-
-                if (TRGameInfo.Game.GameDefaults.MenuPlaceholderChars.Contains(c))
-                {
-                    charsFind.Add(c.ToString());
-                    pos.Add(i);
-
-                }
-                else
-                {
-                    if (text.Trim().Length == 1)
-                        Debug.Flush();
-                    //if ((int)c > 0x1800 && (int)c < 1900)
-                    if ((int)c > 0xFF)
-                    {
-                        //Debug.WriteLine(string.Format("unicodeinfo: \"{0}\" ({1})", c, cat));
-                        Debug.WriteLine(" == unicodeinfo == ");
-                        //string placeHolder = "";
-                        //if (TRGameInfo.Game.GameDefaults.MenuPlaceholderChars.TryGetValue(c, placeHolder)
-
-                        Debug.WriteLine(string.Format("Char: \"{0}\" ({1:X8}) {2})", c, (int)c, cat));
-                        Debug.WriteLine(string.Format("Text: \"{0}\")", text));
-                        Debug.WriteLine(" == /unicodeinfo == ");
-                        Debug.Flush();
-                        charsFind.Add(c.ToString());
-                        pos.Add(i);
-                    }
-
-                }
-                /*
-                if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(text, i) == UnicodeCategory.PrivateUse)
-                {
-                    charsFind.Add(c.ToString());
-                    pos.Add(i);
-                }
-                 * */
-            }
-
-            chars = charsFind.ToArray();
-
-            if (pos.Count > 1)
-                Noop.DoIt();
-            if (pos.Count > 0)
-            {
-                StringBuilder sb = new StringBuilder();
-                int lastPos = 0;
-                for (int i = 0; i < pos.Count; i++)
-                {
-                    sb.Append(text.Substring(lastPos, pos[i] - lastPos));
-                    sb.Append(string.Format("{{{0}}}", i));
-                    lastPos = pos[i] + 1;
-                }
-                if (lastPos != text.Length - 1)
-                    sb.Append(text.Substring(lastPos, text.Length - lastPos));
-
-                if (pos.Count > 1)
-                    Noop.DoIt();
-
-                string rb = KeyPlaceholdersToChar(text, chars);
-                if (rb != text)
-                    Noop.DoIt();
-                return sb.ToString();
-            }
-
-            return text;
-        }
-
-        private static string KeyPlaceholdersToChar(string text, string[] chars)
-        {
-            if (chars == null)
-                return text;
-            if (chars.Length == 0)
-                return text;
-
-            return string.Format(text, chars);
-
-            //for (int i = 0; i < chars.Length; i++)
-            //    ret.Replace("{" + i.ToString() + "}", chars[i].ToString()); 
-            //return ret;
-        }
-
-
         internal static bool Process(IFileEntry entry, Stream inStream, long contentLength, Stream outStream, TranslationProvider tp)
         {
             if (outStream == null)
                 outStream = Stream.Null;
-//            entry.BigFile.Parent.DumpToFile(@"c:\tmp\menu", entry.ReadContent());
+            //            entry.BigFile.Parent.DumpToFile(@"c:\tmp\menu", entry.ReadContent());
             Int64 startInPos = inStream.Position;
             //Int64 startOutPos = -1;
             MemoryStream textBlockStream = new MemoryStream();
@@ -175,7 +66,7 @@ namespace TRTR
                 //startOutPos = outStream.Position;
                 outStream.WriteUInt32(langCode);
                 outStream.WriteUInt32(entryCount1);
-                outStream.WriteUInt32(entryCount2);
+                outStream.WriteUInt32(entryCount2 + 1);
             }
 
             MenuTable[] table = new MenuTable[entryCount];
@@ -272,6 +163,114 @@ namespace TRTR
             }
 
             return true;
+        }
+
+        private static string CharToKeyPlaceholders(string text, out string[] chars)
+        {
+            chars = null;
+            //return text;
+
+            //if (text.Contains("You've unlocked a new secondary weapo"))
+            //    Debug.Flush();
+            List<string> charsFind = new List<string>();
+            List<int> pos = new List<int>();
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                char c = text[i];
+
+                UnicodeCategory cat = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(text, i);
+                List<UnicodeCategory> ign = new List<UnicodeCategory> { 
+                    UnicodeCategory.LowercaseLetter, 
+                    UnicodeCategory.UppercaseLetter, 
+                    //UnicodeCategory.OtherPunctuation, 
+                    UnicodeCategory.DecimalDigitNumber,
+                    UnicodeCategory.SpaceSeparator
+
+                    /*
+                     * filter: Control, DashPunctuation
+                     * OtherLetter, NonSpacingMark
+                     * 
+                     * */
+                };
+
+                if (TRGameInfo.Game.GameDefaults.MenuPlaceholderChars.Contains(c))
+                {
+                    charsFind.Add(c.ToString());
+                    pos.Add(i);
+
+                }
+                else
+                {
+                    if (text.Trim().Length == 1)
+                        Debug.Flush();
+                    //if ((int)c > 0x1800 && (int)c < 1900)
+                    if ((int)c > 0xFF)
+                    {
+                        //Debug.WriteLine(string.Format("unicodeinfo: \"{0}\" ({1})", c, cat));
+                        Debug.WriteLine(" == unicodeinfo == ");
+                        //string placeHolder = "";
+                        //if (TRGameInfo.Game.GameDefaults.MenuPlaceholderChars.TryGetValue(c, placeHolder)
+
+                        Debug.WriteLine(string.Format("Char: \"{0}\" ({1:X8}) {2})", c, (int)c, cat));
+                        Debug.WriteLine(string.Format("Text: \"{0}\")", text));
+                        Debug.WriteLine(" == /unicodeinfo == ");
+                        Debug.Flush();
+                        charsFind.Add(c.ToString());
+                        pos.Add(i);
+                    }
+
+                }
+                /*
+                if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(text, i) == UnicodeCategory.PrivateUse)
+                {
+                    charsFind.Add(c.ToString());
+                    pos.Add(i);
+                }
+                 * */
+            }
+
+            chars = charsFind.ToArray();
+
+            if (pos.Count > 1)
+                Noop.DoIt();
+            if (pos.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                int lastPos = 0;
+                for (int i = 0; i < pos.Count; i++)
+                {
+                    sb.Append(text.Substring(lastPos, pos[i] - lastPos));
+                    sb.Append(string.Format("{{{0}}}", i));
+                    lastPos = pos[i] + 1;
+                }
+                if (lastPos != text.Length - 1)
+                    sb.Append(text.Substring(lastPos, text.Length - lastPos));
+
+                if (pos.Count > 1)
+                    Noop.DoIt();
+
+                string rb = KeyPlaceholdersToChar(text, chars);
+                if (rb != text)
+                    Noop.DoIt();
+                return sb.ToString();
+            }
+
+            return text;
+        }
+
+        private static string KeyPlaceholdersToChar(string text, string[] chars)
+        {
+            if (chars == null)
+                return text;
+            if (chars.Length == 0)
+                return text;
+
+            return string.Format(text, chars);
+
+            //for (int i = 0; i < chars.Length; i++)
+            //    ret.Replace("{" + i.ToString() + "}", chars[i].ToString()); 
+            //return ret;
         }
     }
 }

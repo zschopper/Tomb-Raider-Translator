@@ -54,9 +54,9 @@ namespace TRTR
             Int64 startOutPos = outStream.Position;
 
             // dump
-            entry.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, entry.Extra.FileNameOnlyForced));
+            //entry.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, entry.Extra.FileNameOnlyForced));
             //entry.DumpToFile(Path.Combine(TRGameInfo.Game.WorkFolder, "cine_tmp.dump"));
-            inStream.Position = startInPos;
+            //inStream.Position = startInPos;
 
             // write _file_ header to output
             outStream.WriteFromStream(inStream, CineConsts.CineHeaderSize);
@@ -78,19 +78,19 @@ namespace TRTR
                 bool dump = true;
                 if (dump)
                 {
-                    FileStream fs = new FileStream(Path.Combine(TRGameInfo.Game.WorkFolder, "tmp.dump"), FileMode.Create);
-                    try
-                    {
-                        Int64 _inpos = inStream.Position;
-                        //fs.Position = startPos;
-                        fs.WriteFromStream(inStream, blockSize + 0x10);
-                        inStream.Position = _inpos;
-                        //inStream.Position = inStream.Position.ExtendToBoundary(0x10);
-                    }
-                    finally
-                    {
-                        fs.Close();
-                    }
+                    //FileStream fs = new FileStream(Path.Combine(TRGameInfo.Game.WorkFolder, "tmp.dump"), FileMode.Create);
+                    //try
+                    //{
+                    //    Int64 _inpos = inStream.Position;
+                    //    //fs.Position = startPos;
+                    //    fs.WriteFromStream(inStream, blockSize + 0x10);
+                    //    inStream.Position = _inpos;
+                    //    //inStream.Position = inStream.Position.ExtendToBoundary(0x10);
+                    //}
+                    //finally
+                    //{
+                    //    fs.Close();
+                    //}
                 }
                 #endregion
 

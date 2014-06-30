@@ -31,7 +31,6 @@ namespace TRTR
                 return;
             }
 
-
             Settings.Args = args;
             Log.AddListener("debug", new DebugLogListener());
             Log.AddListener("applog", new FileLogListener(@".\trtr.log"));
