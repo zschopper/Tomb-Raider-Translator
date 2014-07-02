@@ -262,7 +262,7 @@ namespace TRTR
 
             Log.RemoveListener("gamelog");
             if (Directory.Exists(workFolder))
-                Log.AddListener("gamelog", new FileLogListener(Path.Combine(workFolder, "trtr.log")));
+                Log.AddListener("gamelog", new FileLogListener(Path.Combine(workFolder, "trtr-" + Path.GetFileNameWithoutExtension(TRGameInfo.Game.GameDefaults.ExeName) + ".log")));
 
             return ret;
         }

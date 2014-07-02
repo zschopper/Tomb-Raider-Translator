@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
+using System.Diagnostics;
 
 namespace TRTR
 {
@@ -39,13 +40,19 @@ namespace TRTR
         internal override void Open()
         {
 
-            tpRUS = new RUTMXProvider();
-            tpRUS.Open();
-            GameTransFile gtf = TRGameInfo.Game.TransFiles[0];
-            TRGameInfo.Game.loadGameTextDataFile(gtf);
-
-            if (File.Exists(gtf.FileName))
+            GameTransFile gtf = null;
+            if (TRGameInfo.Game.TransFiles.Count > 0)
             {
+                gtf = TRGameInfo.Game.TransFiles[0];
+                TRGameInfo.Game.loadGameTextDataFile(gtf);
+                if (!File.Exists(gtf.FileName))
+                    gtf = null;
+            }
+
+            if (gtf != null)
+            {
+                tpRUS = new RUTMXProvider();
+                tpRUS.Open();
                 ZipFile zipFile = new ZipFile(gtf.FileName);
                 ZipEntry transFileEntry = zipFile.GetEntry(gtf.TranslationFile);
                 Stream zipStream = zipFile.GetInputStream(transFileEntry);
@@ -76,6 +83,7 @@ namespace TRTR
                         value = value.Replace("&#13;", "\r").Replace("&#10;", "\n");//.Replace("\n", "\\n");
 
                         int key = normalizedTextHash(source);
+
                         TMXDictEntry value1;
                         if (dict.TryGetValue(key, out value1))
                         {
@@ -113,7 +121,7 @@ namespace TRTR
             else
             {
                 Log.LogDebugMsg("No translation files found.");
-                throw new Exception("No translation files found.");
+                // throw new Exception("No translation files found.");
             }
         }
 
@@ -176,7 +184,7 @@ namespace TRTR
 
             if (!dict.TryGetValue(hash, out dictEntry))
             {
-                Log.LogDebugMsg(string.Format("No translation for \"{0}\"", text));
+                Log.LogDebugMsg(string.Format("TMXProvider: No translation for \"{0}\"", text));
                 return text;
             }
             return dictEntry.Text;

@@ -37,10 +37,17 @@ namespace TRTR
 
         internal override void Open()
         {
-            GameTransFile gtf = TRGameInfo.Game.TransFiles[0];
-            TRGameInfo.Game.loadGameTextDataFile(gtf);
+            GameTransFile gtf = null;
+            if (TRGameInfo.Game.TransFiles.Count > 0)
+            {
+                gtf = TRGameInfo.Game.TransFiles[0];
+                TRGameInfo.Game.loadGameTextDataFile(gtf);
+                if (!File.Exists(gtf.FileName))
+                    gtf = null;
+            }
 
-            if (File.Exists(gtf.FileName))
+
+            if (gtf != null)
             {
                 ZipFile zipFile = new ZipFile(gtf.FileName);
                 ZipEntry transFileEntry = zipFile.GetEntry(Path.ChangeExtension(gtf.TranslationFile, ".ru-ext.tmx"));
@@ -112,8 +119,8 @@ namespace TRTR
             }
             else
             {
-                Log.LogDebugMsg("No translation files found.");
-                throw new Exception("No translation files found.");
+                //Log.LogDebugMsg("Russian TMX Provider: No translation files found.");
+                //throw new Exception("No translation files found.");
             }
         }
 
@@ -160,7 +167,7 @@ namespace TRTR
             int hash = normalizedTextHash(text);
             if (!dict.TryGetValue(hash, out dictEntry))
             {
-                Log.LogDebugMsg(string.Format("No translation for \"{0}\"", text));
+                Log.LogDebugMsg(string.Format("RUTMXProvider: No translation for \"{0}\"", text));
                 return text;
             }
             return dictEntry.Text;

@@ -1072,14 +1072,15 @@ namespace TRTR
 
 
             // TranslationProvider tp = new ResXExtractor(destFolder);
-            TranslationProvider tpTransSrc = new TMXProvider();
+            TranslationProvider tpTransSrc = null;
             //TranslationProvider tpTransSrc = new ResXDict(Path.Combine(TRGameInfo.Game.WorkFolder, "hu"));
             //TranslationProvider tpTransSrc = new NMSTranslationProvider(Path.Combine(TRGameInfo.Game.WorkFolder, "nemes"));
             //TranslationProvider tpTransSrc = new ResXExtractor();
 
 
             //TranslationProvider tpTransSrc = new TMXProvider();
-            tpTransSrc.Open();
+            if (tpTransSrc != null)
+                tpTransSrc.Open();
             TranslationProvider tp = new ResXExtractor(false);
             //TranslationProvider tp = new TMXExtractor(Path.Combine(destFolder, "extract.tmx"), null);
             tp.Open();
@@ -1211,7 +1212,8 @@ namespace TRTR
                 }
             }
 
-            tpTransSrc.Close();
+            if (tpTransSrc != null)
+                tpTransSrc.Close();
             tp.Close();
             Log.LogProgress(StaticTexts.translationDone, 100);
             //if (!true)

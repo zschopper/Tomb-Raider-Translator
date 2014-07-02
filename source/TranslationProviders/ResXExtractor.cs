@@ -52,6 +52,7 @@ namespace TRTR
             if (!Directory.Exists(extractFolder))
                 Directory.CreateDirectory(extractFolder);
             tp = new TMXProvider();
+            tp.Open();
         }
 
         internal override void Close()
@@ -165,7 +166,7 @@ namespace TRTR
             else
                 if (!entry.Extra.FileNameResolved)
                 {
-                    resXFileName = entry.HashText + ".resx";
+                    resXFileName = entry.FileType + ".resx";
                     transHashes = new List<int>();
                 }
                 else
@@ -212,6 +213,8 @@ namespace TRTR
                 if (!Directory.Exists(_extractFolder))
                     Directory.CreateDirectory(_extractFolder);
 
+                if (resXFileName == null)
+                    resXFileName = "unnamed.resx";
                 helper = ResXPoolSingleton.GetResX(Path.Combine(_extractFolder, resXFileName));
                 lastHelper = helper;
                 lastResXFileName = resXFileName;

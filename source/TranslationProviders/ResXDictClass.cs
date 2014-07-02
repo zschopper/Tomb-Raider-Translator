@@ -97,7 +97,7 @@ namespace TRTR
             if (!dict.TryGetValue(sourceHash, out dictEntries))
             {
                 //throw new Exception(string.Format("No translation for \"{0}\"", text));
-                Log.LogDebugMsg(string.Format("No translation for \"{0}\"", text));
+                Log.LogDebugMsg(string.Format("ResXDict: No translation for \"{0}\"", text));
                 Log.LogDebugMsg(string.Format("  Context: \"{0}\"", string.Join("; ", context)));
                 return text;
             }
