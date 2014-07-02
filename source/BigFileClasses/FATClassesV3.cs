@@ -51,7 +51,7 @@ namespace TRTR
         #region private variables
         private string hashText;
         private IBigFile bigFile;
-        //        private BigFilePool filePool = null;
+        // private BigFilePool filePool = null;
 
         private FATEntry raw;
         private FileExtraInfoV3 extra = null;
@@ -142,9 +142,9 @@ namespace TRTR
                 case FileEntryCompareField.VirtualLength:
                     ret = VirtualSize.CompareTo(other.VirtualSize);
                     break;
-                //                case FileEntryCompareField.EndOffset:
-                //                    ret = (raw.Location + raw.Length).CompareTo(other.Raw.Location + other.Raw.Length);
-                //                    break;
+                // case FileEntryCompareField.EndOffset:
+                //     ret = (raw.Location + raw.Length).CompareTo(other.Raw.Location + other.Raw.Length);
+                //     break;
                 default:
                     throw new Exception(Errors.InvalidSortMode);
             }

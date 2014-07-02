@@ -164,20 +164,24 @@ namespace TRTR
                 throw new Exception("Steam install folder is not exist."); // xx translate/localize
 
             //\\\Registry\HKEY_LOCAL_MACHINE\SOFTWARE\Valve\Steam\InstallPath 
+
+
+            installFolder = string.Empty;
             SteamVDFDoc configVDF = new SteamVDFDoc(Path.Combine(steamInstallFolder, "config", "config.vdf"));
-
             VDFNode gameNode = configVDF.ItemByPath(@"InstallConfigStore\Software\Valve\Steam\apps\" + GameDefaults.SteamAppId);
-
             if (gameNode != null)
             {
                 VDFNode installFolderNode = gameNode.ChildItemByName("installdir");
                 if (installFolderNode != null)
                 {
                     installFolder = installFolderNode.Value;
-
+                    if (!Directory.Exists(installFolder))
+                        installFolder = string.Empty;
                 }
             }
-            else
+
+
+            if(installFolder == string.Empty)
             {
                 VDFNode steamNode = configVDF.ItemByPath(@"InstallConfigStore\Software\Valve\Steam");
                 VDFNode baseInstallFolderNode = null;
@@ -281,13 +285,25 @@ namespace TRTR
                         XmlNode gameNode = doc.SelectSingleNode("/game/info");
                         if (gameNode != null)
                         {
+                            string version = string.Empty;
                             if (gameNode.Attributes["name"].Value == this.Name)
-                                if (gameNode.Attributes["version"].Value == this.VersionString)
+                            {
+
+                                if (gameNode.Attributes["version"] != null)
+                                {
+                                    version = gameNode.Attributes["version"].Value;
+                                }
+                                else
+                                {
+                                    version = this.VersionString;
+                                }
+
+                                if (version == this.VersionString)
                                 {
                                     GameTransFile gtf = new GameTransFile();
                                     gtf.FileName = fileName;
                                     gtf.Game = gameNode.Attributes["name"].Value;
-                                    gtf.Version = gameNode.Attributes["version"].Value;
+                                    gtf.Version = version; //gameNode.Attributes["version"].Value;
 
                                     XmlAttribute attr = (XmlAttribute)(gameNode.Attributes.GetNamedItem("description"));
                                     if (attr != null)
@@ -296,6 +312,8 @@ namespace TRTR
                                         gtf.Description = string.Format("No description: {0} version {1}", gtf.Game, gtf.Version);
                                     TransFiles.Add(gtf);
                                 }
+
+                            }
                         }
                     }
                     finally
@@ -322,37 +340,39 @@ namespace TRTR
                     if (gameNode != null)
                     {
                         if (gameNode.Attributes["name"].Value == this.Name)
-                            if (gameNode.Attributes["version"].Value == this.VersionString)
-                            {
-                                gtf.Game = gameNode.Attributes["name"].Value;
-                                gtf.FileName = fileName;
+                        {
+                            gtf.Game = gameNode.Attributes["name"].Value;
+                            gtf.FileName = fileName;
+                            if (gameNode.Attributes["version"] != null)
                                 gtf.Version = gameNode.Attributes["version"].Value;
+                            else
+                                gtf.Version = this.VersionString;
 
-                                XmlAttribute attr = (XmlAttribute)(gameNode.Attributes.GetNamedItem("description"));
-                                if (attr != null)
-                                    gtf.Description = attr.Value;
-                                else
-                                    gtf.Description = string.Format("No description: {0} version {1}", gtf.Game, gtf.Version);
+                            XmlAttribute attr = (XmlAttribute)(gameNode.Attributes.GetNamedItem("description"));
+                            if (attr != null)
+                                gtf.Description = attr.Value;
+                            else
+                                gtf.Description = string.Format("No description: {0} version {1}", gtf.Game, gtf.Version);
 
-                                XmlNode transNode = doc.SelectSingleNode("/game/translation");
+                            XmlNode transNode = doc.SelectSingleNode("/game/translation");
 
-                                gtf.TranslationLang = transNode.Attributes["lang"].Value;
-                                gtf.TranslationProvider = transNode.Attributes["provider"].Value;
-                                gtf.TranslationFile = transNode.Attributes["file"].Value;
-                                gtf.TranslationVersion = transNode.Attributes["version"].Value;
+                            gtf.TranslationLang = transNode.Attributes["lang"].Value;
+                            gtf.TranslationProvider = transNode.Attributes["provider"].Value;
+                            gtf.TranslationFile = transNode.Attributes["file"].Value;
+                            gtf.TranslationVersion = transNode.Attributes["version"].Value;
 
-                                XmlNodeList nodesReplace = doc.SelectNodes("/game/translation/replace");
-                                if (nodesReplace.Count > 0)
+                            XmlNodeList nodesReplace = doc.SelectNodes("/game/translation/replace");
+                            if (nodesReplace.Count > 0)
+                            {
+                                gtf.ReplaceChars = new Dictionary<char, char>();
+                                foreach (XmlNode node in nodesReplace)
                                 {
-                                    gtf.ReplaceChars = new Dictionary<char, char>();
-                                    foreach (XmlNode node in nodesReplace)
-                                    {
-                                        char src = node.Attributes["src"].Value[0];
-                                        char rpl = node.Attributes["rpl"].Value[0];
-                                        gtf.ReplaceChars.Add(src, rpl);
-                                    }
+                                    char src = node.Attributes["src"].Value[0];
+                                    char rpl = node.Attributes["rpl"].Value[0];
+                                    gtf.ReplaceChars.Add(src, rpl);
                                 }
                             }
+                        }
                     }
                 }
                 finally

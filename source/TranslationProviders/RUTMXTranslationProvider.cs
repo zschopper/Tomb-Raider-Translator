@@ -153,6 +153,9 @@ namespace TRTR
 
         internal override string GetTranslation(string text, IFileEntry entry, Dictionary<string, string> context)
         {
+            if (text.Trim().Length == 0)
+                return text;
+
             RUTMXDictEntry dictEntry = null;
             int hash = normalizedTextHash(text);
             if (!dict.TryGetValue(hash, out dictEntry))

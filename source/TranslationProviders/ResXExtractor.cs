@@ -22,6 +22,7 @@ namespace TRTR
         private List<int> lastTransHashes = null;
         private string lastBigFile;
         private bool sepByBigfile;
+        TranslationProvider tp = null;
         #endregion
 
         // ctor
@@ -50,6 +51,7 @@ namespace TRTR
 
             if (!Directory.Exists(extractFolder))
                 Directory.CreateDirectory(extractFolder);
+            tp = new TMXProvider();
         }
 
         internal override void Close()
@@ -155,35 +157,41 @@ namespace TRTR
             ResXHelper helper;
             List<int> transHashes;
 
-            if (!entry.Extra.FileNameResolved)
+            if (entry == null)
             {
-                resXFileName = entry.HashText + ".resx";
+                resXFileName = "unnamed.resx";
                 transHashes = new List<int>();
             }
             else
-            {
-                string path = Path.GetDirectoryName(entry.Extra.FileNameForced);
-                // is it the previously processed file?
-                if (lastHelper != null && path == lastPath && (!sepByBigfile || lastBigFile == entry.BigFile.Name))
+                if (!entry.Extra.FileNameResolved)
                 {
-                    resXFileName = lastResXFileName;
-                    helper = lastHelper;
-                    transHashes = lastTransHashes;
-                    bigFileName = entry.BigFile.Name;
+                    resXFileName = entry.HashText + ".resx";
+                    transHashes = new List<int>();
                 }
                 else
                 {
-                    int pathHash = path.GetHashCode();
+                    string path = Path.GetDirectoryName(entry.Extra.FileNameForced);
+                    // is it the previously processed file?
+                    if (lastHelper != null && path == lastPath && (!sepByBigfile || lastBigFile == entry.BigFile.Name))
+                    {
+                        resXFileName = lastResXFileName;
+                        helper = lastHelper;
+                        transHashes = lastTransHashes;
+                        bigFileName = entry.BigFile.Name;
+                    }
+                    else
+                    {
+                        int pathHash = path.GetHashCode();
 
-                    if (!fileNameAliasDict.TryGetValue(pathHash, out resXFileName))
-                        if (folderAliasDict.TryGetValue(pathHash, out resXFileName))
-                            resXFileName = Path.ChangeExtension(entry.Extra.FileName.Replace(path, resXFileName), ".resx");
-                    if (resXFileName == string.Empty)
-                        resXFileName = entry.HashText + ".resx";
+                        if (!fileNameAliasDict.TryGetValue(pathHash, out resXFileName))
+                            if (folderAliasDict.TryGetValue(pathHash, out resXFileName))
+                                resXFileName = Path.ChangeExtension(entry.Extra.FileName.Replace(path, resXFileName), ".resx");
+                        if (resXFileName == string.Empty)
+                            resXFileName = entry.HashText + ".resx";
 
-                    transHashes = new List<int>();
+                        transHashes = new List<int>();
+                    }
                 }
-            }
 
             int textHashCode = text.GetHashCode();
             if (!transHashes.Contains(textHashCode))
@@ -192,7 +200,12 @@ namespace TRTR
                 string _extractFolder;
 
                 if (sepByBigfile)
-                    _extractFolder = Path.Combine(extractFolder, entry.BigFile.Name);
+                {
+                    if (entry != null)
+                        _extractFolder = Path.Combine(extractFolder, entry.BigFile.Name);
+                    else
+                        _extractFolder = extractFolder;
+                }
                 else
                     _extractFolder = extractFolder;
 
@@ -203,14 +216,17 @@ namespace TRTR
                 lastHelper = helper;
                 lastResXFileName = resXFileName;
                 lastTransHashes = transHashes;
-                lastBigFile = entry.BigFile.Name;
+                if (entry != null)
+                    lastBigFile = entry.BigFile.Name;
+                else
+                    lastBigFile = "none";
 
                 if (!helper.TryLockFor(ResXLockMode.Write))
                     throw new Exception(string.Format("Can not lock {0} for write", helper.FileName));
 
                 //ResXDataNode resNode = new ResXDataNode(text, text);
                 string _text = text; //.Replace(" \r\n", "\r\n");
-                ResXDataNode resNode = new ResXDataNode(_text, _text);
+                ResXDataNode resNode = new ResXDataNode(_text, tp.GetTranslation(_text, entry));
 
                 if (context != null)
                 {
@@ -220,7 +236,7 @@ namespace TRTR
                     {
                         discardValue = (key != "bigFile");
 
-                        if(!discardValue)
+                        if (!discardValue)
                             sb.Append(string.Format("{0}: {1}\r\n", key, context[key]));
                     }
                     resNode.Comment = sb.ToString().Trim();

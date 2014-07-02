@@ -121,8 +121,9 @@ namespace TRTR
         {
             if (tpRUS != null)
                 tpRUS.Close();
-            DoStat(); 
-            Clear(); }
+            DoStat();
+            Clear();
+        }
 
         private void DoStat()
         {
@@ -160,16 +161,19 @@ namespace TRTR
 
         internal override string GetTranslation(string text, IFileEntry entry, Dictionary<string, string> context)
         {
+            if (text.Trim().Length == 0)
+                return text;
             string textSrcLang;
-            if (context.TryGetValue("SrcLang", out textSrcLang))
-                if (textSrcLang == "ru")
-                {
-                    return tpRUS.GetTranslation(text, entry, context);
-                }
+            if (context != null)
+                if (context.TryGetValue("SrcLang", out textSrcLang))
+                    if (textSrcLang == "ru")
+                    {
+                        return tpRUS.GetTranslation(text, entry, context);
+                    }
 
             TMXDictEntry dictEntry = null;
             int hash = normalizedTextHash(text);
-            
+
             if (!dict.TryGetValue(hash, out dictEntry))
             {
                 Log.LogDebugMsg(string.Format("No translation for \"{0}\"", text));

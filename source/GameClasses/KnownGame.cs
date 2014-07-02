@@ -18,6 +18,12 @@ namespace TRTR
 
     internal class KnownGame
     {
+        internal class ExternalFile
+        {
+            public string FileName;
+            public FileTypeEnum FileType;
+        }
+
         internal class KnownBigfileData
         {
             public static int DefaultPriority = -1;
@@ -37,6 +43,7 @@ namespace TRTR
         public FileLocale Locales;
         //public Dictionary<char, string> MenuPlaceholderChars = null;
         public List<char> MenuPlaceholderChars = null;
+        public Dictionary<string, ExternalFile> ExternalFiles = null;
     }
 
     internal static class KnownGames
@@ -118,13 +125,14 @@ namespace TRTR
                 ExeName = "LCGOL.exe",
                 BigfileVersion = "2",
                 BigFiles = new KnownGame.KnownBigfileData[] { 
-                    new KnownGame.KnownBigfileData{ Name = "bigfile", Pattern = "bigfile.{D3}", EntryOfs = 0, Priority = 0 },
-                    new KnownGame.KnownBigfileData{ Name = "patch", Pattern = "patch.{D3}", EntryOfs = 0, Priority = 65 },
-                    new KnownGame.KnownBigfileData{ Name = "pack1", Pattern = "pack1.{D3}", EntryOfs = 0, Priority = 1 },
-                    new KnownGame.KnownBigfileData{ Name = "pack2", Pattern = "pack2.{D3}", EntryOfs = 0, Priority = 2 },
-                    new KnownGame.KnownBigfileData{ Name = "pack3", Pattern = "pack3.{D3}", EntryOfs = 0, Priority = 3 },
-                    new KnownGame.KnownBigfileData{ Name = "pack4", Pattern = "pack4.{D3}", EntryOfs = 0, Priority = 4 },
-                    new KnownGame.KnownBigfileData{ Name = "pack5", Pattern = "pack5.{D3}", EntryOfs = 0, Priority = 5 },
+                    new KnownGame.KnownBigfileData{ Name = "bigfile", Pattern = "bigfile.{0:D3}", EntryOfs = 0, Priority = 0 },
+                    new KnownGame.KnownBigfileData{ Name = "patch0", Pattern = "patch.000", EntryOfs = 0, Priority = 64 },
+                    new KnownGame.KnownBigfileData{ Name = "patch1", Pattern = "patch.001", EntryOfs = 0, Priority = 65 },
+                    new KnownGame.KnownBigfileData{ Name = "pack1", Pattern = "pack1.{0:D3}", EntryOfs = 0, Priority = 1 },
+                    new KnownGame.KnownBigfileData{ Name = "pack2", Pattern = "pack2.{0:D3}", EntryOfs = 0, Priority = 2 },
+                    new KnownGame.KnownBigfileData{ Name = "pack3", Pattern = "pack3.{0:D3}", EntryOfs = 0, Priority = 3 },
+                    new KnownGame.KnownBigfileData{ Name = "pack4", Pattern = "pack4.{0:D3}", EntryOfs = 0, Priority = 4 },
+                    new KnownGame.KnownBigfileData{ Name = "pack5", Pattern = "pack5.{0:D3}", EntryOfs = 0, Priority = 5 },
                 },
                 Langs = new Dictionary<FileLanguage, Int32>() {
                     { FileLanguage.Default, -1 },
@@ -151,6 +159,13 @@ namespace TRTR
                 //    {'\u180B', "{P7}"}, 
                 //    {'\u182A', "{P8}"}, 
                 //     },
+                ExternalFiles = new Dictionary<string, KnownGame.ExternalFile> {
+                    {"scene1.sch",      new KnownGame.ExternalFile{ FileName = "movies\\scene1.sch", FileType = FileTypeEnum.SCH}},
+                    {"scene3.sch",      new KnownGame.ExternalFile{ FileName = "movies\\scene3.sch", FileType = FileTypeEnum.SCH}},
+                    {"sell.sch",        new KnownGame.ExternalFile{ FileName = "movies\\sell.sch", FileType = FileTypeEnum.SCH}},
+                    {"scene1_kl.sch",   new KnownGame.ExternalFile{ FileName = "movies\\scene1_kl.sch", FileType = FileTypeEnum.SCH}},
+                    {"scene3_kl.sch",   new KnownGame.ExternalFile{ FileName = "movies\\scene3_kl.sch", FileType = FileTypeEnum.SCH}},
+                },
             });
 
             Items.Add(new KnownGame
@@ -178,8 +193,8 @@ namespace TRTR
                     { FileLanguage.Korean, 1 << 14 },       //  32768 0x4000  0101000100000000
                     { FileLanguage.Chinese, 1 << 15 },      //  65536 0x8000  1001000100000000
                 },
-                Locales = FileLocale.English | FileLocale.French | FileLocale.German | FileLocale.Italian | FileLocale.Spanish | 
-                    FileLocale.Japanese | FileLocale.Portuguese | FileLocale.Polish | FileLocale.Russian | FileLocale.Czech | 
+                Locales = FileLocale.English | FileLocale.French | FileLocale.German | FileLocale.Italian | FileLocale.Spanish |
+                    FileLocale.Japanese | FileLocale.Portuguese | FileLocale.Polish | FileLocale.Russian | FileLocale.Czech |
                     FileLocale.Dutch | FileLocale.Arabic | FileLocale.Korean | FileLocale.Chinese,
 
                 //BigFiles = new KnownGame.KnownBigfileData[] { 

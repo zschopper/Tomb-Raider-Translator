@@ -89,7 +89,7 @@ namespace TRTR
             doc.Save(this.extractFileName);
             if(tpRUS != null)
                 tpRUS.Close();
-            this.tp.Close();
+            //this.tp.Close();
         }
 
         protected override bool getUseContext() { return true; }
@@ -147,7 +147,7 @@ namespace TRTR
             if (text.Trim() == "")
                 return text;
 
-            Debug.WriteLine(string.Format("TMXExtractor.GetTranslation: \"{0}\"", text));
+            //Debug.WriteLine(string.Format("TMXExtractor.GetTranslation: \"{0}\"", text));
 
             string textSrcLang = this.SrcLang;
             if (context.TryGetValue("SrcLang", out textSrcLang))

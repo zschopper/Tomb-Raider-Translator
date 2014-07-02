@@ -11,11 +11,21 @@ namespace TRTR
     {
         public readonly UInt32 Hash;
         public readonly FileLocale Locale;
+        public readonly string BigFile;
 
         public FatEntryKey(UInt32 hash, FileLocale locale)
         {
             Hash = hash;
             Locale = locale;
+            BigFile = "";
+        }
+
+        public FatEntryKey(UInt32 hash, FileLocale locale, string bigFile)
+        {
+            Hash = hash;
+            Locale = locale;
+            BigFile = bigFile;
+
         }
         // Equals and GetHashCode ommitted
     }
@@ -33,10 +43,11 @@ namespace TRTR
         //internal FileLanguage Language { get { return getLanguage(LangCode); } }
         internal UInt32 BigFileIndex;
         internal UInt32 Address;
+
         internal IBigFile BigFile { get; set; }
         internal string LocaleText { get { return getLocaleText(); } }
 
-        internal bool IsLocale(FileLocale locale) 
+        internal bool IsLocale(FileLocale locale)
         {
             return (this.Locale & locale) == locale;
         }
@@ -46,12 +57,12 @@ namespace TRTR
             if (Locale == FileLocale.Default)
                 return FileLocale.Default.ToString();
 
-//            return (Locale ^ (FileLocale.UpperWord)).ToString(); //xx for debugging!
+            // return (Locale ^ (FileLocale.UpperWord)).ToString(); //xx for debugging!
             return (Locale & TRGameInfo.Game.GameDefaults.Locales).ToString(); //xx for debugging!
-//            return (Locale ^ (FileLocale.UpperWord | FileLocale.UnusedFlags2)).ToString();
+            // return (Locale ^ (FileLocale.UpperWord | FileLocale.UnusedFlags2)).ToString();
 
         }
-        
+
         // internal UInt32 Priority { get { return Location % 0x800 } }
 
         internal static int InfoSize = 0x10;
@@ -105,7 +116,7 @@ namespace TRTR
             return FileLanguage.Unknown;
         }
 
-        internal void WriteToStream(Stream st)
+        internal void WriteToStream__NOT_USED(Stream st)
         {
             BinaryWriter bw = new BinaryWriter(st);
             bw.Write(Hash);
@@ -114,7 +125,7 @@ namespace TRTR
             bw.Write(Location);
         }
 
-        internal void ReadFromStream(Stream st)
+        internal void ReadFromStream__NOT_USED(Stream st)
         {
             BinaryReader br = new BinaryReader(st);
             Hash = br.ReadUInt32();
@@ -122,9 +133,10 @@ namespace TRTR
             Length = br.ReadUInt32();
             Location = br.ReadUInt32();
             //BigFileIndex = { get { return Location & 0x0F; } }
-            
+
             Index = 0;
         }
+
     }
 
     // all FAT entry of a bigfile/tiger
