@@ -88,7 +88,7 @@ namespace TRTR
             if (e.Error != null)
             {
                 Log.Write(e.Error);
-                ErrorDialog.ShowError(e.Error);
+                ErrorDetailsDialog.ShowError(e.Error);
                 //MessageBox.Show(e.Error.Message, StaticTexts.error, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             refreshGameInfoLabels(e.Error != null || e.Cancelled);

@@ -79,7 +79,7 @@ namespace TRTR
         internal KnownGame GameDefaults { get; set; }
         internal Settings UserSettings { get { return userSettings; } }
         internal List<GameTransFile> TransFiles { get { return transFiles; } }
-        internal bool debugMode = false;
+        internal bool DebugMode = false;
         //        internal bool 
 
         private void setInstallFolder(string value)
@@ -88,7 +88,7 @@ namespace TRTR
             if (Directory.Exists(Path.Combine(value, workingFolderName)))
             {
                 workFolder = Path.Combine(value, workingFolderName);
-                debugMode = true;
+                DebugMode = true;
             }
             else
             {

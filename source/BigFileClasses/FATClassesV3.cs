@@ -654,7 +654,7 @@ namespace TRTR
 
         private void dumpRawFatEntries()
         {
-            if (TRGameInfo.Game.debugMode)
+            if (TRGameInfo.Game.DebugMode)
             {
                 if (!Directory.Exists(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT")))
                     Directory.CreateDirectory(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT"));
@@ -669,7 +669,7 @@ namespace TRTR
 
         private void dumpFatEntries()
         {
-            if (TRGameInfo.Game.debugMode)
+            if (TRGameInfo.Game.DebugMode)
             {
                 if (!Directory.Exists(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT")))
                     Directory.CreateDirectory(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT"));
@@ -1184,7 +1184,7 @@ namespace TRTR
                 Int32 lastReported = 0;
                 Log.LogProgress(StaticTexts.creatingFilesTxt, lastReported);
 
-                if (TRGameInfo.Game.debugMode)
+                if (TRGameInfo.Game.DebugMode)
                 {
                     if (!Directory.Exists(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT")))
                         Directory.CreateDirectory(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT"));

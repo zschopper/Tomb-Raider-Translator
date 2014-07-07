@@ -438,7 +438,7 @@ namespace TRTR
                 // read header
                 //magic = new byte[4];
                 version = 2;
-                fileCount = 0; //xx
+                fileCount = 0; // determined later by contained file addresses
                 entryCount = br.ReadInt32();
                 string fileNameOnly = Path.GetFileNameWithoutExtension(this.Name);
 
@@ -447,9 +447,7 @@ namespace TRTR
                 else
                     priority = 0;
 
-                //priority = 0; //xx dont priorize translatables
-
-                //pathPrefix = br.ReadBytes(0x20);
+                pathPrefix = System.Text.Encoding.ASCII.GetBytes("pc-w");
 
                 // derivate some useful data
                 UInt32 hashBlockSize = (UInt32)(entryCount * sizeof(Int32));
@@ -751,7 +749,6 @@ namespace TRTR
                         }
                         if (entry.FileType == FileTypeEnum.RAW_FNT || entry.FileType == FileTypeEnum.SCH)
                             entry.Status = TranslationStatus.Translatable;
-                        //xx debug
                         if (entry.FileType == FileTypeEnum.MUL_CIN && !entry.Raw.IsLocale(FileLocale.Default))
                             entry.Status = TranslationStatus.Translatable;
                     }
@@ -772,7 +769,7 @@ namespace TRTR
 
         private void dumpRawFatEntries()
         {
-            if (TRGameInfo.Game.debugMode)
+            if (TRGameInfo.Game.DebugMode)
             {
                 if (!Directory.Exists(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT")))
                     Directory.CreateDirectory(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT"));
@@ -791,7 +788,7 @@ namespace TRTR
 
         private void dumpFatEntries()
         {
-            if (TRGameInfo.Game.debugMode)
+            if (TRGameInfo.Game.DebugMode)
             {
                 if (!Directory.Exists(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT")))
                     Directory.CreateDirectory(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT"));
@@ -1072,17 +1069,19 @@ namespace TRTR
 
 
             // TranslationProvider tp = new ResXExtractor(destFolder);
-            TranslationProvider tpTransSrc = null;
+            //TranslationProvider tpTransSrc = null;
             //TranslationProvider tpTransSrc = new ResXDict(Path.Combine(TRGameInfo.Game.WorkFolder, "hu"));
             //TranslationProvider tpTransSrc = new NMSTranslationProvider(Path.Combine(TRGameInfo.Game.WorkFolder, "nemes"));
             //TranslationProvider tpTransSrc = new ResXExtractor();
 
 
-            //TranslationProvider tpTransSrc = new TMXProvider();
+            TranslationProvider tpTransSrc = new TMXProvider();
+            //TranslationProvider tp = new ResXExtractor(false);
+
+
             if (tpTransSrc != null)
                 tpTransSrc.Open();
-            TranslationProvider tp = new ResXExtractor(false);
-            //TranslationProvider tp = new TMXExtractor(Path.Combine(destFolder, "extract.tmx"), null);
+            TranslationProvider tp = new TMXExtractor(Path.Combine(destFolder, "extract.tmx"), tpTransSrc);
             tp.Open();
             //BigFileIdx.EntryList.SortBy(FileEntryCompareField.FileName);
 
@@ -1096,27 +1095,27 @@ namespace TRTR
                             {
                                 if (entry.Raw.IsLocale(TRGameInfo.TransVoiceLang) || entry.Raw.IsLocale(FileLocale.Default))
                                 {
-                                    //string fileName;
-
-                                    //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "orig", entry.BigFileV2.Name, entry.Extra.FileNameForced });
-                                    //if (!Directory.Exists(Path.GetDirectoryName(fileName)))
-                                    //    Directory.CreateDirectory(Path.GetDirectoryName(fileName));
-                                    //DumpToFile(fileName, entry);
-
-
-                                    MemoryStream ms = new MemoryStream();
-                                    try
+                                    if (TRGameInfo.Game.DebugMode)
                                     {
-                                        if (CineFile.Process(entry, Stream.Null, tp))
+                                        bool dump = false;
+                                        if (dump)
                                         {
-                                            //fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV2.Name, entry.Extra.FileNameForced });
-                                            //DumpToFile(fileName, ms.ToArray());
-                                            //entry.BigFile.Parent.WriteFile(entry.BigFile, entry, ms.ToArray(), true);
+                                            string fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "orig", entry.BigFile.Name, entry.Extra.FileNameForced });
+                                            if (!Directory.Exists(Path.GetDirectoryName(fileName)))
+                                                Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+                                            entry.DumpToFile(fileName);
                                         }
                                     }
-                                    finally
+
+                                    if (CineFile.Process(entry, Stream.Null, tp))
                                     {
-                                        ms.Close();
+                                        //bool dump = false;
+                                        //if (dump)
+                                        //{
+                                        //    fileName = Path.Combine(new string[] { TRGameInfo.Game.WorkFolder, "extract", "cine_new", "trans", entry.BigFileV2.Name, entry.Extra.FileNameForced });
+                                        //    DumpToFile(fileName, ms.ToArray());
+                                        //    entry.BigFile.Parent.WriteFile(entry.BigFile, entry, ms.ToArray(), true);
+                                        //}
                                     }
                                 }
                                 break;
@@ -1387,11 +1386,24 @@ namespace TRTR
                                 {
                                     if (!simulated)
                                     {
-                                        File.Move(fileName, fileName + ".trtrbackup");
-                                        inStream = new FileStream(fileName + ".trtrbackup", FileMode.Open);
-                                        outStream = new FileStream(fileName, FileMode.Create);
+                                        inStream = new FileStream(fileName, FileMode.Open);
+                                        outStream = new MemoryStream();
                                         res = MovieFile.ProcessStream(name, inStream, inStream.Length, outStream, tp);
-
+                                        if (res)
+                                        {
+                                            inStream.Close();
+                                            inStream = null;
+                                            Stream fs = new FileStream(fileName, FileMode.Create);
+                                            try
+                                            {
+                                                outStream.Position = 0;
+                                                outStream.CopyTo(fs, (int)outStream.Length);
+                                            }
+                                            finally
+                                            {
+                                                fs.Close();
+                                            }
+                                        }
                                     }
                                     else
                                     {
@@ -1442,7 +1454,7 @@ namespace TRTR
                 Int32 lastReported = 0;
                 Log.LogProgress(StaticTexts.creatingFilesTxt, lastReported);
 
-                if (TRGameInfo.Game.debugMode)
+                if (TRGameInfo.Game.DebugMode)
                 {
                     if (!Directory.Exists(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT")))
                         Directory.CreateDirectory(Path.Combine(TRGameInfo.Game.WorkFolder, "FAT"));

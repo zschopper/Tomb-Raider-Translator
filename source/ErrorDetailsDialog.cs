@@ -11,6 +11,7 @@ using System.Reflection;
 using Microsoft.Win32;
 using System.Management;
 using System.Management.Instrumentation;
+using System.Runtime.InteropServices;
 
 using System.Web;
 
@@ -18,44 +19,59 @@ namespace TRTR
 {
     public partial class ErrorDetailsDialog : Form
     {
-        Exception error = null;
+
+        public Exception error = null;
+        int fullHeight;
         internal static void ShowError(Exception e)
         {
             Assembly thisExe = Assembly.GetExecutingAssembly();
-            Stream page = thisExe.GetManifestResourceStream(thisExe.GetName().Name + ".Resources.ErrorPage.html");
+
             ErrorDetailsDialog inst = new ErrorDetailsDialog();
+            inst.fullHeight = inst.ClientSize.Height;
+            inst.ClientSize = new Size(inst.ClientSize.Width, inst.textBoxDetails.Top - 1);
+
+            inst.pictureBox1.Image = System.Drawing.SystemIcons.Error.ToBitmap();
             inst.error = e;
-            page.Position = 0;
-            inst.webBrowserDetails.DocumentStream = page;
+            inst.labelErrorMessage.Text = e.Message;
+
+            inst.textBoxDetails.Text = Write(e);
+
+            //page.Position = 0;
+            //inst.webBrowserDetails.DocumentStream = page;
             if (Application.OpenForms.Count > 0)
             {
                 inst.ShowDialog(Application.OpenForms[0]);
             }
             else
                 inst.ShowDialog(null);
+
         }
+
+
+
 
         public ErrorDetailsDialog()
         {
             InitializeComponent();
         }
 
-        string Write(Exception ex)
+        static string Write(Exception ex)
         {
             StringBuilder ret = new StringBuilder();
-            ret.AppendFormat("<ul><li/>Message: {0}\r\n", ex.Message);
-            ret.AppendFormat("<li/>Source: {0}\r\n", ex.Source);
+            ret.AppendFormat("Message: {0}\r\n", ex.Message);
+            ret.AppendFormat("Source: {0}\r\n", ex.Source);
+            ret.AppendFormat("TargetSite: {0}\r\n", ex.TargetSite);
             if (ex.Data.Count == 0)
             {
-                ret.Append("<li/>Data: [none]\r\n");
+                ret.Append("Data: [none]\r\n");
             }
             else
             {
-                ret.Append("<li/><ul>Data:\r\n");
+                ret.Append("Data:\r\n");
                 foreach (object ob in ex.Data.Keys)
                 {
                     object Data = ex.Data[ob];
-                    ret.AppendFormat("<li/>\"{0}\": \"{1}\"", ob, ex.Data[ob]);
+                    ret.AppendFormat("\"{0}\": \"{1}\"", ob, ex.Data[ob]);
                     if (Data is string)
                     {
                         ret.Append("   Hex Values:");
@@ -64,20 +80,20 @@ namespace TRTR
                     }
                     ret.Append("\r\n");
                 }
-                ret.Append("</ul>");
+                ret.Append("\r\n");
             }
-            ret.AppendFormat("<li/>StackTrace:\r\n{0}\r\n", ex.StackTrace);
+            ret.AppendFormat("StackTrace:\r\n{0}\r\n", ex.StackTrace);
             if (ex.InnerException == null)
-                ret.Append("<li/>InnerException: [none]\r\n");
+                ret.Append("InnerException: [none]\r\n");
             else
-                ret.Append("<li/>InnerException: [details below]\r\n");
+                ret.Append("InnerException: [details below]\r\n");
 
             if (ex.InnerException != null)
                 ret.Append(Write(ex.InnerException));
-            ret.Append("</ul>");
+            ret.Append("\r\n");
             //HttpServerUtility u;
 
-            return ret.ToString().Replace("\r\n", "<br/>");
+            return ret.ToString();
         }
 
         private void wmiInstalledAppList()
@@ -227,19 +243,35 @@ namespace TRTR
 
         private void webBrowserDetails_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            HtmlDocument doc = webBrowserDetails.Document;
-            doc.GetElementById("errorLabel").InnerText = StaticTexts.error;
-            doc.GetElementById("error").InnerText = error.Message;
-            //doc.GetElementById("more").InnerText = StaticTexts.details;
-            string details = string.Empty;
-            doc.GetElementById("detailed").InnerHtml = Write(error);
-            doc.GetElementById("sysInfo").InnerHtml = regInstalledAppList().Replace("\r\n", "<br/>");
-            doc.GetElementById("copy").InnerHtml = StaticTexts.copyDetails;
+            //HtmlDocument doc = webBrowserDetails.Document;
+            //doc.GetElementById("errorLabel").InnerText = StaticTexts.error;
+            //doc.GetElementById("error").InnerText = error.Message;
+            ////doc.GetElementById("more").InnerText = StaticTexts.details;
+            //string details = string.Empty;
+            //doc.GetElementById("detailed").InnerHtml = Write(error);
+            //doc.GetElementById("sysInfo").InnerHtml = regInstalledAppList().Replace("\r\n", "<br/>");
+            //doc.GetElementById("copy").InnerHtml = StaticTexts.copyDetails;
         }
 
         private void webBrowserDetails_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
             Noop.DoIt();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (ClientSize.Height == fullHeight)
+                ClientSize = new Size(ClientSize.Width, textBoxDetails.Top - 1);
+            else
+                ClientSize = new Size(ClientSize.Width, fullHeight);
+            
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(labelErrorMessage.Text + "\r\n\r\nDetails:\r\n" + textBoxDetails.Text);
+            MessageBox.Show("Details copied to clipboard!", "Information");
         }
     }
 }
