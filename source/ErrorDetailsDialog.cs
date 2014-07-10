@@ -91,6 +91,7 @@ namespace TRTR
             if (ex.InnerException != null)
                 ret.Append(Write(ex.InnerException));
             ret.Append("\r\n");
+            ret.Append(Log.GetLogContents());
             //HttpServerUtility u;
 
             return ret.ToString();

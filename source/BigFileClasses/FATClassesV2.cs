@@ -612,12 +612,12 @@ namespace TRTR
                 IFileEntry thisEntry = EntryList[i];
                 IFileEntry nextEntry = EntryList[i + 1];
 
-                if (thisEntry.Raw.Address == nextEntry.Raw.Address)
-                    Log.LogDebugMsg("??");
-                if (thisEntry.Raw.Length == 0 || nextEntry.Raw.Length == 0)
-                    Log.LogDebugMsg("??");
-                if (thisEntry.Raw.Address >= nextEntry.Raw.Address)
-                    Log.LogDebugMsg("??");
+                //if (thisEntry.Raw.Address == nextEntry.Raw.Address)
+                //    Log.LogDebugMsg("entry's start address matches with next's");
+                //if (thisEntry.Raw.Length == 0 || nextEntry.Raw.Length == 0)
+                //    Log.LogDebugMsg("entry's or next entry's length is 0");
+                //if (thisEntry.Raw.Address >= nextEntry.Raw.Address)
+                //    Log.LogDebugMsg("this entry's start adress greater or equal with next's");
 
                 if (thisEntry.Raw.BigFileIndex == nextEntry.Raw.BigFileIndex)
                 {
@@ -1037,6 +1037,8 @@ namespace TRTR
 
             int i = 0;
             UpdateBigFiles();
+
+            // throw new Exception("E!");
 
             List<IFileEntry> transEntryList = new List<IFileEntry>(TransEntries.Values.ToArray<IFileEntry>());
 

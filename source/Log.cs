@@ -107,7 +107,17 @@ namespace TRTR
 
         internal static void LogProgress(string msg, int progress)
         {
-            LogMsg(LogEntryType.Progress, msg, progress); 
+            LogMsg(LogEntryType.Progress, msg, progress);
+        }
+
+        internal static string GetLogContents()
+        {
+            return GetLogContents(Encoding.Unicode);
+        }
+
+        internal static string GetLogContents(Encoding encoding)
+        {
+            return internalListener.GetContents(encoding);
         }
     }
 
@@ -136,7 +146,7 @@ namespace TRTR
         public void LogMsg(LogMessage msg)
         {
             string msgText;
-            if(msg.LogType != LogEntryType.Progress)
+            if (msg.LogType != LogEntryType.Progress)
                 msgText = string.Format("{0} {1} {2}", msg.Time.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss.ffff"), msg.LogType.ToString(), msg.Message);
             else
                 msgText = string.Format("{0} {1} {2} {3}%", msg.Time.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss.ffff"), msg.LogType.ToString(), msg.Message, msg.Progress);
@@ -178,6 +188,18 @@ namespace TRTR
                 this.internalStream = stream;
                 InitializeListener();
             }
+        }
+
+        internal string GetContents(Encoding encoding)
+        {
+            byte[] data = new byte[internalStream.Length];
+            internalStream.Position = 0;
+            internalStream.Read(data, 0, data.Length);
+
+            if (this.encoding != encoding)
+                data = Encoding.Convert(this.encoding, encoding, data);
+            return encoding.GetString(data);
+
         }
     }
 
