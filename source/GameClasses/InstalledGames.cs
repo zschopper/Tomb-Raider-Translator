@@ -196,58 +196,66 @@ namespace TRTR
                     }
             }
 
-
             if (installFolder == string.Empty)
             {
-                Log.LogDebugMsg("Steam config.vdf: installdir is not determined, searching manifests.");
+                Log.LogDebugMsg("Steam config.vdf: installdir is not determined, searching for game manifests.");
                 VDFNode steamNode = configVDF.ItemByPath(@"InstallConfigStore\Software\Valve\Steam");
                 VDFNode baseInstallFolderNode = null;
-                int installFolderIdx = 0;
-                installFolder = string.Empty;
+                int installFolderIdx = 1;
+                string steamFolder = steamInstallFolder;
                 do
                 {
-                    installFolderIdx++;
+                    string appManifestFileName = Path.Combine(steamFolder, "steamapps", "appmanifest_" + GameDefaults.SteamAppId + ".acf");
+
+                    if (!File.Exists(appManifestFileName))
+                    {
+                        Log.LogDebugMsg(string.Format("Steam: App manifest \"{0}\" not exists.", appManifestFileName));
+                    }
+                    else
+                    {
+                        Log.LogDebugMsg(string.Format("Steam: App manifest \"{0}\" found.", appManifestFileName));
+                        SteamVDFDoc appManifest = new SteamVDFDoc(appManifestFileName);
+                        VDFNode appStateNode = appManifest.ItemByPath(@"AppState");
+                        VDFNode installDirNode = appStateNode.ChildItemByName("installdir");
+                        if (installDirNode == null)
+                        {
+                            Log.LogDebugMsg("Steam: installdir key is not exists.");
+                        }
+
+                        else
+                            if (installDirNode.Value.Trim() == string.Empty)
+                            {
+                                Log.LogDebugMsg("Steam: installdir key is empty.");
+                            }
+                            else
+                            {
+                                installFolder = Path.Combine(steamFolder, "steamapps", "common", installDirNode.Value);
+                                Log.LogDebugMsg(string.Format("Install folder: \"{0}\".", installFolder));
+                                if (!Directory.Exists(installFolder))
+                                {
+                                    Log.LogDebugMsg(string.Format("Install folder: \"{0}\" not exists!", installFolder));
+                                    installFolder = string.Empty;
+                                }
+
+                            }
+                    }
+
                     baseInstallFolderNode = steamNode.ChildItemByName("BaseInstallFolder_" + installFolderIdx);
+                    
                     if (baseInstallFolderNode != null)
                     {
-                        string steamFolder = baseInstallFolderNode.Value;
-                        string appManifestFileName = Path.Combine(steamFolder, "steamapps", "appmanifest_" + GameDefaults.SteamAppId + ".acf");
-                        if (!File.Exists(appManifestFileName))
-                        {
-                            Log.LogDebugMsg(string.Format("Steam: App manifest \"{0}\" not exists.", appManifestFileName));
-                        }
-                        else
-                        {
-                            Log.LogDebugMsg(string.Format("Steam: App manifest \"{0}\" found.", appManifestFileName));
-                            SteamVDFDoc appManifest = new SteamVDFDoc(appManifestFileName);
-                            VDFNode appStateNode = appManifest.ItemByPath(@"AppState");
-                            VDFNode installDirNode = appStateNode.ChildItemByName("installdir");
-                            if (installDirNode == null)
-                            {
-                                Log.LogDebugMsg("Steam: installdir key is not exists.");
-                            }
-
-                            else
-                                if (installDirNode.Value.Trim() == string.Empty)
-                                {
-                                    Log.LogDebugMsg("Steam: installdir key is empty.");
-                                }
-                                else
-                                {
-                                    installFolder = Path.Combine(steamFolder, "steamapps", "common", installDirNode.Value);
-                                    Log.LogDebugMsg(string.Format("Install folder: \"{0}\".", installFolder));
-                                    if (!Directory.Exists(installFolder))
-                                    {
-                                        Log.LogDebugMsg(string.Format("Install folder: \"{0}\" not exists!", installFolder));
-                                        installFolder = string.Empty;
-                                    }
-
-                                }
-                        }
+                        Log.LogDebugMsg("Parsing: BaseInstallFolder_" + installFolderIdx);
+                        steamFolder = baseInstallFolderNode.Value;
 
                     }
+                    installFolderIdx++;
+
                 } while (installFolder == string.Empty && baseInstallFolderNode != null);
 
+                if (installFolder == string.Empty)
+                {
+                    throw new Exception("Steam game install location not found!");
+                }
             }
             try
             {
